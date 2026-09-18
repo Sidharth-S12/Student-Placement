@@ -1,0 +1,228 @@
+{
+  "apt_1789747586629_h8day": {
+    "id": "apt_1789747586629_h8day",
+    "assessmentId": "apt_1789747586629_h8day",
+    "studentId": "test_student_apt_01",
+    "startTime": "2026-09-18T16:06:26.629Z",
+    "completedAt": "2026-09-18T16:06:31.183Z",
+    "totalQuestions": 20,
+    "answeredQuestions": 1,
+    "correctAnswers": 1,
+    "finalScore": 5,
+    "score": 5,
+    "categoryBreakdown": {
+      "Quantitative Aptitude": {
+        "correct": 1,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "1/5",
+        "accuracy": 20,
+        "status": "Needs Improvement"
+      },
+      "Logical Reasoning": {
+        "correct": 0,
+        "attempted": 0,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      },
+      "Verbal Ability": {
+        "correct": 0,
+        "attempted": 0,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      },
+      "Basic Technical Aptitude": {
+        "correct": 0,
+        "attempted": 0,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      }
+    },
+    "strengths": [
+      "Completed comprehensive 20-question placement aptitude evaluation under timed conditions"
+    ],
+    "improvements": [
+      "Quantitative Aptitude (1/5 correct - Focus on core shortcuts and drills)",
+      "Logical Reasoning (0/5 correct - Focus on core shortcuts and drills)",
+      "Verbal Ability (0/5 correct - Focus on core shortcuts and drills)",
+      "Basic Technical Aptitude (0/5 correct - Focus on core shortcuts and drills)"
+    ],
+    "summaryFeedback": "Student achieved an Aptitude Score of 5%, answering 1 of 20 questions correctly. Requires targeted practice on fundamental quantitative shortcuts, syllogisms, and comprehension drills.",
+    "totalTimeSpentSeconds": 5,
+    "status": "Completed",
+    "finishReason": "EarlySubmission",
+    "responses": [
+      {
+        "questionIndex": 1,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A student scores 78, 85, 92 and 88 marks in four successive exams. What is the average marks obtained?",
+        "options": [
+          "85.75",
+          "86",
+          "85.5",
+          "86.5"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 0,
+        "isCorrect": true,
+        "explanation": "Sum of the marks = 78+85+92+88 = 343. Average = Total/Number of exams = 343/4 = 85.75. Hence option A (index 0) is correct.",
+        "answeredAt": "2026-09-18T16:06:28.774Z"
+      }
+    ],
+    "updatedAt": "2026-09-18T16:06:31.189Z"
+  },
+  "apt_1789747915307_zz5du": {
+    "id": "apt_1789747915307_zz5du",
+    "assessmentId": "apt_1789747915307_zz5du",
+    "studentId": "crsid542@gmail.com",
+    "startTime": "2026-09-18T16:11:55.307Z",
+    "completedAt": "2026-09-18T16:14:35.882Z",
+    "totalQuestions": 20,
+    "answeredQuestions": 5,
+    "correctAnswers": 2,
+    "finalScore": 10,
+    "score": 10,
+    "categoryBreakdown": {
+      "Quantitative Aptitude": {
+        "correct": 1,
+        "attempted": 2,
+        "total": 5,
+        "scoreText": "1/5",
+        "accuracy": 20,
+        "status": "Needs Improvement"
+      },
+      "Logical Reasoning": {
+        "correct": 1,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "1/5",
+        "accuracy": 20,
+        "status": "Needs Improvement"
+      },
+      "Verbal Ability": {
+        "correct": 0,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      },
+      "Basic Technical Aptitude": {
+        "correct": 0,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      }
+    },
+    "strengths": [
+      "Completed comprehensive 20-question placement aptitude evaluation under timed conditions"
+    ],
+    "improvements": [
+      "Quantitative Aptitude (1/5 correct - Focus on core shortcuts and drills)",
+      "Logical Reasoning (1/5 correct - Focus on core shortcuts and drills)",
+      "Verbal Ability (0/5 correct - Focus on core shortcuts and drills)",
+      "Basic Technical Aptitude (0/5 correct - Focus on core shortcuts and drills)"
+    ],
+    "summaryFeedback": "Student achieved an Aptitude Score of 10%, answering 2 of 20 questions correctly. Requires targeted practice on fundamental quantitative shortcuts, syllogisms, and comprehension drills.",
+    "totalTimeSpentSeconds": 161,
+    "status": "Completed",
+    "finishReason": "EarlySubmission",
+    "responses": [
+      {
+        "questionIndex": 1,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A shopkeeper gives a 10% discount on an article and the selling price after discount is $540. What was the marked price of the article?",
+        "options": [
+          "$600",
+          "$590",
+          "$560",
+          "$550"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 0,
+        "isCorrect": false,
+        "explanation": "Let the marked price be x. After a 10% discount the price becomes 0.90x = 540. Solving gives x = 540/0.90 = 600. Therefore the marked price is $600, which corresponds to option A.",
+        "answeredAt": "2026-09-18T16:12:50.759Z"
+      },
+      {
+        "questionIndex": 2,
+        "category": "Logical Reasoning",
+        "difficulty": "Easy",
+        "question": "What is the next number in the series: 2, 5, 9, 14, 20, ?",
+        "options": [
+          "25",
+          "26",
+          "27",
+          "28"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "The differences between consecutive terms are 3, 4, 5, 6, ... increasing by 1 each time. The next difference is 7, so 20 + 7 = 27, which is option C (index 2).",
+        "answeredAt": "2026-09-18T16:13:20.551Z"
+      },
+      {
+        "questionIndex": 3,
+        "category": "Verbal Ability",
+        "difficulty": "Medium",
+        "question": "Select the word that is most nearly opposite in meaning to the word \"mitigate\".",
+        "options": [
+          "Alleviate",
+          "Exacerbate",
+          "Moderate",
+          "Temper"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "\"Mitigate\" means to make less severe or to lessen. The opposite is to make more severe, which is expressed by \"exacerbate\". The other options (alleviate, moderate, temper) all imply reduction or softening, not the opposite.",
+        "answeredAt": "2026-09-18T16:13:36.104Z"
+      },
+      {
+        "questionIndex": 4,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which of the following statements about method overriding in object-oriented programming is FALSE?",
+        "options": [
+          "The overriding method must have the same name and parameter list as the method in the superclass.",
+          "The overriding method can have a more restrictive access modifier than the method in the superclass.",
+          "The overriding method can return a subtype (covariant return) of the return type declared in the superclass method.",
+          "The overriding method cannot be declared static."
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "For a method to correctly override a superclass method, it must have the same name and parameter list (option A is true). The access level of the overriding method cannot be more restrictive than that of the overridden method; it must be the same or less restrictive, so option B is false. Covariant return types are allowed, making option C true. Static methods are not subject to overriding; they are hidden, so stating that an overriding method cannot be static is also true (option D). Hence, the false statement is option B, which corresponds to index 1.",
+        "answeredAt": "2026-09-18T16:13:46.562Z"
+      },
+      {
+        "questionIndex": 5,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A shopkeeper sells an article for $540, making a profit of 20%. What was the cost price of the article?",
+        "options": [
+          "$450",
+          "$440",
+          "$460",
+          "$420"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 0,
+        "isCorrect": true,
+        "explanation": "Profit% = (Selling Price - Cost Price)/Cost Price *100. Here 20 = (540 - CP)/CP *100 => (540 - CP)/CP = 0.20 => 540 - CP = 0.20 CP => 540 = 1.20 CP => CP = 540/1.20 = 450. Hence the cost price is $450, which is option 0.",
+        "answeredAt": "2026-09-18T16:14:21.112Z"
+      }
+    ],
+    "updatedAt": "2026-09-18T16:14:35.892Z"
+  }
+}

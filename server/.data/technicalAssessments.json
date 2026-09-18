@@ -1,0 +1,213 @@
+{
+  "test_assess_1789745365465": {
+    "assessmentId": "test_assess_1789745365465",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-18T15:29:25.465Z",
+    "savedAt": "2026-09-18T15:29:25.467Z"
+  },
+  "assess_1789746392002_8d2jf": {
+    "assessmentId": "assess_1789746392002_8d2jf",
+    "studentId": "crsid542@gmail.com",
+    "startedAt": "2026-09-18T15:46:33.459Z",
+    "completedAt": "2026-09-18T15:49:42.323Z",
+    "totalQuestions": 15,
+    "correctAnswers": 7,
+    "incorrectAnswers": 8,
+    "technicalScore": 46.67,
+    "skillsAssessed": [
+      "Python",
+      "HTML",
+      "C++",
+      "Firebase",
+      "GitHub",
+      "VScode",
+      "vercel"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 33,
+        "questionsAttempted": 3,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "HTML": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "C++": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "Firebase": {
+        "score": 0,
+        "questionsAttempted": 2,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "VScode": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "vercel": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      }
+    },
+    "topicPerformance": {
+      "String Slicing": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "HTML Elements": {
+        "skill": "HTML",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Data Types and Arithmetic": {
+        "skill": "C++",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Authentication": {
+        "skill": "Firebase",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Repository Initialization": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Keyboard Shortcuts": {
+        "skill": "VScode",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Vercel CLI Deployment Command": {
+        "skill": "vercel",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Longest Subarray with Given Sum": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Document Encoding": {
+        "skill": "HTML",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Function Overloading and const correctness": {
+        "skill": "C++",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Realtime Database Basics": {
+        "skill": "Firebase",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Protected Branches": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Configuration Files": {
+        "skill": "VScode",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Preview Deployments": {
+        "skill": "vercel",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Dictionary Access": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      }
+    },
+    "highestDifficulty": "MEDIUM",
+    "strengths": [
+      "GitHub (100% proficiency achieved)",
+      "String Slicing in Python (Consistent correctness)",
+      "HTML Elements in HTML (Consistent correctness)",
+      "Data Types and Arithmetic in C++ (Consistent correctness)",
+      "Repository Initialization in GitHub (Consistent correctness)",
+      "Protected Branches in GitHub (Consistent correctness)",
+      "Configuration Files in VScode (Consistent correctness)",
+      "Preview Deployments in vercel (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Python (33% accuracy - practice EASY fundamentals)",
+      "HTML (50% accuracy - practice EASY fundamentals)",
+      "C++ (50% accuracy - practice EASY fundamentals)",
+      "Firebase (0% accuracy - practice EASY fundamentals)",
+      "VScode (50% accuracy - practice EASY fundamentals)",
+      "vercel (50% accuracy - practice MEDIUM fundamentals)",
+      "Authentication in Firebase (Review concepts)",
+      "Keyboard Shortcuts in VScode (Review concepts)",
+      "Vercel CLI Deployment Command in vercel (Review concepts)",
+      "Longest Subarray with Given Sum in Python (Review concepts)",
+      "Document Encoding in HTML (Review concepts)",
+      "Function Overloading and const correctness in C++ (Review concepts)",
+      "Realtime Database Basics in Firebase (Review concepts)",
+      "Dictionary Access in Python (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-09-18T15:49:42.325Z"
+  },
+  "test_assess_1789746981902": {
+    "assessmentId": "test_assess_1789746981902",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-18T15:56:21.902Z",
+    "savedAt": "2026-09-18T15:56:21.903Z"
+  }
+}

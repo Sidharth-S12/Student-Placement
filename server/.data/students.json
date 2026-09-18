@@ -1,0 +1,111 @@
+{
+  "test_student@placement.edu": {
+    "studentId": "test_student@placement.edu",
+    "latestAssessmentId": "test_assess_1789746981902",
+    "latestTechnicalScore": 80,
+    "latestCorrectAnswers": 12,
+    "latestIncorrectAnswers": 3,
+    "latestCompletedAt": "2026-09-18T15:56:21.902Z",
+    "status": "Completed",
+    "updatedAt": "2026-09-18T15:56:21.912Z"
+  },
+  "crsid542@gmail.com": {
+    "studentId": "crsid542@gmail.com",
+    "latestAssessmentId": "assess_1789746392002_8d2jf",
+    "latestTechnicalScore": 46.67,
+    "latestCorrectAnswers": 7,
+    "latestIncorrectAnswers": 8,
+    "latestCompletedAt": "2026-09-18T15:49:42.323Z",
+    "status": "Completed",
+    "updatedAt": "2026-09-18T16:14:35.898Z",
+    "latestAptitudeAssessment": {
+      "assessmentId": "apt_1789747915307_zz5du",
+      "score": 10,
+      "totalQuestions": 20,
+      "correctAnswers": 2,
+      "completedAt": "2026-09-18T16:14:35.882Z",
+      "categoryBreakdown": {
+        "Quantitative Aptitude": {
+          "correct": 1,
+          "attempted": 2,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Logical Reasoning": {
+          "correct": 1,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Verbal Ability": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Basic Technical Aptitude": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        }
+      },
+      "status": "Completed"
+    },
+    "aptitudeScore": 10
+  },
+  "test_student_apt_01": {
+    "latestAptitudeAssessment": {
+      "assessmentId": "apt_1789747586629_h8day",
+      "score": 5,
+      "totalQuestions": 20,
+      "correctAnswers": 1,
+      "completedAt": "2026-09-18T16:06:31.183Z",
+      "categoryBreakdown": {
+        "Quantitative Aptitude": {
+          "correct": 1,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Logical Reasoning": {
+          "correct": 0,
+          "attempted": 0,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Verbal Ability": {
+          "correct": 0,
+          "attempted": 0,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Basic Technical Aptitude": {
+          "correct": 0,
+          "attempted": 0,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        }
+      },
+      "status": "Completed"
+    },
+    "aptitudeScore": 5,
+    "updatedAt": "2026-09-18T16:06:31.193Z"
+  }
+}

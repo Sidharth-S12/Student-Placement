@@ -1,0 +1,54 @@
+{
+  "test_student_apt_01": [
+    {
+      "id": "groq-apt-1789747588767-hgyv4",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A student scores 78, 85, 92 and 88 marks in four successive exams. What is the average marks obtained?",
+      "recordedAt": "2026-09-18T16:06:31.185Z"
+    }
+  ],
+  "crsid542@gmail.com": [
+    {
+      "id": "groq-apt-1789747917033-4n9up",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A shopkeeper gives a 10% discount on an article and the selling price after discount is $540. What was the marked price of the article?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789747972656-s887w",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "What is the next number in the series: 2, 5, 9, 14, 20, ?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789748002618-xyuxj",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Select the word that is most nearly opposite in meaning to the word \"mitigate\".",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789748017885-ywo7w",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Which of the following statements about method overriding in object-oriented programming is FALSE?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789748028701-g7o4r",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A shopkeeper sells an article for $540, making a profit of 20%. What was the cost price of the article?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    }
+  ]
+}

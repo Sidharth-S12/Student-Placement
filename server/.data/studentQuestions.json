@@ -1,0 +1,20 @@
+{
+  "student_repeat_test": [
+    {
+      "id": "groq-1789747002168-09j4ly",
+      "skill": "Python",
+      "topic": "Lists",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following Python code?\n\nmy_list = [10, 20, 30, 40]\nprint(my_list[2])",
+      "recordedAt": "2026-09-18T15:56:42.169Z"
+    },
+    {
+      "id": "groq-1789747009363-69r9js",
+      "skill": "Python",
+      "topic": "String Manipulation",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following code?\n\ns = \"Graduate\"\nprint(s[2:5])",
+      "recordedAt": "2026-09-18T15:56:49.365Z"
+    }
+  ]
+}
