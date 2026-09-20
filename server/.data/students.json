@@ -1,23 +1,23 @@
 {
   "test_student@placement.edu": {
     "studentId": "test_student@placement.edu",
-    "latestAssessmentId": "test_assess_1789746981902",
+    "latestAssessmentId": "test_assess_1789927262984",
     "latestTechnicalScore": 80,
     "latestCorrectAnswers": 12,
     "latestIncorrectAnswers": 3,
-    "latestCompletedAt": "2026-09-18T15:56:21.902Z",
+    "latestCompletedAt": "2026-09-20T18:01:02.984Z",
     "status": "Completed",
-    "updatedAt": "2026-09-18T15:56:21.912Z"
+    "updatedAt": "2026-09-20T18:01:02.992Z"
   },
   "crsid542@gmail.com": {
     "studentId": "crsid542@gmail.com",
-    "latestAssessmentId": "assess_1789746392002_8d2jf",
-    "latestTechnicalScore": 46.67,
-    "latestCorrectAnswers": 7,
-    "latestIncorrectAnswers": 8,
-    "latestCompletedAt": "2026-09-18T15:49:42.323Z",
+    "latestAssessmentId": "assess_1789789135125_7f3o4",
+    "latestTechnicalScore": 40,
+    "latestCorrectAnswers": 6,
+    "latestIncorrectAnswers": 9,
+    "latestCompletedAt": "2026-09-19T03:41:54.644Z",
     "status": "Completed",
-    "updatedAt": "2026-09-18T16:14:35.898Z",
+    "updatedAt": "2026-09-19T03:41:54.667Z",
     "latestAptitudeAssessment": {
       "assessmentId": "apt_1789747915307_zz5du",
       "score": 10,
@@ -107,5 +107,793 @@
     },
     "aptitudeScore": 5,
     "updatedAt": "2026-09-18T16:06:31.193Z"
+  },
+  "test_user_a_1789924912755": {
+    "uid": "test_user_a_1789924912755",
+    "studentId": "test_user_a_1789924912755",
+    "personalInfo": {
+      "fullName": "Alice Johnson",
+      "email": "alice@college.edu",
+      "summary": "Aspiring Cloud Architect"
+    },
+    "placementScores": {
+      "technicalScore": 85,
+      "overallReadiness": 88
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Go",
+          "level": "Advanced"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T17:21:52.786Z",
+    "latestAssessmentId": "assess_a_1789924912780",
+    "latestTechnicalScore": 95,
+    "latestCompletedAt": "2026-09-20T17:21:52.780Z",
+    "status": "Completed"
+  },
+  "test_user_b_1789924912768": {
+    "uid": "test_user_b_1789924912768",
+    "studentId": "test_user_b_1789924912768",
+    "personalInfo": {
+      "fullName": "Bob Smith",
+      "email": "bob@college.edu",
+      "summary": "Data Scientist"
+    },
+    "placementScores": {
+      "technicalScore": 65,
+      "overallReadiness": 70
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T17:21:52.798Z",
+    "latestAssessmentId": "assess_b_1789924912792",
+    "latestTechnicalScore": 60,
+    "latestCompletedAt": "2026-09-20T17:21:52.792Z",
+    "status": "Completed"
+  },
+  "uid_sidharth_1789924912811": {
+    "uid": "uid_sidharth_1789924912811",
+    "studentId": "uid_sidharth_1789924912811",
+    "personalInfo": {
+      "fullName": "Sidharth S",
+      "headline": "Computer Science Student",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "crsid542@gmail.com",
+      "phone": "",
+      "location": "",
+      "summary": "Undergraduate student passionate about software engineering and problem solving."
+    },
+    "placementScores": {
+      "overallReadiness": 42,
+      "technicalScore": 40,
+      "aptitudeScore": 10,
+      "communicationScore": 75
+    },
+    "education": {
+      "tenthPercentage": "92%",
+      "tenthBoard": "State Board",
+      "tenthYear": "2019",
+      "twelfthPercentage": "90%",
+      "twelfthBoard": "State Board",
+      "twelfthYear": "2021",
+      "degree": "Bachelor of Technology",
+      "branch": "Computer Science & Engineering",
+      "college": "Engineering College",
+      "cgpa": "8.5",
+      "graduationYear": "2025"
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "JavaScript",
+          "level": "Proficient"
+        },
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "React",
+          "level": "Proficient"
+        },
+        {
+          "name": "Node.js",
+          "level": "Proficient"
+        }
+      ],
+      "databases": [
+        {
+          "name": "MongoDB",
+          "level": "Proficient"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "Git",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "latestAssessmentId": "assess_1789789135125_7f3o4",
+    "latestTechnicalScore": 40,
+    "latestAptitudeAssessment": {
+      "assessmentId": "apt_1789747915307_zz5du",
+      "score": 10,
+      "totalQuestions": 20,
+      "correctAnswers": 2,
+      "completedAt": "2026-09-18T16:14:35.882Z",
+      "categoryBreakdown": {
+        "Quantitative Aptitude": {
+          "correct": 1,
+          "attempted": 2,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Logical Reasoning": {
+          "correct": 1,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Verbal Ability": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Basic Technical Aptitude": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        }
+      },
+      "status": "Completed"
+    },
+    "aptitudeScore": 10,
+    "migratedFromLegacyEmail": "crsid542@gmail.com",
+    "migratedAt": "2026-09-20T17:21:52.814Z"
+  },
+  "student_ece_01": {
+    "uid": "student_ece_01",
+    "studentId": "student_ece_01",
+    "personalInfo": {
+      "fullName": "Priya Nair",
+      "headline": "ECE Student | Embedded Systems & Machine Learning",
+      "email": "priya.nair@college.edu",
+      "phone": "+91 98765 12345",
+      "location": "Bengaluru, India",
+      "summary": "Electronics and Communication Engineering student with hands-on experience in Embedded C, Python, and edge Machine Learning."
+    },
+    "placementScores": {
+      "overallReadiness": 86,
+      "technicalScore": 84,
+      "aptitudeScore": 85,
+      "communicationScore": 90
+    },
+    "education": {
+      "degree": "Bachelor of Technology",
+      "branch": "Electronics & Communication Engineering",
+      "college": "National Institute of Technology",
+      "cgpa": "8.7",
+      "graduationYear": "2025"
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Python",
+          "level": "Advanced"
+        },
+        {
+          "name": "C",
+          "level": "Proficient"
+        },
+        {
+          "name": "Embedded C",
+          "level": "Proficient"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "FastAPI",
+          "level": "Intermediate"
+        },
+        {
+          "name": "TensorFlow Lite",
+          "level": "Intermediate"
+        }
+      ],
+      "databases": [
+        {
+          "name": "SQL",
+          "level": "Proficient"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "MATLAB",
+          "level": "Advanced"
+        },
+        {
+          "name": "Git",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [
+      {
+        "title": "Smart IoT Health Telemetry Monitor",
+        "description": "Real-time edge sensor node monitoring vital biometrics with cloud sync.",
+        "technologies": [
+          "Python",
+          "Embedded C",
+          "MQTT",
+          "SQL"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "company": "Semiconductor Labs",
+        "role": "Embedded Firmware Intern",
+        "duration": "June 2025 - August 2025",
+        "description": "Developed low-power device communication protocols using C."
+      }
+    ],
+    "placementVisibility": {
+      "profile": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "experience": true,
+      "certifications": true,
+      "achievements": true,
+      "scores": true,
+      "resume": true,
+      "contact": false
+    },
+    "updatedAt": "2026-09-20T17:40:00.000Z"
+  },
+  "student_me_01": {
+    "uid": "student_me_01",
+    "studentId": "student_me_01",
+    "personalInfo": {
+      "fullName": "Rohan Deshmukh",
+      "headline": "Mechanical Engineering Student | CAD & Simulation Specialist",
+      "email": "rohan.d@college.edu",
+      "phone": "+91 98765 67890",
+      "location": "Pune, India",
+      "summary": "Final year Mechanical Engineering student skilled in SolidWorks, finite element analysis, and computational fluid dynamics."
+    },
+    "placementScores": {
+      "overallReadiness": 72,
+      "technicalScore": 68,
+      "aptitudeScore": 76,
+      "communicationScore": 75
+    },
+    "education": {
+      "degree": "Bachelor of Technology",
+      "branch": "Mechanical Engineering",
+      "college": "College of Engineering",
+      "cgpa": "8.0",
+      "graduationYear": "2025"
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        },
+        {
+          "name": "MATLAB",
+          "level": "Proficient"
+        }
+      ],
+      "frameworks": [],
+      "databases": [
+        {
+          "name": "SQL",
+          "level": "Basic"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "AutoCAD",
+          "level": "Advanced"
+        },
+        {
+          "name": "SolidWorks",
+          "level": "Advanced"
+        },
+        {
+          "name": "ANSYS",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [
+      {
+        "title": "Aerodynamic Optimization of Drone Propellers",
+        "description": "CFD simulation and blade angle optimization reducing drag by 14%.",
+        "technologies": [
+          "ANSYS",
+          "SolidWorks",
+          "Python"
+        ]
+      }
+    ],
+    "experience": [],
+    "placementVisibility": {
+      "profile": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "experience": true,
+      "certifications": true,
+      "achievements": true,
+      "scores": true,
+      "resume": true,
+      "contact": false
+    },
+    "updatedAt": "2026-09-20T17:40:00.000Z"
+  },
+  "student_eee_01": {
+    "uid": "student_eee_01",
+    "studentId": "student_eee_01",
+    "personalInfo": {
+      "fullName": "Karthik Verma",
+      "headline": "Electrical Engineering Student | EV Powertrain & Microcontrollers",
+      "email": "karthik.v@college.edu",
+      "phone": "+91 98765 54321",
+      "location": "Chennai, India",
+      "summary": "Passionate about electric vehicles, battery management systems, and power electronics."
+    },
+    "placementScores": {
+      "overallReadiness": 78,
+      "technicalScore": 74,
+      "aptitudeScore": 78,
+      "communicationScore": 82
+    },
+    "education": {
+      "degree": "Bachelor of Technology",
+      "branch": "Electrical & Electronics Engineering",
+      "college": "National Institute of Technology",
+      "cgpa": "8.3",
+      "graduationYear": "2025"
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "C++",
+          "level": "Proficient"
+        },
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ],
+      "frameworks": [],
+      "databases": [
+        {
+          "name": "MySQL",
+          "level": "Basic"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "Simulink",
+          "level": "Advanced"
+        },
+        {
+          "name": "Arduino",
+          "level": "Proficient"
+        },
+        {
+          "name": "Proteus",
+          "level": "Intermediate"
+        }
+      ]
+    },
+    "projects": [
+      {
+        "title": "Adaptive Battery Management System",
+        "description": "Cell balancing and thermal prediction algorithm implemented on microcontroller.",
+        "technologies": [
+          "Simulink",
+          "C++",
+          "Python"
+        ]
+      }
+    ],
+    "experience": [],
+    "placementVisibility": {
+      "profile": true,
+      "education": true,
+      "skills": true,
+      "projects": true,
+      "experience": true,
+      "certifications": true,
+      "achievements": true,
+      "scores": true,
+      "resume": true,
+      "contact": false
+    },
+    "updatedAt": "2026-09-20T17:40:00.000Z"
+  },
+  "test_user_a_1789926150208": {
+    "uid": "test_user_a_1789926150208",
+    "studentId": "test_user_a_1789926150208",
+    "personalInfo": {
+      "fullName": "Alice Johnson",
+      "email": "alice@college.edu",
+      "summary": "Aspiring Cloud Architect"
+    },
+    "placementScores": {
+      "technicalScore": 85,
+      "overallReadiness": 88
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Go",
+          "level": "Advanced"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T17:42:30.242Z",
+    "latestAssessmentId": "assess_a_1789926150235",
+    "latestTechnicalScore": 95,
+    "latestCompletedAt": "2026-09-20T17:42:30.235Z",
+    "status": "Completed"
+  },
+  "test_user_b_1789926150221": {
+    "uid": "test_user_b_1789926150221",
+    "studentId": "test_user_b_1789926150221",
+    "personalInfo": {
+      "fullName": "Bob Smith",
+      "email": "bob@college.edu",
+      "summary": "Data Scientist"
+    },
+    "placementScores": {
+      "technicalScore": 65,
+      "overallReadiness": 70
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T17:42:30.253Z",
+    "latestAssessmentId": "assess_b_1789926150247",
+    "latestTechnicalScore": 60,
+    "latestCompletedAt": "2026-09-20T17:42:30.247Z",
+    "status": "Completed"
+  },
+  "uid_sidharth_1789926150265": {
+    "uid": "uid_sidharth_1789926150265",
+    "studentId": "uid_sidharth_1789926150265",
+    "personalInfo": {
+      "fullName": "Sidharth S",
+      "headline": "Computer Science Student",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "crsid542@gmail.com",
+      "phone": "",
+      "location": "",
+      "summary": "Undergraduate student passionate about software engineering and problem solving."
+    },
+    "placementScores": {
+      "overallReadiness": 42,
+      "technicalScore": 40,
+      "aptitudeScore": 10,
+      "communicationScore": 75
+    },
+    "education": {
+      "tenthPercentage": "92%",
+      "tenthBoard": "State Board",
+      "tenthYear": "2019",
+      "twelfthPercentage": "90%",
+      "twelfthBoard": "State Board",
+      "twelfthYear": "2021",
+      "degree": "Bachelor of Technology",
+      "branch": "Computer Science & Engineering",
+      "college": "Engineering College",
+      "cgpa": "8.5",
+      "graduationYear": "2025"
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "JavaScript",
+          "level": "Proficient"
+        },
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "React",
+          "level": "Proficient"
+        },
+        {
+          "name": "Node.js",
+          "level": "Proficient"
+        }
+      ],
+      "databases": [
+        {
+          "name": "MongoDB",
+          "level": "Proficient"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "Git",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "latestAssessmentId": "assess_1789789135125_7f3o4",
+    "latestTechnicalScore": 40,
+    "latestAptitudeAssessment": {
+      "assessmentId": "apt_1789747915307_zz5du",
+      "score": 10,
+      "totalQuestions": 20,
+      "correctAnswers": 2,
+      "completedAt": "2026-09-18T16:14:35.882Z",
+      "categoryBreakdown": {
+        "Quantitative Aptitude": {
+          "correct": 1,
+          "attempted": 2,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Logical Reasoning": {
+          "correct": 1,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Verbal Ability": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Basic Technical Aptitude": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        }
+      },
+      "status": "Completed"
+    },
+    "aptitudeScore": 10,
+    "migratedFromLegacyEmail": "crsid542@gmail.com",
+    "migratedAt": "2026-09-20T17:42:30.268Z"
+  },
+  "test_user_a_1789927250745": {
+    "uid": "test_user_a_1789927250745",
+    "studentId": "test_user_a_1789927250745",
+    "personalInfo": {
+      "fullName": "Alice Johnson",
+      "email": "alice@college.edu",
+      "summary": "Aspiring Cloud Architect"
+    },
+    "placementScores": {
+      "technicalScore": 85,
+      "overallReadiness": 88
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Go",
+          "level": "Advanced"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T18:00:50.778Z",
+    "latestAssessmentId": "assess_a_1789927250772",
+    "latestTechnicalScore": 95,
+    "latestCompletedAt": "2026-09-20T18:00:50.772Z",
+    "status": "Completed"
+  },
+  "test_user_b_1789927250757": {
+    "uid": "test_user_b_1789927250757",
+    "studentId": "test_user_b_1789927250757",
+    "personalInfo": {
+      "fullName": "Bob Smith",
+      "email": "bob@college.edu",
+      "summary": "Data Scientist"
+    },
+    "placementScores": {
+      "technicalScore": 65,
+      "overallReadiness": 70
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T18:00:50.792Z",
+    "latestAssessmentId": "assess_b_1789927250785",
+    "latestTechnicalScore": 60,
+    "latestCompletedAt": "2026-09-20T18:00:50.785Z",
+    "status": "Completed"
+  },
+  "uid_sidharth_1789927250803": {
+    "uid": "uid_sidharth_1789927250803",
+    "studentId": "uid_sidharth_1789927250803",
+    "personalInfo": {
+      "fullName": "Sidharth S",
+      "headline": "Computer Science Student",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "crsid542@gmail.com",
+      "phone": "",
+      "location": "",
+      "summary": "Undergraduate student passionate about software engineering and problem solving."
+    },
+    "placementScores": {
+      "overallReadiness": 42,
+      "technicalScore": 40,
+      "aptitudeScore": 10,
+      "communicationScore": 75
+    },
+    "education": {
+      "tenthPercentage": "92%",
+      "tenthBoard": "State Board",
+      "tenthYear": "2019",
+      "twelfthPercentage": "90%",
+      "twelfthBoard": "State Board",
+      "twelfthYear": "2021",
+      "degree": "Bachelor of Technology",
+      "branch": "Computer Science & Engineering",
+      "college": "Engineering College",
+      "cgpa": "8.5",
+      "graduationYear": "2025"
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "JavaScript",
+          "level": "Proficient"
+        },
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "React",
+          "level": "Proficient"
+        },
+        {
+          "name": "Node.js",
+          "level": "Proficient"
+        }
+      ],
+      "databases": [
+        {
+          "name": "MongoDB",
+          "level": "Proficient"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "Git",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "latestAssessmentId": "assess_1789789135125_7f3o4",
+    "latestTechnicalScore": 40,
+    "latestAptitudeAssessment": {
+      "assessmentId": "apt_1789747915307_zz5du",
+      "score": 10,
+      "totalQuestions": 20,
+      "correctAnswers": 2,
+      "completedAt": "2026-09-18T16:14:35.882Z",
+      "categoryBreakdown": {
+        "Quantitative Aptitude": {
+          "correct": 1,
+          "attempted": 2,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Logical Reasoning": {
+          "correct": 1,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Verbal Ability": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Basic Technical Aptitude": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        }
+      },
+      "status": "Completed"
+    },
+    "aptitudeScore": 10,
+    "migratedFromLegacyEmail": "crsid542@gmail.com",
+    "migratedAt": "2026-09-20T18:00:50.807Z"
   }
 }

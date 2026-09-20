@@ -335,7 +335,7 @@ export const EditProfileModal = () => {
                     <input
                       type="text"
                       name="fullName"
-                      placeholder="e.g. Aarav Sharma"
+                      placeholder="e.g. Alex Morgan"
                       value={formData.personalInfo?.fullName || ''}
                       onChange={handlePersonalChange}
                       required

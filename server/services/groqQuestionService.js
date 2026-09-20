@@ -69,79 +69,55 @@ function buildPrompt({
   const codingEligible = ['Python', 'Java', 'JavaScript', 'TypeScript', 'C++', 'SQL', 'MySQL', 'Go', 'Rust'].includes(skill);
   const qType = preferredType || (codingEligible && (questionNumber % 4 === 0) ? 'coding' : 'mcq');
 
-  const historySummary = questionHistory.length > 0
-    ? questionHistory.map((h, i) => `Q${i + 1} (${h.skill}): [${h.topic || 'General'}] "${h.questionText ? h.questionText.substring(0, 75) : ''}..."`).join('\n')
+  const safeHistory = Array.isArray(questionHistory) ? questionHistory : [];
+  // Keep history concise (last 5 questions) for prompt efficiency
+  const recentHistory = safeHistory.slice(-5);
+  const historySummary = recentHistory.length > 0
+    ? recentHistory.map((h, i) => `Q: [${h.topic || 'General'}] "${h.questionText ? h.questionText.substring(0, 60) : ''}..."`).join(' | ')
     : 'None yet (First question of assessment).';
 
-  return `You are an expert Technical Assessment & Placement Evaluation Engine for undergraduate engineering students.
-Your task is to dynamically generate EXACTLY ONE original, technically rigorous, placement-grade question.
+  return `You are an expert Technical Assessment Engine for undergraduate engineering students.
+Generate EXACTLY ONE original, technically rigorous question.
 
-STUDENT PROFILE CONTEXT:
-- Student Verified Technical Skills: ${studentSkills.join(', ') || skill}
-- TARGET SKILL FOR THIS QUESTION: "${skill}" (CRITICAL: Question MUST be strictly and exclusively on ${skill})
-- CURRENT DIFFICULTY LEVEL: ${difficulty} (EASY, MEDIUM, or HARD)
-- ASSESSMENT PROGRESS: Question ${questionNumber} of ${totalQuestions}
-- DESIRED QUESTION TYPE: ${qType}
-
-STUDENT PERFORMANCE SNAPSHOT:
+CONTEXT:
+- Target Skill: "${skill}" (CRITICAL: Question MUST be strictly and exclusively on ${skill})
+- Student Verified Skills: ${studentSkills.join(', ') || skill}
+- Difficulty: ${difficulty} (EASY, MEDIUM, or HARD)
+- Progress: Question ${questionNumber} of ${totalQuestions}
+- Question Type: ${qType}
 - Recent Accuracy: ${recentPerformance.recentAccuracy !== undefined ? `${recentPerformance.recentAccuracy}%` : 'N/A'}
-- Overall Technical Score: ${recentPerformance.technicalScore !== undefined ? `${recentPerformance.technicalScore}%` : '0%'}
-- Skill-Specific Accuracy (${skill}): ${skillPerformance[skill]?.score !== undefined ? `${skillPerformance[skill].score}%` : '0%'}
+- Prior Topics Covered in this Session: ${historySummary}
 
-QUESTIONS ALREADY ASKED IN THIS CURRENT ASSESSMENT SESSION:
-${historySummary}
+RULES:
+- Do NOT repeat, rephrase, or re-test any concept listed above.
+- Explanations must be concise and useful (2 to 4 sentences max).
+- Return STRICT VALID JSON ONLY. No markdown formatting, no code blocks, no chat.
+- For MCQ: correctAnswer must be integer 0, 1, 2, or 3.
 
-STRICT ANTI-REPETITION RULES:
-- DO NOT repeat, rephrase, or re-test any concept/topic listed above.
-- DO NOT simply change variable names or values.
-- Focus on fresh fundamentals for EASY, progressive depth for MEDIUM, and optimization/edge-cases for HARD.
-
-STRICT JSON OUTPUT FORMAT RULES:
-- Return STRICT VALID JSON ONLY.
-- Absolutely NO markdown formatting, NO \`\`\`json wrappers, NO conversational intros or outtros.
-- For MCQ questions, correctAnswer must be the 0-indexed number of the correct option in the options array (0, 1, 2, or 3).
-
-${qType === 'mcq' ? `
-JSON SCHEMA FOR MCQ:
+${qType === 'mcq' ? `JSON SCHEMA:
 {
   "skill": "${skill}",
   "topic": "Core Topic Name",
   "difficulty": "${difficulty}",
   "type": "mcq",
-  "question": "Clear, unambiguous technical question text",
-  "options": [
-    "Option 0",
-    "Option 1",
-    "Option 2",
-    "Option 3"
-  ],
+  "question": "Clear technical question text",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
   "correctAnswer": 0,
-  "explanation": "Clear explanation of why this answer is correct and why other options are incorrect"
-}
-` : `
-JSON SCHEMA FOR CODING:
+  "explanation": "Concise 2-4 sentence explanation of why this answer is correct and key conceptual reasoning."
+}` : `JSON SCHEMA:
 {
   "skill": "${skill}",
   "topic": "Core Topic Name",
   "difficulty": "${difficulty}",
   "type": "coding",
-  "question": "Clear problem statement with input/output constraints",
+  "question": "Clear problem statement with constraints",
   "starterCode": "function solution(input) {\\n  // Your code here\\n}",
   "testCases": [
-    {
-      "input": ["test_val_1"],
-      "expectedOutput": "expected_result_1",
-      "description": "Base test case"
-    },
-    {
-      "input": ["test_val_2"],
-      "expectedOutput": "expected_result_2",
-      "description": "Edge case"
-    }
+    { "input": ["val_1"], "expectedOutput": "res_1", "description": "Base case" },
+    { "input": ["val_2"], "expectedOutput": "res_2", "description": "Edge case" }
   ],
-  "explanation": "Concise explanation of optimal algorithm and time/space complexity"
-}
-`}`;
+  "explanation": "Concise 2-4 sentence summary of optimal algorithm approach and complexity."
+}`}`;
 }
 
 /**
@@ -153,15 +129,17 @@ JSON SCHEMA FOR CODING:
  */
 export async function generateQuestionFromGroq(params) {
   const groq = getGroqClient();
+  const configuredModel = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
   const candidateModels = [
-    process.env.GROQ_MODEL,
+    configuredModel,
     'openai/gpt-oss-120b',
     'openai/gpt-oss-20b',
     'qwen/qwen3.8-27b',
     'groq/compound'
-  ].filter(Boolean);
+  ].filter((m, i, arr) => m && arr.indexOf(m) === i);
 
-  const prompt = buildPrompt(params);
+  const safeHistory = Array.isArray(params.questionHistory) ? params.questionHistory : [];
+  const prompt = buildPrompt({ ...params, questionHistory: safeHistory });
   const maxAttempts = 3;
   let lastError = null;
 
@@ -180,7 +158,8 @@ export async function generateQuestionFromGroq(params) {
           }
         ],
         model: currentModel,
-        temperature: 0.5,
+        temperature: 0.4,
+        max_tokens: 1024,
         response_format: { type: 'json_object' }
       });
 
@@ -233,7 +212,7 @@ export async function generateQuestionFromGroq(params) {
       // Robust repetition check against student's lifetime question history
       const currentQText = (parsedQuestion.question || '').toLowerCase().trim();
 
-      const isDuplicate = params.questionHistory.some(prev => {
+      const isDuplicate = safeHistory.some(prev => {
         const prevQText = (prev.questionText || prev.question || '').toLowerCase().trim();
         if (!prevQText || !currentQText) return false;
 
@@ -259,10 +238,10 @@ export async function generateQuestionFromGroq(params) {
       return parsedQuestion;
     } catch (err) {
       lastError = err;
-      console.warn(`[Groq AI] Attempt ${attempt} failed: ${err.message}`);
+      console.warn(`[Groq AI] Attempt ${attempt} with model ${currentModel} failed: ${err.message}`);
       // Wait briefly before retrying
       if (attempt < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
   }

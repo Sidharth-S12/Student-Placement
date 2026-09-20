@@ -1,8 +1,15 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
-import { initialStudentData, defaultAvatarSvg } from '../data/mockStudentData';
+import { defaultAvatarSvg } from '../data/mockStudentData';
 import { fetchLatestCompletedAssessment } from '../services/assessmentService';
 import { fetchLatestCompletedAptitude } from '../services/aptitudeService';
 import { calculateReadinessScore } from '../services/readinessService';
+import {
+  fetchStudentProfile,
+  saveStudentProfile,
+  getCachedProfile,
+  createBlankProfile as makeBlankProfile
+} from '../services/studentProfileService';
+import { useAuth } from './AuthContext';
 
 const StudentContext = createContext();
 
@@ -17,10 +24,10 @@ export const emptyStudentProfile = {
     summary: ""
   },
   placementScores: {
-    overallReadiness: 75,
-    technicalScore: 70,
-    aptitudeScore: 75,
-    communicationScore: 80
+    overallReadiness: 0,
+    technicalScore: 0,
+    aptitudeScore: 0,
+    communicationScore: 0
   },
   education: {
     tenthPercentage: "",
@@ -53,34 +60,25 @@ export const emptyStudentProfile = {
 };
 
 export const StudentProvider = ({ children }) => {
+  const { currentUser } = useAuth();
+  const currentUid = currentUser?.uid;
+
+  // Initialize strictly with UID-cached profile, never falling back to Aarav Sharma
   const [studentData, setStudentData] = useState(() => {
-    const saved = localStorage.getItem('placement_student_profile');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved student data", e);
-      }
+    if (currentUid) {
+      return getCachedProfile(currentUid);
     }
-    return initialStudentData;
+    return null;
   });
 
+  const [profileLoading, setProfileLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
   const [isAptitudeModalOpen, setIsAptitudeModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
-
-  // Check if student profile exists and has basic details
-  const hasProfile = useMemo(() => {
-    return Boolean(studentData?.personalInfo?.fullName && studentData?.education?.college);
-  }, [studentData]);
-
-  // Auto-save to localStorage
-  const saveStudentData = (newData) => {
-    setStudentData(newData);
-    localStorage.setItem('placement_student_profile', JSON.stringify(newData));
-  };
+  const [latestAssessment, setLatestAssessment] = useState(null);
+  const [latestAptitudeAssessment, setLatestAptitudeAssessment] = useState(null);
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -89,7 +87,107 @@ export const StudentProvider = ({ children }) => {
     }, 3500);
   };
 
+  // Profile existence check: Must have full name and at least college or contact info
+  const hasProfile = useMemo(() => {
+    return Boolean(studentData?.personalInfo?.fullName && (studentData?.education?.college || studentData?.personalInfo?.email));
+  }, [studentData]);
+
+  // Load and sync authenticated student profile from Firestore / Backend strictly by UID
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!currentUid) {
+      setStudentData(null);
+      setLatestAssessment(null);
+      setLatestAptitudeAssessment(null);
+      setProfileLoading(false);
+      return;
+    }
+
+    const loadProfileAndAssessments = async () => {
+      setProfileLoading(true);
+      try {
+        // 1. Fetch or create UID-anchored student profile
+        const profile = await fetchStudentProfile(currentUid, currentUser);
+
+        if (!isMounted) return;
+
+        if (profile) {
+          setStudentData(profile);
+        } else {
+          showToast("Unable to load your profile. Please try again.");
+        }
+
+        // 2. Fetch latest assessments strictly filtered by this user's UID
+        try {
+          const [assessment, aptitude] = await Promise.all([
+            fetchLatestCompletedAssessment(currentUid),
+            fetchLatestCompletedAptitude(currentUid)
+          ]);
+
+          if (isMounted) {
+            if (assessment) setLatestAssessment(assessment);
+            if (aptitude) setLatestAptitudeAssessment(aptitude);
+
+            if (assessment || aptitude) {
+              setStudentData((prev) => {
+                if (!prev) return prev;
+                const techScore = assessment?.technicalScore ?? prev.placementScores?.technicalScore ?? 0;
+                const aptScore = aptitude?.finalScore ?? aptitude?.score ?? prev.placementScores?.aptitudeScore ?? 0;
+                const commScore = prev.placementScores?.communicationScore ?? 75;
+
+                const newReadiness = calculateReadinessScore({
+                  technicalScore: techScore,
+                  aptitudeScore: aptScore,
+                  communicationScore: commScore
+                });
+
+                return {
+                  ...prev,
+                  placementScores: {
+                    ...prev.placementScores,
+                    technicalScore: techScore,
+                    aptitudeScore: aptScore,
+                    overallReadiness: newReadiness
+                  }
+                };
+              });
+            }
+          }
+        } catch (assessErr) {
+          console.warn('[StudentContext] Failed to load assessments for UID:', assessErr.message);
+        }
+      } catch (err) {
+        console.error('[StudentContext] Profile loading error:', err);
+        if (isMounted) {
+          showToast("Unable to load your profile. Please try again.");
+        }
+      } finally {
+        if (isMounted) setProfileLoading(false);
+      }
+    };
+
+    loadProfileAndAssessments();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUid]);
+
+  // Persist student data to UID-keyed storage & Firestore/backend
+  const saveStudentData = async (newData) => {
+    setStudentData(newData);
+    if (currentUid) {
+      try {
+        await saveStudentProfile(currentUid, newData);
+      } catch (err) {
+        console.error('[StudentContext] Failed to persist profile:', err);
+      }
+    }
+  };
+
   const updateStudentData = (section, data) => {
+    if (!studentData) return;
     const updated = {
       ...studentData,
       [section]: data
@@ -104,78 +202,21 @@ export const StudentProvider = ({ children }) => {
   };
 
   const createBlankProfile = () => {
-    saveStudentData(emptyStudentProfile);
+    if (!currentUid) return;
+    const fresh = makeBlankProfile(currentUid, currentUser);
+    saveStudentData(fresh);
     setIsEditModalOpen(true);
     showToast("Create your new placement profile!");
   };
 
-  const resetDemoData = () => {
-    saveStudentData(initialStudentData);
-    showToast("Demo profile loaded!");
-  };
-
-  const [latestAssessment, setLatestAssessment] = useState(null);
-  const [latestAptitudeAssessment, setLatestAptitudeAssessment] = useState(null);
-
-  // Sync latest completed technical & aptitude assessments from Firebase / Backend on load
-  useEffect(() => {
-    let isMounted = true;
-    const loadFromFirebase = async () => {
-      const studentId = studentData?.personalInfo?.email || 'default_student';
-      try {
-        const [assessment, aptitude] = await Promise.all([
-          fetchLatestCompletedAssessment(studentId),
-          fetchLatestCompletedAptitude(studentId)
-        ]);
-
-        if (isMounted) {
-          if (assessment) {
-            setLatestAssessment(assessment);
-          }
-          if (aptitude) {
-            setLatestAptitudeAssessment(aptitude);
-          }
-
-          if (assessment || aptitude) {
-            setStudentData(prev => {
-              const techScore = assessment?.technicalScore ?? prev.placementScores?.technicalScore ?? 70;
-              const aptScore = aptitude?.finalScore ?? aptitude?.score ?? prev.placementScores?.aptitudeScore ?? 75;
-              const commScore = prev.placementScores?.communicationScore ?? 80;
-
-              const newReadiness = calculateReadinessScore({
-                technicalScore: techScore,
-                aptitudeScore: aptScore,
-                communicationScore: commScore
-              });
-
-              return {
-                ...prev,
-                placementScores: {
-                  ...prev.placementScores,
-                  technicalScore: techScore,
-                  aptitudeScore: aptScore,
-                  overallReadiness: newReadiness
-                }
-              };
-            });
-          }
-        }
-      } catch (err) {
-        console.warn('Failed to load assessments from backend/Firebase:', err);
-      }
-    };
-    loadFromFirebase();
-    return () => { isMounted = false; };
-  }, [studentData?.personalInfo?.email]);
-
   // Handler when technical assessment finishes
   const handleAssessmentCompleted = (summary) => {
-    if (!summary) return;
+    if (!summary || !studentData) return;
     
     setLatestAssessment(summary);
     const techScore = summary.technicalScore;
-    const aptScore = studentData.placementScores?.aptitudeScore ?? 75;
-    const commScore = studentData.placementScores?.communicationScore ?? 80;
+    const aptScore = studentData.placementScores?.aptitudeScore ?? 0;
+    const commScore = studentData.placementScores?.communicationScore ?? 75;
 
     const newReadiness = calculateReadinessScore({
       technicalScore: techScore,
@@ -200,12 +241,12 @@ export const StudentProvider = ({ children }) => {
 
   // Handler when aptitude assessment finishes
   const handleAptitudeCompleted = (summary) => {
-    if (!summary) return;
+    if (!summary || !studentData) return;
 
     setLatestAptitudeAssessment(summary);
     const aptScore = summary.finalScore ?? summary.score ?? 0;
-    const techScore = studentData.placementScores?.technicalScore ?? 70;
-    const commScore = studentData.placementScores?.communicationScore ?? 80;
+    const techScore = studentData.placementScores?.technicalScore ?? 0;
+    const commScore = studentData.placementScores?.communicationScore ?? 75;
 
     const newReadiness = calculateReadinessScore({
       technicalScore: techScore,
@@ -230,7 +271,7 @@ export const StudentProvider = ({ children }) => {
 
   // Device file upload for profile photo
   const handlePhotoFileUpload = (file) => {
-    if (!file) return;
+    if (!file || !studentData) return;
 
     if (!file.type.startsWith('image/')) {
       showToast("Please select a valid image file (JPG, PNG, WEBP).");
@@ -248,12 +289,13 @@ export const StudentProvider = ({ children }) => {
         }
       };
       saveStudentData(updated);
-      showToast("Profile photo uploaded from device!");
+      showToast("Profile photo updated!");
     };
     reader.readAsDataURL(file);
   };
 
   const removeProfilePhoto = () => {
+    if (!studentData) return;
     const updated = {
       ...studentData,
       personalInfo: {
@@ -290,11 +332,12 @@ export const StudentProvider = ({ children }) => {
     <StudentContext.Provider
       value={{
         studentData,
+        currentUid,
+        profileLoading,
         hasProfile,
         updateStudentData,
         setFullStudentData,
         createBlankProfile,
-        resetDemoData,
         handlePhotoFileUpload,
         removeProfilePhoto,
         readinessScore,

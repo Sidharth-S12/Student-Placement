@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Cpu, Layers, Loader2, Sparkles, Target, AlertCircle, RefreshCw } from 'lucide-react';
+import { X, Cpu, Loader2, Sparkles, Target, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   startAssessmentSession,
-  submitQuestionAnswer
+  submitQuestionAnswer,
+  fetchNextQuestion
 } from '../../services/assessmentService';
 import { MCQQuestionView } from './MCQQuestionView';
 import { CodingQuestionView } from './CodingQuestionView';
@@ -16,30 +17,36 @@ export const TechnicalAssessmentModal = ({
 }) => {
   const [session, setSession] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [nextQuestionCache, setNextQuestionCache] = useState(null);
   const [submittedResult, setSubmittedResult] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingNext, setIsGeneratingNext] = useState(false);
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [summaryData, setSummaryData] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [nextQuestionError, setNextQuestionError] = useState(null);
   const [liveScore, setLiveScore] = useState(0);
 
   const questionStartTimeRef = useRef(Date.now());
+  const isGeneratingNextRef = useRef(false);
+  const isSubmittingRef = useRef(false);
+  const initializedSessionIdRef = useRef(null);
 
-  // Initialize brand-new assessment session when modal opens
+  // Initialize assessment session when modal opens
   const initializeAssessment = async () => {
     if (!studentData) return;
 
     setIsLoadingSession(true);
     setErrorMessage(null);
+    setNextQuestionError(null);
     setSession(null);
     setCurrentQuestion(null);
-    setNextQuestionCache(null);
     setSubmittedResult(null);
     setIsSubmitted(false);
     setSummaryData(null);
     setLiveScore(0);
+    isGeneratingNextRef.current = false;
+    isSubmittingRef.current = false;
 
     try {
       const newSession = await startAssessmentSession(studentData);
@@ -50,6 +57,7 @@ export const TechnicalAssessmentModal = ({
       } else {
         setSession(newSession);
         setCurrentQuestion(newSession.currentQuestion);
+        initializedSessionIdRef.current = newSession.assessmentId;
         questionStartTimeRef.current = Date.now();
       }
     } catch (err) {
@@ -62,64 +70,81 @@ export const TechnicalAssessmentModal = ({
   useEffect(() => {
     if (isOpen && studentData) {
       initializeAssessment();
+    } else {
+      initializedSessionIdRef.current = null;
     }
-  }, [isOpen, studentData]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  // Handle student answer submission
+  // Handle student answer submission (instant backend evaluation)
   const handleAnswerSubmit = async (studentAnswer) => {
-    if (!session || !currentQuestion || isSubmitted || isSubmitting) return;
+    if (!session || !currentQuestion || isSubmitted || isSubmittingRef.current) return;
 
     const responseTimeMs = Date.now() - questionStartTimeRef.current;
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
+    setNextQuestionError(null);
 
     try {
       const result = await submitQuestionAnswer(session, studentAnswer, responseTimeMs);
       setSubmittedResult(result);
       setIsSubmitted(true);
-      setLiveScore(result.liveScore !== undefined ? result.liveScore : session.technicalScore);
+      setLiveScore(result.score !== undefined ? result.score : (result.liveScore ?? session.technicalScore));
 
-      if (result.isCompleted) {
+      if (result.isCompleted && result.finalResult) {
         setSummaryData(result.finalResult);
         if (onAssessmentCompleted) {
           onAssessmentCompleted(result.finalResult);
         }
-      } else if (result.nextQuestion) {
-        // Cache next question ready for when user clicks "Next Question"
-        setNextQuestionCache(result.nextQuestion);
       }
     } catch (err) {
       alert(`Submission error: ${err.message || 'Failed to evaluate answer.'}`);
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
 
-  // Move to next question after viewing answer explanation, or conclude test and return to dashboard
-  const handleNextQuestion = () => {
-    if (!session) return;
+  // Move to next question after viewing answer explanation
+  const handleNextQuestion = async () => {
+    if (!session || isGeneratingNextRef.current) return;
 
-    if (session.isCompleted) {
+    // If assessment finished at Question 15, switch to final results view
+    if (session.isCompleted || submittedResult?.isCompleted) {
       if (onAssessmentCompleted && summaryData) {
         onAssessmentCompleted(summaryData);
       }
-      // Test box is gone, dashboard is shown!
-      onClose();
       return;
     }
 
-    if (nextQuestionCache) {
-      setCurrentQuestion(nextQuestionCache);
-      setNextQuestionCache(null);
-      setSubmittedResult(null);
-      setIsSubmitted(false);
-      questionStartTimeRef.current = Date.now();
+    // Generate Question N+1 on-demand via Groq AI
+    isGeneratingNextRef.current = true;
+    setIsGeneratingNext(true);
+    setNextQuestionError(null);
+
+    try {
+      const nextData = await fetchNextQuestion(session);
+
+      if (nextData && nextData.question) {
+        setCurrentQuestion(nextData.question);
+        setSubmittedResult(null);
+        setIsSubmitted(false);
+        questionStartTimeRef.current = Date.now();
+      } else {
+        throw new Error('No question returned from server.');
+      }
+    } catch (err) {
+      console.error('[TechnicalAssessmentModal] Error loading next question:', err);
+      setNextQuestionError(err.message || 'Unable to generate the next question. Please try again.');
+    } finally {
+      isGeneratingNextRef.current = false;
+      setIsGeneratingNext(false);
     }
   };
 
   const handleClose = () => {
-    if (session && !session.isCompleted && session.attemptedQuestions > 0) {
+    if (session && !session.isCompleted && session.attemptedQuestions > 0 && !summaryData) {
       if (!window.confirm("Are you sure you want to exit the assessment midway? Your completed progress will be saved.")) {
         return;
       }
@@ -127,7 +152,7 @@ export const TechnicalAssessmentModal = ({
     onClose();
   };
 
-  const currentQNum = currentQuestion?.questionIndex || session?.currentQuestionNumber || 1;
+  const currentQNum = currentQuestion?.questionIndex || session?.currentQuestionNumber || (session?.attemptedQuestions ? session.attemptedQuestions + 1 : 1);
   const totalQ = session?.totalQuestions || 15;
 
   return (
@@ -147,7 +172,7 @@ export const TechnicalAssessmentModal = ({
           </div>
 
           {/* Live Score Display */}
-          {session && !session.isCompleted && (
+          {session && !summaryData && (
             <div className="hidden sm:flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
               <Target className="w-4 h-4 text-brand-400" />
               <span className="text-xs text-slate-300 font-medium">Technical Score:</span>
@@ -166,7 +191,7 @@ export const TechnicalAssessmentModal = ({
         {/* Modal Main Body */}
         <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
           
-          {/* Error View */}
+          {/* Error View on Session Initialization */}
           {errorMessage && (
             <div className="max-w-xl mx-auto py-10 space-y-4 text-center">
               <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
@@ -194,25 +219,42 @@ export const TechnicalAssessmentModal = ({
             </div>
           )}
 
-          {/* AI Question Loading State */}
-          {(isLoadingSession || isSubmitting) && !errorMessage && (
+          {/* Initial Session Loading State */}
+          {isLoadingSession && !errorMessage && (
             <div className="max-w-lg mx-auto py-16 text-center space-y-4">
               <div className="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto shadow-inner border border-brand-100 animate-pulse">
                 <Loader2 className="w-7 h-7 animate-spin" />
               </div>
               <div className="space-y-1">
                 <h3 className="text-base font-extrabold text-slate-900">
-                  {isLoadingSession ? "Generating your first question..." : "Generating your next question..."}
+                  Generating Question 1...
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Groq AI is dynamically generating a personalized question based on your profile skills and ML difficulty target.
+                  Groq AI is dynamically generating a personalized question based on your verified skills and EASY difficulty target.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Generating Next Question Loading State */}
+          {isGeneratingNext && !errorMessage && (
+            <div className="max-w-lg mx-auto py-16 text-center space-y-4 animate-fade-in">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto shadow-inner border border-indigo-100 animate-pulse">
+                <Loader2 className="w-7 h-7 animate-spin" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-extrabold text-slate-900">
+                  Generating your next question...
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Preparing a question based on your skills and performance.
                 </p>
               </div>
             </div>
           )}
 
           {/* Active Question Flow */}
-          {!isLoadingSession && !isSubmitting && session && !session.isCompleted && currentQuestion && (
+          {!isLoadingSession && !isGeneratingNext && session && (!session.isCompleted || !summaryData) && currentQuestion && (
             <div className="space-y-6 max-w-3xl mx-auto">
               
               {/* Progress Indicator & Badges */}
@@ -262,6 +304,24 @@ export const TechnicalAssessmentModal = ({
                 </div>
               </div>
 
+              {/* Next Question Generation Error Banner (preserves session & score) */}
+              {nextQuestionError && (
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-3 text-xs sm:text-sm text-amber-900 animate-fade-in">
+                  <div className="flex items-center space-x-2.5">
+                    <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                    <span>{nextQuestionError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleNextQuestion}
+                    className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs flex items-center space-x-1"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Retry</span>
+                  </button>
+                </div>
+              )}
+
               {/* Question View (MCQ / Coding) */}
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card">
                 {currentQuestion.type === 'mcq' ? (
@@ -271,6 +331,7 @@ export const TechnicalAssessmentModal = ({
                     onNext={handleNextQuestion}
                     isSubmitted={isSubmitted}
                     submittedResult={submittedResult}
+                    isGeneratingNext={isGeneratingNext}
                   />
                 ) : (
                   <CodingQuestionView
@@ -279,6 +340,7 @@ export const TechnicalAssessmentModal = ({
                     onNext={handleNextQuestion}
                     isSubmitted={isSubmitted}
                     submittedResult={submittedResult}
+                    isGeneratingNext={isGeneratingNext}
                   />
                 )}
               </div>
@@ -287,7 +349,7 @@ export const TechnicalAssessmentModal = ({
           )}
 
           {/* Assessment Completed Result View */}
-          {session && session.isCompleted && summaryData && (
+          {summaryData && (!currentQuestion || isSubmitted) && (
             <AssessmentResultView
               summaryData={summaryData}
               onReturnToDashboard={onClose}
@@ -299,3 +361,4 @@ export const TechnicalAssessmentModal = ({
     </div>
   );
 };
+

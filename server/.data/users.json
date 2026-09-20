@@ -1,0 +1,26 @@
+{
+  "uid_admin_placement_director": {
+    "uid": "uid_admin_placement_director",
+    "role": "admin",
+    "email": "placement.director@college.edu",
+    "displayName": "Placement Director",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:00:40.225Z"
+  },
+  "uid_recruiter_globaltech": {
+    "uid": "uid_recruiter_globaltech",
+    "role": "company",
+    "email": "hr@globaltech.com",
+    "displayName": "GlobalTech HR",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:00:40.235Z"
+  },
+  "admin_placementadmin_gmail_com": {
+    "uid": "admin_placementadmin_gmail_com",
+    "role": "admin",
+    "email": "placementadmin@gmail.com",
+    "displayName": "Placement Administrator",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:02:40.901Z"
+  }
+}

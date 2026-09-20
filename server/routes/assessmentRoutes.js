@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   startAssessment,
   submitAnswer,
+  getNextQuestion,
   getLatestAssessment,
   getAssessmentById,
   generateQuestion
@@ -12,6 +13,7 @@ const router = Router();
 // Assessment Session Management
 router.post('/start', startAssessment);
 router.post('/answer', submitAnswer);
+router.post('/next-question', getNextQuestion);
 router.post('/generate-question', generateQuestion);
 
 // Assessment Data Retrieval

@@ -157,7 +157,7 @@ export async function startAssessmentSession(studentData) {
     };
   }
 
-  const studentId = studentData?.personalInfo?.email || 'default_student';
+  const studentId = studentData?.uid || studentData?.studentId || (typeof window !== 'undefined' && JSON.parse(window.localStorage?.getItem('placement_genie_active_session') || '{}')?.uid) || studentData?.personalInfo?.email || 'default_student';
   const headers = await getAuthHeaders(studentId);
 
   try {
@@ -201,8 +201,8 @@ export async function startAssessmentSession(studentData) {
 }
 
 /**
- * Submits the student's answer to the backend for validation, ML difficulty prediction,
- * live score update, and next question generation (or completion).
+ * Submits the student's answer to the backend for immediate validation, ML difficulty prediction,
+ * and live score calculation.
  */
 export async function submitQuestionAnswer(session, studentAnswer, responseTimeMs = null) {
   if (!session || !session.assessmentId) {
@@ -230,20 +230,51 @@ export async function submitQuestionAnswer(session, studentAnswer, responseTimeM
     const result = await response.json();
 
     // Update active session object in-place
-    session.technicalScore = result.liveScore || 0;
+    session.technicalScore = result.score !== undefined ? result.score : (result.liveScore || 0);
     session.correctAnswers = result.correctAnswers || 0;
     session.incorrectAnswers = result.incorrectAnswers || 0;
     session.attemptedQuestions = result.attemptedQuestions || 0;
-    session.currentQuestionNumber = result.currentQuestionNumber || session.attemptedQuestions;
     session.isCompleted = Boolean(result.isCompleted);
-
-    if (!result.isCompleted && result.nextQuestion) {
-      session.currentQuestion = result.nextQuestion;
-    }
 
     return result;
   } catch (err) {
     console.error('[Assessment Service:submitAnswer] Error:', err);
+    throw err;
+  }
+}
+
+/**
+ * Fetches the next dynamically generated question via Groq AI based on updated ML difficulty.
+ */
+export async function fetchNextQuestion(session) {
+  if (!session || !session.assessmentId) {
+    throw new Error('No active assessment session.');
+  }
+
+  const headers = await getAuthHeaders(session.studentId);
+
+  try {
+    const response = await fetch(`${API_BASE}/next-question`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        assessmentId: session.assessmentId
+      })
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson.error || 'Unable to generate the next question. Please try again.');
+    }
+
+    const result = await response.json();
+    if (result.question) {
+      session.currentQuestion = result.question;
+      session.currentQuestionNumber = result.questionIndex || (session.attemptedQuestions + 1);
+    }
+    return result;
+  } catch (err) {
+    console.error('[Assessment Service:fetchNextQuestion] Error:', err);
     throw err;
   }
 }

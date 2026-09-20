@@ -14,13 +14,15 @@ import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, ge
  * - VITE_FIREBASE_APP_ID
  */
 
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : (typeof process !== 'undefined' ? process.env : {});
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || ""
+  apiKey: env.VITE_FIREBASE_API_KEY || "",
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || "",
+  projectId: env.VITE_FIREBASE_PROJECT_ID || "",
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || "",
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
+  appId: env.VITE_FIREBASE_APP_ID || ""
 };
 
 let app = null;
@@ -43,12 +45,15 @@ if (firebaseConfig.apiKey && firebaseConfig.projectId) {
  * Gets authentication token for backend requests.
  */
 export async function getAuthHeaders(studentId = 'default_student') {
+  const effectiveUid = auth?.currentUser?.uid || studentId;
+
   if (isConfigured && auth?.currentUser) {
     try {
       const token = await auth.currentUser.getIdToken();
       return {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-student-id': effectiveUid
       };
     } catch (err) {
       console.warn('Failed to retrieve Firebase ID token:', err);
@@ -57,7 +62,7 @@ export async function getAuthHeaders(studentId = 'default_student') {
 
   return {
     'Content-Type': 'application/json',
-    'x-student-id': studentId
+    'x-student-id': effectiveUid
   };
 }
 

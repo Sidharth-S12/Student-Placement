@@ -17,7 +17,7 @@ const API_BASE = '/api/aptitude';
  * Starts a new 20-question, 20-minute Aptitude Assessment session.
  */
 export async function startAptitudeSession(studentData) {
-  const studentId = studentData?.personalInfo?.email || 'default_student';
+  const studentId = studentData?.uid || studentData?.studentId || (typeof window !== 'undefined' && JSON.parse(window.localStorage?.getItem('placement_genie_active_session') || '{}')?.uid) || studentData?.personalInfo?.email || 'default_student';
   const headers = await getAuthHeaders(studentId);
 
   try {

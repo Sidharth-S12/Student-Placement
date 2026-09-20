@@ -11,7 +11,7 @@
   },
   "assess_1789746392002_8d2jf": {
     "assessmentId": "assess_1789746392002_8d2jf",
-    "studentId": "crsid542@gmail.com",
+    "studentId": "uid_sidharth_1789924912811",
     "startedAt": "2026-09-18T15:46:33.459Z",
     "completedAt": "2026-09-18T15:49:42.323Z",
     "totalQuestions": 15,
@@ -209,5 +209,304 @@
     "status": "Completed",
     "completedAt": "2026-09-18T15:56:21.902Z",
     "savedAt": "2026-09-18T15:56:21.903Z"
+  },
+  "assess_1789789135125_7f3o4": {
+    "assessmentId": "assess_1789789135125_7f3o4",
+    "studentId": "uid_sidharth_1789924912811",
+    "startedAt": "2026-09-19T03:38:56.526Z",
+    "completedAt": "2026-09-19T03:41:54.644Z",
+    "totalQuestions": 15,
+    "correctAnswers": 6,
+    "incorrectAnswers": 9,
+    "technicalScore": 40,
+    "skillsAssessed": [
+      "Python",
+      "HTML",
+      "C++",
+      "Firebase",
+      "GitHub",
+      "VScode",
+      "vercel"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 33,
+        "questionsAttempted": 3,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "HTML": {
+        "score": 0,
+        "questionsAttempted": 2,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "C++": {
+        "score": 0,
+        "questionsAttempted": 2,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Firebase": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "GitHub": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "VScode": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "vercel": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      }
+    },
+    "topicPerformance": {
+      "Operators": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Headings": {
+        "skill": "HTML",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Variable Declaration and Initialization": {
+        "skill": "C++",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Initializing Firebase in a web app": {
+        "skill": "Firebase",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Repository Creation": {
+        "skill": "GitHub",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Keyboard Shortcuts": {
+        "skill": "VScode",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Deployment Commands": {
+        "skill": "vercel",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "String Reversal": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Images": {
+        "skill": "HTML",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Increment Operators": {
+        "skill": "C++",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Realtime Database vs Firestore": {
+        "skill": "Firebase",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Forking": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Debugging Configuration": {
+        "skill": "VScode",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Configuration File": {
+        "skill": "vercel",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Conditional Statements": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "MEDIUM",
+    "strengths": [
+      "VScode (100% proficiency achieved)",
+      "Initializing Firebase in a web app in Firebase (Consistent correctness)",
+      "Keyboard Shortcuts in VScode (Consistent correctness)",
+      "Forking in GitHub (Consistent correctness)",
+      "Debugging Configuration in VScode (Consistent correctness)",
+      "Configuration File in vercel (Consistent correctness)",
+      "Conditional Statements in Python (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Python (33% accuracy - practice EASY fundamentals)",
+      "HTML (0% accuracy - practice EASY fundamentals)",
+      "C++ (0% accuracy - practice EASY fundamentals)",
+      "Firebase (50% accuracy - practice EASY fundamentals)",
+      "GitHub (50% accuracy - practice EASY fundamentals)",
+      "vercel (50% accuracy - practice MEDIUM fundamentals)",
+      "Operators in Python (Review concepts)",
+      "Headings in HTML (Review concepts)",
+      "Variable Declaration and Initialization in C++ (Review concepts)",
+      "Repository Creation in GitHub (Review concepts)",
+      "Deployment Commands in vercel (Review concepts)",
+      "String Reversal in Python (Review concepts)",
+      "Images in HTML (Review concepts)",
+      "Increment Operators in C++ (Review concepts)",
+      "Realtime Database vs Firestore in Firebase (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-09-19T03:41:54.656Z"
+  },
+  "test_assess_1789922571076": {
+    "assessmentId": "test_assess_1789922571076",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T16:42:51.076Z",
+    "savedAt": "2026-09-20T16:42:51.078Z"
+  },
+  "test_assess_1789922889482": {
+    "assessmentId": "test_assess_1789922889482",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T16:48:09.482Z",
+    "savedAt": "2026-09-20T16:48:09.484Z"
+  },
+  "test_assess_1789924014003": {
+    "assessmentId": "test_assess_1789924014003",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:06:54.003Z",
+    "savedAt": "2026-09-20T17:06:54.004Z"
+  },
+  "assess_a_1789924912780": {
+    "assessmentId": "assess_a_1789924912780",
+    "studentId": "test_user_a_1789924912755",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:21:52.780Z",
+    "savedAt": "2026-09-20T17:21:52.780Z"
+  },
+  "assess_b_1789924912792": {
+    "assessmentId": "assess_b_1789924912792",
+    "studentId": "test_user_b_1789924912768",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:21:52.792Z",
+    "savedAt": "2026-09-20T17:21:52.792Z"
+  },
+  "test_assess_1789924935156": {
+    "assessmentId": "test_assess_1789924935156",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:22:15.156Z",
+    "savedAt": "2026-09-20T17:22:15.159Z"
+  },
+  "assess_a_1789926150235": {
+    "assessmentId": "assess_a_1789926150235",
+    "studentId": "test_user_a_1789926150208",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:42:30.235Z",
+    "savedAt": "2026-09-20T17:42:30.235Z"
+  },
+  "assess_b_1789926150247": {
+    "assessmentId": "assess_b_1789926150247",
+    "studentId": "test_user_b_1789926150221",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:42:30.247Z",
+    "savedAt": "2026-09-20T17:42:30.247Z"
+  },
+  "test_assess_1789926162678": {
+    "assessmentId": "test_assess_1789926162678",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:42:42.678Z",
+    "savedAt": "2026-09-20T17:42:42.681Z"
+  },
+  "assess_a_1789927250772": {
+    "assessmentId": "assess_a_1789927250772",
+    "studentId": "test_user_a_1789927250745",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:00:50.772Z",
+    "savedAt": "2026-09-20T18:00:50.772Z"
+  },
+  "assess_b_1789927250785": {
+    "assessmentId": "assess_b_1789927250785",
+    "studentId": "test_user_b_1789927250757",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:00:50.785Z",
+    "savedAt": "2026-09-20T18:00:50.785Z"
+  },
+  "test_assess_1789927262984": {
+    "assessmentId": "test_assess_1789927262984",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:01:02.984Z",
+    "savedAt": "2026-09-20T18:01:02.986Z"
   }
 }

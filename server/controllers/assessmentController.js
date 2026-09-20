@@ -177,7 +177,7 @@ export async function startAssessment(req, res) {
 /**
  * POST /api/technical-assessment/answer
  * Evaluates student answer on backend, predicts adaptive difficulty with ML engine,
- * updates live score, and generates next question or finalizes after 15 questions.
+ * updates live score, and returns immediate result & explanation.
  */
 export async function submitAnswer(req, res) {
   try {
@@ -291,6 +291,29 @@ export async function submitAnswer(req, res) {
       mlModelType: mlPrediction.modelType
     });
 
+    // Format human-readable yourAnswer and correctAnswer
+    let formattedYourAnswer = '';
+    let formattedCorrectAnswer = '';
+    const studentIdx = Number(studentAnswer);
+    const correctIdx = Number(currentQuestion.correctAnswer);
+
+    if (currentQuestion.type === 'mcq') {
+      if (!isNaN(studentIdx) && Array.isArray(currentQuestion.options) && studentIdx >= 0 && studentIdx < currentQuestion.options.length) {
+        formattedYourAnswer = `${String.fromCharCode(65 + studentIdx)}. ${currentQuestion.options[studentIdx]}`;
+      } else {
+        formattedYourAnswer = String(studentAnswer ?? 'No answer provided');
+      }
+
+      if (!isNaN(correctIdx) && Array.isArray(currentQuestion.options) && correctIdx >= 0 && correctIdx < currentQuestion.options.length) {
+        formattedCorrectAnswer = `${String.fromCharCode(65 + correctIdx)}. ${currentQuestion.options[correctIdx]}`;
+      } else {
+        formattedCorrectAnswer = String(currentQuestion.correctAnswer ?? '');
+      }
+    } else {
+      formattedYourAnswer = typeof studentAnswer === 'string' ? studentAnswer : JSON.stringify(studentAnswer);
+      formattedCorrectAnswer = currentQuestion.starterCode || 'Correct implementation satisfying all test cases';
+    }
+
     // 5. Check if assessment is finished (Exactly 15 Questions)
     if (session.attemptedQuestions >= session.totalQuestions) {
       session.isCompleted = true;
@@ -323,58 +346,44 @@ export async function submitAnswer(req, res) {
       return res.status(200).json({
         success: true,
         isCompleted: true,
+        correct: isCorrect,
         isCorrect,
+        yourAnswer: formattedYourAnswer,
+        correctAnswer: formattedCorrectAnswer,
+        correctAnswerIndex: correctIdx,
+        yourAnswerIndex: studentIdx,
         explanation: currentQuestion.explanation,
         evalDetails,
+        score: session.technicalScore,
         liveScore: session.technicalScore,
         correctAnswers: session.correctAnswers,
         incorrectAnswers: session.incorrectAnswers,
         attemptedQuestions: session.attemptedQuestions,
+        questionNumber: session.attemptedQuestions,
+        totalQuestions: session.totalQuestions,
         finalResult: finalInsights
       });
     }
 
-    // 6. Generate Next Question (Dynamic Groq runtime call)
-    session.currentQuestionNumber = session.attemptedQuestions + 1;
-    session.currentSkillIndex = (session.currentSkillIndex + 1) % session.skills.length;
-    const nextSkill = session.skills[session.currentSkillIndex];
-    const nextSkillDifficulty = session.skillStates[nextSkill]?.currentDifficulty || DIFFICULTY_LEVELS.EASY;
-
-    // Combine lifetime past questions + current assessment questions to prevent any repetition across tests
-    const fullHistoricalQuestions = [
-      ...(session.studentPastQuestions || []),
-      ...session.questionHistory
-    ];
-
-    const nextQuestion = await generateQuestionFromGroq({
-      studentSkills: session.skills,
-      skill: nextSkill,
-      difficulty: nextSkillDifficulty,
-      questionNumber: session.currentQuestionNumber,
-      totalQuestions: session.totalQuestions,
-      questionHistory: fullHistoricalQuestions,
-      recentPerformance: {
-        recentAccuracy,
-        technicalScore: session.technicalScore
-      },
-      skillPerformance: session.skillStates
-    });
-
-    session.currentQuestion = nextQuestion;
-    await recordStudentQuestions(session.studentId, [nextQuestion]);
-
+    // 6. Return evaluation result immediately (<50ms) without waiting for Groq
     return res.status(200).json({
       success: true,
       isCompleted: false,
+      correct: isCorrect,
       isCorrect,
+      yourAnswer: formattedYourAnswer,
+      correctAnswer: formattedCorrectAnswer,
+      correctAnswerIndex: correctIdx,
+      yourAnswerIndex: studentIdx,
       explanation: currentQuestion.explanation,
       evalDetails,
+      score: session.technicalScore,
       liveScore: session.technicalScore,
       correctAnswers: session.correctAnswers,
       incorrectAnswers: session.incorrectAnswers,
       attemptedQuestions: session.attemptedQuestions,
-      currentQuestionNumber: session.currentQuestionNumber,
-      nextQuestion: sanitizeQuestionForClient(nextQuestion, session.currentQuestionNumber, session.totalQuestions),
+      questionNumber: session.attemptedQuestions,
+      totalQuestions: session.totalQuestions,
       mlInsights: {
         predictedDifficulty: mlPrediction.difficulty,
         usedML: mlPrediction.usedML,
@@ -384,7 +393,113 @@ export async function submitAnswer(req, res) {
   } catch (err) {
     console.error('[AssessmentController:submitAnswer]', err);
     return res.status(500).json({
-      error: err.message || 'Failed to evaluate answer and generate next question.'
+      error: err.message || 'Failed to evaluate answer.'
+    });
+  }
+}
+
+/**
+ * POST /api/technical-assessment/next-question
+ * Generates the next question on-demand via Groq AI using updated ML difficulty.
+ * Includes deduplication guards and robust error handling.
+ */
+export async function getNextQuestion(req, res) {
+  try {
+    const user = await verifyAuthToken(req);
+    const { assessmentId } = req.body;
+
+    const session = activeSessions.get(assessmentId);
+    if (!session) {
+      return res.status(404).json({
+        error: 'Active assessment session not found. Please start a new assessment.'
+      });
+    }
+
+    if (session.isCompleted) {
+      return res.status(400).json({
+        error: 'This assessment has already concluded.'
+      });
+    }
+
+    // Deduplication check: if a generation request is currently in-flight for this session, wait for it
+    if (session.isGeneratingNextQuestion && session.pendingGenerationPromise) {
+      try {
+        const result = await session.pendingGenerationPromise;
+        return res.status(200).json(result);
+      } catch (err) {
+        return res.status(500).json({
+          error: 'Unable to generate the next question. Please try again.'
+        });
+      }
+    }
+
+    // Advance question index and select next skill
+    session.currentQuestionNumber = session.attemptedQuestions + 1;
+    session.currentSkillIndex = (session.currentSkillIndex + 1) % session.skills.length;
+    const nextSkill = session.skills[session.currentSkillIndex];
+    const nextSkillDifficulty = session.skillStates[nextSkill]?.currentDifficulty || DIFFICULTY_LEVELS.EASY;
+
+    const fullHistoricalQuestions = [
+      ...(session.studentPastQuestions || []),
+      ...session.questionHistory
+    ];
+
+    const recentWindow = session.questionHistory.slice(-4);
+    const recentAccuracy = recentWindow.length > 0
+      ? Math.round((recentWindow.filter(q => q.isCorrect).length / recentWindow.length) * 100)
+      : 0;
+
+    session.isGeneratingNextQuestion = true;
+
+    const generationPromise = (async () => {
+      const nextQuestion = await generateQuestionFromGroq({
+        studentSkills: session.skills,
+        skill: nextSkill,
+        difficulty: nextSkillDifficulty,
+        questionNumber: session.currentQuestionNumber,
+        totalQuestions: session.totalQuestions,
+        questionHistory: fullHistoricalQuestions,
+        recentPerformance: {
+          recentAccuracy,
+          technicalScore: session.technicalScore
+        },
+        skillPerformance: session.skillStates
+      });
+
+      session.currentQuestion = nextQuestion;
+      await recordStudentQuestions(session.studentId, [nextQuestion]);
+
+      return {
+        success: true,
+        questionIndex: session.currentQuestionNumber,
+        totalQuestions: session.totalQuestions,
+        question: sanitizeQuestionForClient(nextQuestion, session.currentQuestionNumber, session.totalQuestions),
+        mlInsights: {
+          skill: nextSkill,
+          predictedDifficulty: nextSkillDifficulty
+        }
+      };
+    })();
+
+    session.pendingGenerationPromise = generationPromise;
+
+    try {
+      const result = await generationPromise;
+      session.isGeneratingNextQuestion = false;
+      session.pendingGenerationPromise = null;
+      return res.status(200).json(result);
+    } catch (groqErr) {
+      session.isGeneratingNextQuestion = false;
+      session.pendingGenerationPromise = null;
+      console.error('[AssessmentController:getNextQuestion] Groq generation error:', groqErr);
+      return res.status(500).json({
+        error: 'Unable to generate the next question. Please try again.'
+      });
+    }
+  } catch (err) {
+    console.error('[AssessmentController:getNextQuestion] Unexpected error:', err);
+    return res.status(500).json({
+      error: err.message || 'Unable to generate the next question. Please try again.'
     });
   }
 }
