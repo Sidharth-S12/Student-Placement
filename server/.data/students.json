@@ -1,13 +1,13 @@
 {
   "test_student@placement.edu": {
     "studentId": "test_student@placement.edu",
-    "latestAssessmentId": "test_assess_1789927262984",
+    "latestAssessmentId": "test_assess_1789929063975",
     "latestTechnicalScore": 80,
     "latestCorrectAnswers": 12,
     "latestIncorrectAnswers": 3,
-    "latestCompletedAt": "2026-09-20T18:01:02.984Z",
+    "latestCompletedAt": "2026-09-20T18:31:03.975Z",
     "status": "Completed",
-    "updatedAt": "2026-09-20T18:01:02.992Z"
+    "updatedAt": "2026-09-20T18:31:03.985Z"
   },
   "crsid542@gmail.com": {
     "studentId": "crsid542@gmail.com",
@@ -895,5 +895,375 @@
     "aptitudeScore": 10,
     "migratedFromLegacyEmail": "crsid542@gmail.com",
     "migratedAt": "2026-09-20T18:00:50.807Z"
+  },
+  "817YXZfzOofkDiZErkjWv9gxBeE3": {
+    "uid": "817YXZfzOofkDiZErkjWv9gxBeE3",
+    "personalInfo": {
+      "fullName": "Sid Corporation",
+      "headline": "",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "sid@company.com",
+      "phone": "",
+      "location": "",
+      "summary": ""
+    },
+    "placementScores": {
+      "overallReadiness": 0,
+      "technicalScore": 0,
+      "aptitudeScore": 0,
+      "communicationScore": 0
+    },
+    "education": {
+      "tenthPercentage": "",
+      "tenthBoard": "",
+      "tenthYear": "",
+      "twelfthPercentage": "",
+      "twelfthBoard": "",
+      "twelfthYear": "",
+      "degree": "",
+      "branch": "",
+      "college": "",
+      "cgpa": "",
+      "graduationYear": ""
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [],
+      "frameworks": [],
+      "databases": [],
+      "toolsTechnologies": []
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "createdAt": "2026-09-20T18:12:27.974Z",
+    "updatedAt": "2026-09-20T18:12:29.401Z",
+    "studentId": "817YXZfzOofkDiZErkjWv9gxBeE3"
+  },
+  "Mf822vvluSftcRgqJczJFK63HiW2": {
+    "uid": "Mf822vvluSftcRgqJczJFK63HiW2",
+    "personalInfo": {
+      "fullName": "Sid Corporation",
+      "headline": "",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "sid@company.com",
+      "phone": "",
+      "location": "",
+      "summary": ""
+    },
+    "placementScores": {
+      "overallReadiness": 0,
+      "technicalScore": 0,
+      "aptitudeScore": 0,
+      "communicationScore": 0
+    },
+    "education": {
+      "tenthPercentage": "",
+      "tenthBoard": "",
+      "tenthYear": "",
+      "twelfthPercentage": "",
+      "twelfthBoard": "",
+      "twelfthYear": "",
+      "degree": "",
+      "branch": "",
+      "college": "",
+      "cgpa": "",
+      "graduationYear": ""
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [],
+      "frameworks": [],
+      "databases": [],
+      "toolsTechnologies": []
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "createdAt": "2026-09-20T18:15:38.847Z",
+    "updatedAt": "2026-09-20T18:15:42.732Z",
+    "studentId": "Mf822vvluSftcRgqJczJFK63HiW2"
+  },
+  "bBTVWsn9HQP5xDkcWVSQJFTyIVk2": {
+    "uid": "bBTVWsn9HQP5xDkcWVSQJFTyIVk2",
+    "personalInfo": {
+      "fullName": "TECH CORE",
+      "headline": "",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "sidharths4669@gmail.com",
+      "phone": "",
+      "location": "",
+      "summary": ""
+    },
+    "placementScores": {
+      "overallReadiness": 0,
+      "technicalScore": 0,
+      "aptitudeScore": 0,
+      "communicationScore": 0
+    },
+    "education": {
+      "tenthPercentage": "",
+      "tenthBoard": "",
+      "tenthYear": "",
+      "twelfthPercentage": "",
+      "twelfthBoard": "",
+      "twelfthYear": "",
+      "degree": "",
+      "branch": "",
+      "college": "",
+      "cgpa": "",
+      "graduationYear": ""
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [],
+      "frameworks": [],
+      "databases": [],
+      "toolsTechnologies": []
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "createdAt": "2026-09-20T18:17:08.239Z",
+    "updatedAt": "2026-09-20T18:17:09.733Z",
+    "studentId": "bBTVWsn9HQP5xDkcWVSQJFTyIVk2"
+  },
+  "nt6cNAdMpqNRtPrg3beRbKJ70C72": {
+    "uid": "nt6cNAdMpqNRtPrg3beRbKJ70C72",
+    "personalInfo": {
+      "fullName": "TECH CORP",
+      "headline": "",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "sidharths4669@gmail.com",
+      "phone": "",
+      "location": "",
+      "summary": ""
+    },
+    "placementScores": {
+      "overallReadiness": 0,
+      "technicalScore": 0,
+      "aptitudeScore": 0,
+      "communicationScore": 0
+    },
+    "education": {
+      "tenthPercentage": "",
+      "tenthBoard": "",
+      "tenthYear": "",
+      "twelfthPercentage": "",
+      "twelfthBoard": "",
+      "twelfthYear": "",
+      "degree": "",
+      "branch": "",
+      "college": "",
+      "cgpa": "",
+      "graduationYear": ""
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [],
+      "frameworks": [],
+      "databases": [],
+      "toolsTechnologies": []
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "createdAt": "2026-09-20T18:20:49.853Z",
+    "updatedAt": "2026-09-20T18:20:52.908Z",
+    "studentId": "nt6cNAdMpqNRtPrg3beRbKJ70C72"
+  },
+  "test_user_a_1789929055954": {
+    "uid": "test_user_a_1789929055954",
+    "studentId": "test_user_a_1789929055954",
+    "personalInfo": {
+      "fullName": "Alice Johnson",
+      "email": "alice@college.edu",
+      "summary": "Aspiring Cloud Architect"
+    },
+    "placementScores": {
+      "technicalScore": 85,
+      "overallReadiness": 88
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Go",
+          "level": "Advanced"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T18:30:55.989Z",
+    "latestAssessmentId": "assess_a_1789929055982",
+    "latestTechnicalScore": 95,
+    "latestCompletedAt": "2026-09-20T18:30:55.982Z",
+    "status": "Completed"
+  },
+  "test_user_b_1789929055968": {
+    "uid": "test_user_b_1789929055968",
+    "studentId": "test_user_b_1789929055968",
+    "personalInfo": {
+      "fullName": "Bob Smith",
+      "email": "bob@college.edu",
+      "summary": "Data Scientist"
+    },
+    "placementScores": {
+      "technicalScore": 65,
+      "overallReadiness": 70
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ]
+    },
+    "updatedAt": "2026-09-20T18:30:56.001Z",
+    "latestAssessmentId": "assess_b_1789929055995",
+    "latestTechnicalScore": 60,
+    "latestCompletedAt": "2026-09-20T18:30:55.995Z",
+    "status": "Completed"
+  },
+  "uid_sidharth_1789929056015": {
+    "uid": "uid_sidharth_1789929056015",
+    "studentId": "uid_sidharth_1789929056015",
+    "personalInfo": {
+      "fullName": "Sidharth S",
+      "headline": "Computer Science Student",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "crsid542@gmail.com",
+      "phone": "",
+      "location": "",
+      "summary": "Undergraduate student passionate about software engineering and problem solving."
+    },
+    "placementScores": {
+      "overallReadiness": 42,
+      "technicalScore": 40,
+      "aptitudeScore": 10,
+      "communicationScore": 75
+    },
+    "education": {
+      "tenthPercentage": "92%",
+      "tenthBoard": "State Board",
+      "tenthYear": "2019",
+      "twelfthPercentage": "90%",
+      "twelfthBoard": "State Board",
+      "twelfthYear": "2021",
+      "degree": "Bachelor of Technology",
+      "branch": "Computer Science & Engineering",
+      "college": "Engineering College",
+      "cgpa": "8.5",
+      "graduationYear": "2025"
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "JavaScript",
+          "level": "Proficient"
+        },
+        {
+          "name": "Python",
+          "level": "Intermediate"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "React",
+          "level": "Proficient"
+        },
+        {
+          "name": "Node.js",
+          "level": "Proficient"
+        }
+      ],
+      "databases": [
+        {
+          "name": "MongoDB",
+          "level": "Proficient"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "Git",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [],
+    "experience": [],
+    "certifications": [],
+    "achievements": [],
+    "latestAssessmentId": "assess_1789789135125_7f3o4",
+    "latestTechnicalScore": 40,
+    "latestAptitudeAssessment": {
+      "assessmentId": "apt_1789747915307_zz5du",
+      "score": 10,
+      "totalQuestions": 20,
+      "correctAnswers": 2,
+      "completedAt": "2026-09-18T16:14:35.882Z",
+      "categoryBreakdown": {
+        "Quantitative Aptitude": {
+          "correct": 1,
+          "attempted": 2,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Logical Reasoning": {
+          "correct": 1,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "1/5",
+          "accuracy": 20,
+          "status": "Needs Improvement"
+        },
+        "Verbal Ability": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        },
+        "Basic Technical Aptitude": {
+          "correct": 0,
+          "attempted": 1,
+          "total": 5,
+          "scoreText": "0/5",
+          "accuracy": 0,
+          "status": "Needs Improvement"
+        }
+      },
+      "status": "Completed"
+    },
+    "aptitudeScore": 10,
+    "migratedFromLegacyEmail": "crsid542@gmail.com",
+    "migratedAt": "2026-09-20T18:30:56.018Z"
   }
 }

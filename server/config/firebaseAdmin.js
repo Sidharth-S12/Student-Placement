@@ -292,14 +292,14 @@ export async function getUserRecord(uid, email = '') {
 /**
  * Gets verified user role.
  * Strictly adheres to database roles: 'admin' | 'company' | 'student'.
- * Default role is 'student'. No informal email prefix heuristics.
+ * Returns null if no valid record exists. NEVER defaults to 'student'.
  */
 export async function getUserRole(uid, email = '') {
   const record = await getUserRecord(uid, email);
   if (record && record.role) {
     return record.role;
   }
-  return 'student';
+  return null;
 }
 
 /**

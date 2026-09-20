@@ -9,12 +9,12 @@ import { fetchUserRole } from '../src/services/authService.js';
 async function runRoleAuthorizationTests() {
   console.log('--- STARTING ROLE AUTHORIZATION & ADMIN SETUP TEST SUITE ---');
 
-  // Test 1: By default, unknown accounts (including college/CRS emails) resolve to 'student'
+  // Test 1: By default, unassigned accounts return null (NEVER silently default to student)
   const crsStudentEmail = 'student.crs@college.edu';
   const crsStudentUid = 'uid_crs_student_123';
   const initialRole = await getUserRole(crsStudentUid, crsStudentEmail);
-  assert.strictEqual(initialRole, 'student', 'Unassigned account must resolve to student');
-  console.log('✓ TEST 1 PASSED: Unassigned/CRS college email defaults to role="student" (never auto-promoted to admin).');
+  assert.strictEqual(initialRole, null, 'Unassigned account must return null (NEVER silently default to student)');
+  console.log('✓ TEST 1 PASSED: Unassigned account returns null (never auto-promoted or silently defaulted).');
 
   // Test 2: Role configuration CLI / backend assignment
   const adminEmail = 'placement.director@college.edu';
@@ -44,8 +44,15 @@ async function runRoleAuthorizationTests() {
 
   // Test 4: TEST D - Student selects Admin Portal -> role mismatch validation
   // Portal selected: 'admin', Verified role: 'student'
+  await setUserRole(crsStudentUid, {
+    role: 'student',
+    email: crsStudentEmail,
+    displayName: 'CRS Student'
+  });
+
   const selectedPortalD = 'admin';
   const actualRoleD = await getUserRole(crsStudentUid, crsStudentEmail);
+  assert.strictEqual(actualRoleD, 'student');
   const isAuthorizedD = (selectedPortalD === 'admin' && actualRoleD === 'admin');
   assert.strictEqual(isAuthorizedD, false, 'Student selecting Admin portal MUST be denied admin access');
   const roleMismatchMessageD = !isAuthorizedD ? 'This account does not have administrator access.' : null;
@@ -69,8 +76,8 @@ async function runRoleAuthorizationTests() {
   const fakeAdminEmail = 'admin.imposter@external.com';
   const fakeAdminUid = 'uid_fake_admin_999';
   const fakeAdminRole = await getUserRole(fakeAdminUid, fakeAdminEmail);
-  assert.strictEqual(fakeAdminRole, 'student', 'Arbitrary email starting with "admin" must NOT get admin privileges without database assignment');
-  console.log('✓ TEST 7 PASSED: Security confirmed. No informal prefix heuristics; arbitrary emails default to student.');
+  assert.strictEqual(fakeAdminRole, null, 'Arbitrary email starting with "admin" must NOT get admin privileges; returns null');
+  console.log('✓ TEST 7 PASSED: Security confirmed. No informal prefix heuristics; arbitrary emails return null.');
 
   // Test 8: Route protection check
   const studentUserObj = { uid: crsStudentUid, role: 'student', isDevMock: false };

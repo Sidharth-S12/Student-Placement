@@ -508,5 +508,31 @@
     "status": "Completed",
     "completedAt": "2026-09-20T18:01:02.984Z",
     "savedAt": "2026-09-20T18:01:02.986Z"
+  },
+  "assess_a_1789929055982": {
+    "assessmentId": "assess_a_1789929055982",
+    "studentId": "test_user_a_1789929055954",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:30:55.982Z",
+    "savedAt": "2026-09-20T18:30:55.982Z"
+  },
+  "assess_b_1789929055995": {
+    "assessmentId": "assess_b_1789929055995",
+    "studentId": "test_user_b_1789929055968",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:30:55.995Z",
+    "savedAt": "2026-09-20T18:30:55.995Z"
+  },
+  "test_assess_1789929063975": {
+    "assessmentId": "test_assess_1789929063975",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:31:03.975Z",
+    "savedAt": "2026-09-20T18:31:03.977Z"
   }
 }

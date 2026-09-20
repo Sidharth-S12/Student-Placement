@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   // Load remembered preferred portal from storage (null for first-time users)
   const [selectedRole, setSelectedRoleState] = useState(() => {
@@ -49,30 +50,43 @@ export const AuthProvider = ({ children }) => {
         try {
           const verifiedRole = await fetchUserRole(user.uid, user.email);
           if (isMounted) {
-            setCurrentUser(user);
-            setUserRole(verifiedRole);
-            localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify({
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              role: verifiedRole
-            }));
+            if (verifiedRole) {
+              setCurrentUser(user);
+              setUserRole(verifiedRole);
+              setAuthError(null);
+              localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                role: verifiedRole
+              }));
 
-            if (import.meta.env.DEV) {
-              console.log(`[Auth Diagnostic]\n=========================================\nAuthenticated user: ${user.email}\nUID: ${user.uid}\nRole: ${verifiedRole}\n=========================================`);
+              if (import.meta.env.DEV) {
+                console.log(`[AUTH DIAGNOSTIC]\n=========================================\nFirebase UID: ${user.uid}\nEmail: ${user.email}\nPersisted Role: ${verifiedRole}\nAuthorization: ALLOWED\n=========================================`);
+              }
+            } else {
+              // Role missing: NEVER DEFAULT TO STUDENT
+              setCurrentUser(user);
+              setUserRole(null);
+              setAuthError("Unable to determine account role. Please try again or contact support.");
+              localStorage.removeItem(ACTIVE_SESSION_KEY);
+              console.error(`[AUTH DIAGNOSTIC] Role resolution failed for UID: ${user.uid} (${user.email}). No fallback applied.`);
             }
           }
         } catch (e) {
           console.warn('Error fetching user role on state restore:', e);
           if (isMounted) {
             setCurrentUser(user);
-            setUserRole('student');
+            setUserRole(null);
+            setAuthError("Unable to determine account role. Please try again.");
+            localStorage.removeItem(ACTIVE_SESSION_KEY);
           }
         }
       } else {
         if (isMounted) {
           setCurrentUser(null);
           setUserRole(null);
+          setAuthError(null);
           localStorage.removeItem(ACTIVE_SESSION_KEY);
         }
       }
@@ -89,7 +103,16 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
+    setAuthError(null);
     const { user, role } = await loginUser(email, password);
+
+    if (!role) {
+      setCurrentUser(user);
+      setUserRole(null);
+      setAuthError("Unable to determine account role. Please contact support.");
+      return { user, role: null };
+    }
+
     setCurrentUser(user);
     setUserRole(role);
     localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify({
@@ -100,13 +123,14 @@ export const AuthProvider = ({ children }) => {
     }));
 
     if (import.meta.env.DEV) {
-      console.log(`[Auth Diagnostic]\n=========================================\nAuthenticated user: ${user.email}\nUID: ${user.uid}\nRole: ${role}\n=========================================`);
+      console.log(`[AUTH DIAGNOSTIC]\n=========================================\nFirebase UID: ${user.uid}\nEmail: ${user.email}\nPersisted Role: ${role}\nAuthorization: ALLOWED\n=========================================`);
     }
 
     return { user, role };
   };
 
   const register = async (userData) => {
+    setAuthError(null);
     const { user, role } = await registerUser(userData);
     setCurrentUser(user);
     setUserRole(role);
@@ -127,6 +151,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setCurrentUser(null);
       setUserRole(null);
+      setAuthError(null);
       localStorage.removeItem(ACTIVE_SESSION_KEY);
     }
   };
@@ -137,6 +162,8 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         userRole,
         authLoading,
+        authError,
+        setAuthError,
         selectedRole,
         setSelectedRole,
         login,

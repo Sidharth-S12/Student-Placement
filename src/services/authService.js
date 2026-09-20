@@ -89,6 +89,8 @@ export function formatAuthError(err) {
   }
 }
 
+import { getUserRole, persistUserRole, normalizeRole } from './roleService.js';
+
 /**
  * Registers a new user with Firebase Authentication and records their verified role.
  * 
@@ -96,14 +98,20 @@ export function formatAuthError(err) {
  * - Student registers with Name, Email, Password.
  * - Company registers with Company Name, Official Email, Password.
  * - Admin CANNOT self-register through this function.
+ * - Persists authoritatively to both Firestore and Backend.
  */
 export async function registerUser({ role, name, companyName, email, password }) {
   if (role === 'admin') {
     throw new Error('Admin accounts cannot be self-registered. Please contact the Placement Office.');
   }
 
+  const normalizedRole = normalizeRole(role);
+  if (!normalizedRole || !['student', 'company'].includes(normalizedRole)) {
+    throw new Error('Invalid account role. Allowed roles for registration: student, company.');
+  }
+
   const cleanEmail = (email || '').trim().toLowerCase();
-  const displayName = role === 'company' ? (companyName || '').trim() : (name || '').trim();
+  const displayName = normalizedRole === 'company' ? (companyName || '').trim() : (name || '').trim();
 
   let user = null;
 
@@ -118,22 +126,6 @@ export async function registerUser({ role, name, companyName, email, password })
         console.warn('Failed to update display name:', e);
       }
     }
-
-    // Persist verified role in Firestore users collection
-    if (db) {
-      try {
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          email: cleanEmail,
-          displayName,
-          companyName: role === 'company' ? companyName : null,
-          role,
-          createdAt: new Date().toISOString()
-        });
-      } catch (dbErr) {
-        console.warn('[Firestore] Failed to write user profile doc:', dbErr.message);
-      }
-    }
   } else {
     // Development / offline mock mode
     user = {
@@ -143,17 +135,15 @@ export async function registerUser({ role, name, companyName, email, password })
     };
   }
 
-  // Also record in local store for resilience
-  saveLocalUser(cleanEmail, {
-    uid: user.uid,
+  // Dual authoritative persistence (Firestore + Backend + local cache)
+  await persistUserRole(user.uid, {
+    role: normalizedRole,
     email: cleanEmail,
     displayName,
-    companyName: role === 'company' ? companyName : null,
-    role,
-    createdAt: new Date().toISOString()
+    companyName: normalizedRole === 'company' ? companyName : null
   });
 
-  return { user, role };
+  return { user, role: normalizedRole };
 }
 
 /**
@@ -168,71 +158,26 @@ export async function loginUser(email, password) {
     user = userCredential.user;
   } else {
     // Development fallback: check local store or allow password verification
-    const localUsers = getLocalUsers();
-    const existing = localUsers[cleanEmail];
     user = {
-      uid: existing?.uid || `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
+      uid: `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
       email: cleanEmail,
-      displayName: existing?.displayName || cleanEmail.split('@')[0]
+      displayName: cleanEmail.split('@')[0]
     };
   }
 
-  // Retrieve verified role from database
-  const role = await fetchUserRole(user.uid, cleanEmail);
+  // Retrieve verified role strictly via RoleService
+  const role = await getUserRole(user.uid, cleanEmail);
 
   return { user, role };
 }
 
 /**
  * Fetches the verified role for a user.
- * Priority:
- * 1. Firestore 'users' document for user.uid
- * 2. Backend /api/auth/role endpoint
- * 3. Pre-seeded / local registered users
- * 4. Default to 'student' if unknown (Zero informal email heuristics)
+ * Delegates to centralized RoleService.
+ * Returns valid role string or null. NEVER returns 'student' as a fallback.
  */
 export async function fetchUserRole(uid, email = '') {
-  const cleanEmail = (email || '').trim().toLowerCase();
-
-  // 1. Check live Firestore client SDK
-  if (isConfigured && db && uid) {
-    try {
-      const userDocRef = doc(db, 'users', uid);
-      const snap = await getDoc(userDocRef);
-      if (snap.exists()) {
-        const data = snap.data();
-        if (data.role) return data.role;
-      }
-    } catch (e) {
-      console.warn('[Firestore] Client role retrieval failed:', e.message);
-    }
-  }
-
-  // 2. Check Backend Auth API (/api/auth/role/:uid)
-  if (uid || cleanEmail) {
-    try {
-      const targetId = uid || cleanEmail;
-      const res = await fetch(`http://localhost:5000/api/auth/role/${encodeURIComponent(targetId)}?email=${encodeURIComponent(cleanEmail)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.role) return data.role;
-      }
-    } catch (apiErr) {
-      // Backend unavailable or offline
-    }
-  }
-
-  // 3. Check Local User Registry
-  const localUsers = getLocalUsers();
-  if (cleanEmail && localUsers[cleanEmail]?.role) {
-    return localUsers[cleanEmail].role;
-  }
-  if (uid && localUsers[uid]?.role) {
-    return localUsers[uid].role;
-  }
-
-  // 4. Default to student. Do NOT infer admin or company from email string or domain.
-  return 'student';
+  return await getUserRole(uid, email);
 }
 
 /**

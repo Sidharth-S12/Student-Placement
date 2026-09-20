@@ -165,9 +165,14 @@ export const AuthPage = () => {
       if (mode === 'login') {
         const { user, role: verifiedRole } = await login(formData.email.trim(), formData.password);
 
+        if (!verifiedRole) {
+          await logout();
+          setErrorMessage("Unable to determine account role for this account. Please contact administrator support.");
+          return;
+        }
+
         // Security check: Verified role vs Selected Portal
         if (activeRole === 'admin' && verifiedRole !== 'admin') {
-          // Immediately terminate session: student or company cannot access admin dashboard
           await logout();
           const targetName = verifiedRole === 'company' ? 'Company Portal' : 'Student Portal';
           setRoleMismatch({
@@ -178,13 +183,12 @@ export const AuthPage = () => {
           return;
         }
 
-        if (activeRole === 'company' && verifiedRole !== 'company') {
+        if (activeRole === 'company' && verifiedRole === 'student') {
           await logout();
-          const targetName = verifiedRole === 'admin' ? 'Admin Portal' : 'Student Portal';
           setRoleMismatch({
-            message: `This account is registered as a ${verifiedRole === 'admin' ? 'Placement Administrator' : 'Student'}, not a Recruiter account.`,
-            targetRole: verifiedRole,
-            targetName
+            message: 'This account is registered as a Student account. Please use the Student Portal.',
+            targetRole: 'student',
+            targetName: 'Student Portal'
           });
           return;
         }
@@ -192,16 +196,21 @@ export const AuthPage = () => {
         if (activeRole === 'student' && verifiedRole === 'company') {
           await logout();
           setRoleMismatch({
-            message: 'This account is registered as a Company / Recruiter account.',
+            message: 'This account is registered as a Company account. Please use the Company Portal.',
             targetRole: 'company',
             targetName: 'Company Portal'
           });
           return;
         }
 
-        // If an admin user logged in with student portal selected, verified role still determines authorization
-        if (activeRole === 'student' && verifiedRole === 'admin') {
-          setSelectedRole('admin');
+        if (activeRole !== 'admin' && verifiedRole === 'admin') {
+          await logout();
+          setRoleMismatch({
+            message: 'This account is registered as a Placement Administrator account. Please use the Admin Portal.',
+            targetRole: 'admin',
+            targetName: 'Admin Portal'
+          });
+          return;
         }
       } else {
         await register({

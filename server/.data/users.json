@@ -5,7 +5,7 @@
     "email": "placement.director@college.edu",
     "displayName": "Placement Director",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:00:40.225Z"
+    "updatedAt": "2026-09-20T18:30:28.532Z"
   },
   "uid_recruiter_globaltech": {
     "uid": "uid_recruiter_globaltech",
@@ -13,7 +13,7 @@
     "email": "hr@globaltech.com",
     "displayName": "GlobalTech HR",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:00:40.235Z"
+    "updatedAt": "2026-09-20T18:30:28.542Z"
   },
   "admin_placementadmin_gmail_com": {
     "uid": "admin_placementadmin_gmail_com",
@@ -22,5 +22,93 @@
     "displayName": "Placement Administrator",
     "companyName": null,
     "updatedAt": "2026-09-20T18:02:40.901Z"
+  },
+  "test_student_uid_1789928997055": {
+    "uid": "test_student_uid_1789928997055",
+    "role": "student",
+    "email": "student_1789928997055@college.edu",
+    "displayName": "Student One",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:29:57.055Z"
+  },
+  "test_company_uid_1789928997069": {
+    "uid": "test_company_uid_1789928997069",
+    "role": "company",
+    "email": "recruiter_1789928997069@techcorp.io",
+    "displayName": "TechCorp Recruiter",
+    "companyName": "TechCorp Solutions",
+    "updatedAt": "2026-09-20T18:29:57.069Z"
+  },
+  "admin_uid_1789928997115": {
+    "uid": "admin_uid_1789928997115",
+    "role": "admin",
+    "email": "admin_1789928997115@placement.edu",
+    "displayName": "Placement Admin",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:29:57.115Z"
+  },
+  "uid_crs_student_123": {
+    "uid": "uid_crs_student_123",
+    "role": "student",
+    "email": "student.crs@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:30:28.552Z"
+  },
+  "test_company_sync_1": {
+    "uid": "test_company_sync_1",
+    "role": "company",
+    "email": "test@comp.com",
+    "displayName": "test",
+    "companyName": "SyncCorp",
+    "updatedAt": "2026-09-20T18:31:57.311Z"
+  },
+  "company_seq_1": {
+    "uid": "company_seq_1",
+    "role": "company",
+    "email": "recruiter@corp.com",
+    "displayName": "recruiter",
+    "companyName": "Acme Corp",
+    "updatedAt": "2026-09-20T18:32:23.837Z"
+  },
+  "817YXZfzOofkDiZErkjWv9gxBeE3": {
+    "uid": "817YXZfzOofkDiZErkjWv9gxBeE3",
+    "role": "company",
+    "email": "sid@company.com",
+    "displayName": "Sid Company",
+    "companyName": "Company Solutions",
+    "updatedAt": "2026-09-20T18:32:49.376Z"
+  },
+  "Mf822vvluSftcRgqJczJFK63HiW2": {
+    "uid": "Mf822vvluSftcRgqJczJFK63HiW2",
+    "role": "company",
+    "email": "sid@company.com",
+    "displayName": "Sid Company",
+    "companyName": "Company Solutions",
+    "updatedAt": "2026-09-20T18:32:49.384Z"
+  },
+  "test_student_uid_1789929174921": {
+    "uid": "test_student_uid_1789929174921",
+    "role": "student",
+    "email": "student_1789929174921@college.edu",
+    "displayName": "Student One",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:32:54.922Z"
+  },
+  "test_company_uid_1789929174938": {
+    "uid": "test_company_uid_1789929174938",
+    "role": "company",
+    "email": "recruiter_1789929174938@techcorp.io",
+    "displayName": "TechCorp Recruiter",
+    "companyName": "TechCorp Solutions",
+    "updatedAt": "2026-09-20T18:32:54.938Z"
+  },
+  "admin_uid_1789929174977": {
+    "uid": "admin_uid_1789929174977",
+    "role": "admin",
+    "email": "admin_1789929174977@placement.edu",
+    "displayName": "Placement Admin",
+    "companyName": null,
+    "updatedAt": "2026-09-20T18:32:54.977Z"
   }
 }

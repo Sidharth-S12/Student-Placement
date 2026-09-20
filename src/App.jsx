@@ -137,8 +137,37 @@ const AccessDeniedBarrier = ({ requiredRole, actualRole, onReturn }) => (
   </div>
 );
 
+const RoleResolutionErrorScreen = ({ error, onSignOut }) => (
+  <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 text-slate-100">
+    <div className="max-w-md w-full bg-slate-800/90 border border-slate-700 rounded-3xl p-8 text-center space-y-4 shadow-2xl backdrop-blur">
+      <div className="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mx-auto text-2xl">
+        ⚠️
+      </div>
+      <div className="space-y-1">
+        <h2 className="text-xl font-black text-white tracking-tight">Role Resolution Error</h2>
+        <p className="text-xs text-slate-400">
+          {error || 'Unable to determine your account role. Please try again or contact administrator support.'}
+        </p>
+      </div>
+      <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-700/60 text-xs text-slate-400 text-left">
+        <p>
+          For your security, access is held until your verified role can be determined. Silent default to student access is blocked.
+        </p>
+      </div>
+      <div className="pt-2">
+        <button
+          onClick={onSignOut}
+          className="w-full py-2.5 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs shadow-md transition-colors"
+        >
+          Sign Out & Return to Login
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 const MainAppContent = () => {
-  const { currentUser, userRole, authLoading, setSelectedRole } = useAuth();
+  const { currentUser, userRole, authLoading, authError, logout, setSelectedRole } = useAuth();
   const [currentPath, setCurrentPath] = React.useState(() => {
     return (typeof window !== 'undefined' ? window.location.pathname + window.location.hash : '/');
   });
@@ -197,13 +226,26 @@ const MainAppContent = () => {
     return <AuthPage />;
   }
 
-  // 4. Authenticated Route Guard: Deny unauthorized users from accessing Admin routes
+  // 4. Role Resolution Error -> Render Error Screen (NEVER fallback to Student)
+  if (authError || !userRole) {
+    return (
+      <>
+        <RoleResolutionErrorScreen
+          error={authError}
+          onSignOut={logout}
+        />
+        <DevRoleBadge user={currentUser} role={userRole || 'UNKNOWN'} />
+      </>
+    );
+  }
+
+  // 5. Authenticated Route Guard: Deny unauthorized users from accessing Admin routes
   if (isAdminPath && userRole !== 'admin') {
     return (
       <>
         <AccessDeniedBarrier
           requiredRole="admin"
-          actualRole={userRole || 'student'}
+          actualRole={userRole}
           onReturn={handleReturnToDashboard}
         />
         <DevRoleBadge user={currentUser} role={userRole} />
@@ -211,7 +253,7 @@ const MainAppContent = () => {
     );
   }
 
-  // 5. Authenticated -> Role-Based Dashboard Redirection
+  // 6. Authenticated -> Role-Based Dashboard Redirection
   if (userRole === 'company') {
     return (
       <>
@@ -230,12 +272,21 @@ const MainAppContent = () => {
     );
   }
 
-  // Default / Student Role
+  if (userRole === 'student') {
+    return (
+      <StudentProvider>
+        <StudentDashboardContent />
+        <DevRoleBadge user={currentUser} role={userRole} />
+      </StudentProvider>
+    );
+  }
+
+  // Any other unrecognized role -> Error Barrier
   return (
-    <StudentProvider>
-      <StudentDashboardContent />
-      <DevRoleBadge user={currentUser} role={userRole} />
-    </StudentProvider>
+    <RoleResolutionErrorScreen
+      error={`Unrecognized account role '${userRole}'.`}
+      onSignOut={logout}
+    />
   );
 };
 
