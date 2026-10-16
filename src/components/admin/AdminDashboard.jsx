@@ -12,6 +12,7 @@ import { runKMeansClustering } from '../../utils/kmeansClustering';
 import { AdminStudentDetailModal } from './AdminStudentDetailModal';
 import { AdminAddOfficerModal } from './AdminAddOfficerModal';
 import { AdminAddDriveModal } from './AdminAddDriveModal';
+import { Card, Button, Badge, StatCard, PageHeader } from '../ui';
 import {
   ShieldCheck,
   LogOut,
@@ -21,9 +22,6 @@ import {
   Award,
   BarChart3,
   Search,
-  Filter,
-  GraduationCap,
-  Sparkles,
   ChevronRight,
   Brain,
   Cpu,
@@ -36,16 +34,12 @@ import {
   Download,
   UserPlus,
   Plus,
-  Calendar,
   Briefcase,
   Trash2,
-  ArrowUpDown,
   Mail,
   Phone,
   RefreshCw,
-  Target,
-  ExternalLink,
-  ChevronDown
+  Sparkles
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
@@ -266,7 +260,7 @@ export const AdminDashboard = () => {
     return result;
   }, [students, readinessTierFilter, sortBy]);
 
-  // Real-time Machine Learning K-Means Clustering on active student population
+  // Real-time Machine Learning K-Means Clustering
   const kmeansResult = useMemo(() => {
     return runKMeansClustering(students, 4);
   }, [students]);
@@ -344,8 +338,8 @@ export const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased flex flex-col">
       
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-3.5 shadow-xs flex items-center justify-between">
+      {/* Top Navigation Bar */}
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 shadow-subtle flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <button
             type="button"
@@ -355,45 +349,44 @@ export const AdminDashboard = () => {
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold shadow-xs">
+          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-subtle">
             <ShieldCheck className="w-5 h-5 text-amber-400" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="font-extrabold text-slate-900 text-sm sm:text-base leading-none">
+              <h1 className="font-extrabold text-slate-900 text-sm sm:text-base leading-none font-display">
                 Placement Genie
               </h1>
-              <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-black uppercase tracking-wider border border-amber-200">
-                Admin Portal
-              </span>
+              <Badge variant="amber">Admin Portal</Badge>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">Central Training & Placement Cell</p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <button
-            type="button"
+        <div className="flex items-center space-x-2.5">
+          <Button
+            variant="primary"
+            size="sm"
+            icon={UserPlus}
             onClick={() => setIsAddOfficerModalOpen(true)}
-            className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition-all"
+            className="hidden sm:inline-flex"
           >
-            <UserPlus className="w-3.5 h-3.5 text-amber-400" />
-            <span>Add Officer</span>
-          </button>
+            Add Officer
+          </Button>
 
-          <div className="hidden sm:block text-right">
+          <div className="hidden sm:block text-right px-2">
             <div className="text-xs font-bold text-slate-900">Placement Officer</div>
             <div className="text-[11px] text-slate-400">{currentUser?.email}</div>
           </div>
 
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={LogOut}
             onClick={logout}
-            className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-red-50 hover:border-red-200 hover:text-red-700 text-slate-600 text-xs font-bold flex items-center space-x-1.5 transition-all shadow-xs"
           >
-            <LogOut className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Sign Out</span>
-          </button>
+          </Button>
         </div>
       </header>
 
@@ -401,312 +394,259 @@ export const AdminDashboard = () => {
       <div className="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 gap-6">
         
         {/* Navigation Sidebar */}
-        <aside className={`md:w-64 flex-shrink-0 space-y-3 ${mobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-          <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs space-y-1">
-            <button
-              type="button"
-              onClick={() => { setActiveTab('overview'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'overview' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <BarChart3 className="w-4 h-4" />
-              <span>Overview</span>
-            </button>
+        <aside className={`md:w-60 flex-shrink-0 space-y-4 ${mobileMenuOpen ? 'block' : 'hidden md:block'}`}>
+          <Card className="p-2.5 space-y-1">
+            {[
+              { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'students', label: 'Students Roster', icon: Users, badge: stats.totalStudents },
+              { id: 'drives', label: 'Recruitment Drives', icon: Briefcase, badge: drives.length },
+              { id: 'officers', label: 'Placement Officers', icon: ShieldCheck, badge: officers.length },
+              { id: 'kmeans', label: 'K-Means Clusters', icon: Brain, badgeText: 'ML' },
+              { id: 'departments', label: 'Departments', icon: Building2 },
+              { id: 'performance', label: 'Analytics & Tiers', icon: TrendingUp },
+            ].map((nav) => {
+              const isActive = activeTab === nav.id;
+              return (
+                <button
+                  key={nav.id}
+                  type="button"
+                  onClick={() => { setActiveTab(nav.id); setMobileMenuOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
+                    isActive
+                      ? 'bg-slate-900 text-white shadow-subtle'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <nav.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    <span>{nav.label}</span>
+                  </div>
+                  {nav.badge !== undefined && (
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-bold ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {nav.badge}
+                    </span>
+                  )}
+                  {nav.badgeText && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-50 text-brand-700 font-extrabold uppercase">
+                      {nav.badgeText}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </Card>
 
-            <button
-              type="button"
-              onClick={() => { setActiveTab('students'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'students' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              <span>Students Roster</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setActiveTab('drives'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'drives' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <Briefcase className="w-4 h-4" />
-                <span>Recruitment Drives</span>
-              </div>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-extrabold">
-                {drives.length}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setActiveTab('officers'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'officers' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <ShieldCheck className="w-4 h-4 text-amber-500" />
-                <span>Placement Officers</span>
-              </div>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 font-extrabold">
-                {officers.length}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setActiveTab('kmeans'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'kmeans' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <Brain className="w-4 h-4 text-brand-500" />
-                <span>K-Means Clusters</span>
-              </div>
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-50 text-brand-700 font-extrabold uppercase">
-                ML
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setActiveTab('departments'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'departments' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <Building2 className="w-4 h-4" />
-              <span>Departments</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setActiveTab('performance'); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                activeTab === 'performance' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <TrendingUp className="w-4 h-4" />
-              <span>Analytics & Tiers</span>
-            </button>
-          </div>
-
-          <div className="p-4 bg-gradient-to-br from-slate-900 to-indigo-950 rounded-2xl text-white space-y-3 shadow-xs hidden md:block">
-            <div className="flex items-center space-x-2 text-amber-400">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-xs font-extrabold uppercase tracking-wide">Quick Actions</span>
+          {/* Quick Actions Card */}
+          <Card className="p-4 space-y-3 bg-slate-50/80 hidden md:block">
+            <div className="flex items-center space-x-2 text-slate-800">
+              <Sparkles className="w-4 h-4 text-brand-600" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Quick Actions</span>
             </div>
             <div className="space-y-1.5">
-              <button
-                type="button"
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={UserPlus}
                 onClick={() => setIsAddOfficerModalOpen(true)}
-                className="w-full text-left px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-100 font-bold transition-colors flex items-center justify-between"
+                className="w-full justify-between"
               >
-                <span>Add Placement Officer</span>
-                <UserPlus className="w-3.5 h-3.5 text-amber-400" />
-              </button>
-              <button
-                type="button"
+                Add Placement Officer
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={Plus}
                 onClick={() => setIsAddDriveModalOpen(true)}
-                className="w-full text-left px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-100 font-bold transition-colors flex items-center justify-between"
+                className="w-full justify-between"
               >
-                <span>Schedule New Drive</span>
-                <Briefcase className="w-3.5 h-3.5 text-indigo-300" />
-              </button>
-              <button
-                type="button"
+                Schedule New Drive
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={Download}
                 onClick={handleExportRoster}
-                className="w-full text-left px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-slate-100 font-bold transition-colors flex items-center justify-between"
+                className="w-full justify-between"
               >
-                <span>Export Roster (CSV)</span>
-                <Download className="w-3.5 h-3.5 text-emerald-400" />
-              </button>
+                Export Roster (CSV)
+              </Button>
             </div>
-          </div>
+          </Card>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 space-y-6">
+        <main className="flex-1 space-y-6 min-w-0">
           
           {/* =========================================================================
               TAB 1: OVERVIEW
              ========================================================================= */}
           {activeTab === 'overview' && (
             <div className="space-y-6 animate-fade-in">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight">Institutional Placement Overview</h2>
-                  <p className="text-xs text-slate-500">Live metrics calculated across all registered student profiles & assessments</p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsAddOfficerModalOpen(true)}
-                    className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all"
-                  >
-                    <UserPlus className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Add Officer</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleExportRoster}
-                    className="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Export CSV</span>
-                  </button>
-                </div>
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Institutional Overview']}
+                title="Institutional Placement Overview"
+                subtitle="Live performance metrics calculated across all registered student profiles, assessments, and recruitment drives."
+                actions={
+                  <>
+                    <Button variant="secondary" size="sm" icon={Download} onClick={handleExportRoster}>
+                      Export CSV
+                    </Button>
+                    <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
+                      Add Officer
+                    </Button>
+                  </>
+                }
+              />
+
+              {/* KPI Cards Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <StatCard
+                  title="Total Students"
+                  value={stats.totalStudents}
+                  subtext="Registered candidates"
+                  icon={Users}
+                  colorScheme="brand"
+                  onClick={() => setActiveTab('students')}
+                />
+                <StatCard
+                  title="Departments"
+                  value={stats.totalDepts}
+                  subtext={discoveredDepts.slice(0, 2).join(', ') || 'Academic branches'}
+                  icon={Building2}
+                  colorScheme="indigo"
+                  onClick={() => setActiveTab('departments')}
+                />
+                <StatCard
+                  title="Average Readiness"
+                  value={`${stats.avgReadiness}%`}
+                  subtext="Target benchmark: 75%"
+                  icon={TrendingUp}
+                  colorScheme={stats.avgReadiness >= 75 ? "emerald" : "brand"}
+                  onClick={() => setActiveTab('performance')}
+                />
+                <StatCard
+                  title="Technical Competency"
+                  value={`${stats.avgTech}%`}
+                  subtext="Adaptive AI assessments"
+                  icon={Cpu}
+                  colorScheme="brand"
+                />
+                <StatCard
+                  title="Aptitude & Logic"
+                  value={`${stats.avgApt}%`}
+                  subtext="Quant & verbal battery"
+                  icon={Award}
+                  colorScheme="purple"
+                />
+                <StatCard
+                  title="Placement Officers"
+                  value={officers.length}
+                  subtext="Authorized coordinators"
+                  icon={ShieldCheck}
+                  colorScheme="amber"
+                  onClick={() => setActiveTab('officers')}
+                />
               </div>
 
-              {/* KPI Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">Total Students</span>
-                    <Users className="w-4 h-4 text-brand-600" />
+              {/* Department Snapshot & Active Recruitment Drives */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* Department Snapshot */}
+                <Card className="p-5 sm:p-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                      <h3 className="font-extrabold text-sm text-slate-900">Department Readiness Breakdown</h3>
+                      <p className="text-xs text-slate-500">Live candidate competency by department</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      icon={ChevronRight}
+                      iconPosition="right"
+                      onClick={() => setActiveTab('departments')}
+                    >
+                      View All
+                    </Button>
                   </div>
-                  <div className="text-2xl font-black text-slate-900">{stats.totalStudents}</div>
-                  <div className="text-[11px] text-slate-400">Registered candidates</div>
-                </div>
 
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">Departments</span>
-                    <Building2 className="w-4 h-4 text-indigo-600" />
-                  </div>
-                  <div className="text-2xl font-black text-slate-900">{stats.totalDepts}</div>
-                  <div className="text-[11px] text-slate-400">{discoveredDepts.slice(0, 3).join(', ')}{discoveredDepts.length > 3 ? ` +${discoveredDepts.length - 3}` : ''}</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">Placement Readiness</span>
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                  </div>
-                  <div className="text-2xl font-black text-emerald-600">{stats.avgReadiness}%</div>
-                  <div className="text-[11px] text-slate-400">Campus benchmark: 75%</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">Technical Competency</span>
-                    <Cpu className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <div className="text-2xl font-black text-blue-600">{stats.avgTech}%</div>
-                  <div className="text-[11px] text-slate-400">Adaptive AI assessments</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">Aptitude & Logic</span>
-                    <Award className="w-4 h-4 text-purple-600" />
-                  </div>
-                  <div className="text-2xl font-black text-purple-600">{stats.avgApt}%</div>
-                  <div className="text-[11px] text-slate-400">Quant & verbal reasoning</div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-500">Placement Officers</span>
-                    <ShieldCheck className="w-4 h-4 text-amber-600" />
-                  </div>
-                  <div className="text-2xl font-black text-amber-600">{officers.length}</div>
-                  <div className="text-[11px] text-slate-400">Authorized cell staff</div>
-                </div>
-              </div>
-
-              {/* Department Snapshot Preview */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <h3 className="font-extrabold text-sm text-slate-900">Department Readiness Breakdown</h3>
-                    <p className="text-xs text-slate-500">Dynamically compiled from real academic branch affiliations</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('departments')}
-                    className="text-xs font-bold text-brand-600 hover:underline flex items-center space-x-1"
-                  >
-                    <span>View All Departments</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {departmentBreakdown.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {departmentBreakdown.map((d, i) => (
-                      <div key={i} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+                  <div className="space-y-2.5">
+                    {departmentBreakdown.slice(0, 4).map((d, i) => (
+                      <div key={i} className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70 flex items-center justify-between text-xs">
                         <div>
-                          <div className="font-bold text-xs text-slate-900">{d.dept}</div>
-                          <div className="text-[11px] text-slate-500">{d.count} student{d.count === 1 ? '' : 's'} registered</div>
+                          <div className="font-bold text-slate-900">{d.dept}</div>
+                          <div className="text-[11px] text-slate-500">{d.count} candidates</div>
                         </div>
                         <div className="text-right">
-                          <div className="font-black text-sm text-emerald-600">{d.avgReadiness}%</div>
+                          <div className="font-black text-emerald-600 text-sm">{d.avgReadiness}%</div>
                           <div className="text-[10px] text-slate-400">Avg Readiness</div>
                         </div>
                       </div>
                     ))}
-                  </div>
-                ) : (
-                  <div className="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                    No students registered yet.
-                  </div>
-                )}
-              </div>
 
-              {/* Active Recruitment Drives Preview */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-extrabold text-sm text-slate-900">Active & Upcoming Recruitment Drives</h3>
-                    <p className="text-xs text-slate-500">Real-time candidate matching against corporate criteria</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('drives')}
-                    className="text-xs font-bold text-indigo-600 hover:underline flex items-center space-x-1"
-                  >
-                    <span>Manage Drives</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                  {drives.slice(0, 3).map((dr) => {
-                    const eligibleCount = students.filter(s => {
-                      const cgpa = parseFloat(s.education?.cgpa || 0) || 0;
-                      const readiness = s.placementScores?.overallReadiness || 0;
-                      const dept = s.department || 'Other';
-                      const okCgpa = dr.minCgpa ? cgpa >= dr.minCgpa : true;
-                      const okR = dr.minReadiness ? readiness >= dr.minReadiness : true;
-                      const okDept = (!dr.eligibleDepartments || dr.eligibleDepartments.includes('All'))
-                        ? true
-                        : dr.eligibleDepartments.some(d => d.toLowerCase() === dept.toLowerCase());
-                      return okCgpa && okR && okDept;
-                    }).length;
-
-                    return (
-                      <div key={dr.id} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="font-extrabold text-xs text-slate-900">{dr.companyName}</span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700">
-                            {dr.packageCTC || 'Competitive'}
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-600 font-medium line-clamp-1">{dr.jobRole}</div>
-                        <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-[11px]">
-                          <span className="text-slate-500">{dr.driveDate || 'TBD'}</span>
-                          <span className="font-bold text-emerald-600">{eligibleCount} Eligible</span>
-                        </div>
+                    {departmentBreakdown.length === 0 && (
+                      <div className="text-center py-6 text-slate-400 text-xs italic">
+                        No department records found.
                       </div>
-                    );
-                  })}
-                </div>
+                    )}
+                  </div>
+                </Card>
+
+                {/* Recruitment Drives Snapshot */}
+                <Card className="p-5 sm:p-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div>
+                      <h3 className="font-extrabold text-sm text-slate-900">Active Recruitment Drives</h3>
+                      <p className="text-xs text-slate-500">Real-time student matching against company cutoffs</p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      icon={ChevronRight}
+                      iconPosition="right"
+                      onClick={() => setActiveTab('drives')}
+                    >
+                      Manage Drives
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {drives.slice(0, 3).map((dr) => {
+                      const eligibleCount = students.filter(s => {
+                        const cgpa = parseFloat(s.education?.cgpa || 0) || 0;
+                        const readiness = s.placementScores?.overallReadiness || 0;
+                        const dept = s.department || 'Other';
+                        const okCgpa = dr.minCgpa ? cgpa >= dr.minCgpa : true;
+                        const okR = dr.minReadiness ? readiness >= dr.minReadiness : true;
+                        const okDept = (!dr.eligibleDepartments || dr.eligibleDepartments.includes('All'))
+                          ? true
+                          : dr.eligibleDepartments.some(d => d.toLowerCase() === dept.toLowerCase());
+                        return okCgpa && okR && okDept;
+                      }).length;
+
+                      return (
+                        <div key={dr.id} className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 flex items-center justify-between text-xs">
+                          <div>
+                            <div className="font-extrabold text-slate-900">{dr.companyName}</div>
+                            <div className="text-[11px] text-slate-500">{dr.jobRole} • {dr.packageCTC || 'Negotiable'}</div>
+                          </div>
+                          <div className="text-right">
+                            <Badge variant="emerald" size="sm">{eligibleCount} Eligible</Badge>
+                            <div className="text-[10px] text-slate-400 mt-0.5">{dr.driveDate || 'Upcoming'}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {drives.length === 0 && (
+                      <div className="text-center py-6 text-slate-400 text-xs italic">
+                        No campus recruitment drives scheduled yet.
+                      </div>
+                    )}
+                  </div>
+                </Card>
+
               </div>
             </div>
           )}
@@ -715,49 +655,45 @@ export const AdminDashboard = () => {
               TAB 2: STUDENTS ROSTER
              ========================================================================= */}
           {activeTab === 'students' && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight">Student Placement Directory</h2>
-                  <p className="text-xs text-slate-500">Filter, search, inspect profiles, and export student placement rosters</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleExportRoster}
-                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all w-fit"
-                >
-                  <Download className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Export Filtered Roster (CSV)</span>
-                </button>
-              </div>
+            <div className="space-y-5 animate-fade-in">
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Student Directory']}
+                title="Student Placement Directory"
+                subtitle="Filter, inspect, and export comprehensive student assessment records."
+                actions={
+                  <Button variant="primary" size="sm" icon={Download} onClick={handleExportRoster}>
+                    Export Roster (CSV)
+                  </Button>
+                }
+              />
 
-              {/* Search, Skills, Tier & Sort Bar */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-                <div className="flex flex-col sm:flex-row gap-3">
+              {/* Filters Card */}
+              <Card className="p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row gap-2.5">
                   <div className="relative flex-1">
-                    <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search student by name, email, or keywords..."
-                      className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 bg-slate-50/50"
                     />
                   </div>
-                  <div className="w-full sm:w-52">
+                  <div className="w-full sm:w-48">
                     <input
                       type="text"
                       value={skillFilter}
                       onChange={(e) => setSkillFilter(e.target.value)}
-                      placeholder="Filter by skill (Python, React)..."
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
+                      placeholder="Filter by skill..."
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 bg-slate-50/50"
                     />
                   </div>
                   <div className="w-full sm:w-52">
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600"
                     >
                       <option value="readiness_desc">Sort: Readiness (High to Low)</option>
                       <option value="readiness_asc">Sort: Readiness (Low to High)</option>
@@ -769,16 +705,16 @@ export const AdminDashboard = () => {
                   </div>
                 </div>
 
-                {/* Filter Pills: Departments & Readiness Tiers */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                {/* Filter Pills */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
                   <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 max-w-full">
                     <span className="text-[11px] font-bold text-slate-400 mr-1 flex-shrink-0">Depts:</span>
                     <button
                       type="button"
                       onClick={() => setSelectedDept('all')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                         selectedDept === 'all'
-                          ? 'bg-slate-900 text-white shadow-xs'
+                          ? 'bg-slate-900 text-white'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
@@ -789,9 +725,9 @@ export const AdminDashboard = () => {
                         key={i}
                         type="button"
                         onClick={() => setSelectedDept(dept)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                           selectedDept.toLowerCase() === dept.toLowerCase()
-                            ? 'bg-slate-900 text-white shadow-xs'
+                            ? 'bg-slate-900 text-white'
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}
                       >
@@ -802,46 +738,32 @@ export const AdminDashboard = () => {
 
                   <div className="flex items-center space-x-1 flex-shrink-0">
                     <span className="text-[11px] font-bold text-slate-400 mr-1">Tier:</span>
-                    <button
-                      type="button"
-                      onClick={() => setReadinessTierFilter('all')}
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold ${readinessTierFilter === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600'}`}
-                    >
-                      All
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setReadinessTierFilter('high')}
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold ${readinessTierFilter === 'high' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-800'}`}
-                    >
-                      &ge;80% Ready
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setReadinessTierFilter('moderate')}
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold ${readinessTierFilter === 'moderate' ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-800'}`}
-                    >
-                      60-79%
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setReadinessTierFilter('remedial')}
-                      className={`px-2 py-0.5 rounded text-[11px] font-bold ${readinessTierFilter === 'remedial' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-800'}`}
-                    >
-                      &lt;60%
-                    </button>
+                    {['all', 'high', 'moderate', 'remedial'].map((tier) => (
+                      <button
+                        key={tier}
+                        type="button"
+                        onClick={() => setReadinessTierFilter(tier)}
+                        className={`px-2 py-0.5 rounded text-[11px] font-bold capitalize transition-colors ${
+                          readinessTierFilter === tier
+                            ? 'bg-slate-900 text-white'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                      >
+                        {tier === 'all' ? 'All' : tier === 'high' ? '≥80%' : tier === 'moderate' ? '60-79%' : '<60%'}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </div>
+              </Card>
 
-              {/* Students List Table */}
+              {/* Roster List Table */}
               {loading ? (
-                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-white rounded-2xl border border-slate-200/80">
+                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-white rounded-2xl border border-slate-200/80 shadow-subtle">
                   <Loader2 className="w-4 h-4 animate-spin text-slate-900" />
                   <span>Loading candidate database records...</span>
                 </div>
               ) : filteredAndSortedStudents.length > 0 ? (
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <Card className="overflow-hidden">
                   <div className="divide-y divide-slate-100">
                     {filteredAndSortedStudents.map((student) => {
                       const personal = student.personalInfo || {};
@@ -856,11 +778,11 @@ export const AdminDashboard = () => {
                           className="p-4 hover:bg-slate-50/80 transition-colors cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
                         >
                           <div className="flex items-center space-x-3.5">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-center overflow-hidden flex-shrink-0">
                               {personal.profilePhoto ? (
                                 <img src={personal.profilePhoto} alt={personal.fullName} className="w-full h-full object-cover" />
                               ) : (
-                                <span className="font-extrabold text-sm text-slate-500">
+                                <span className="font-extrabold text-sm text-slate-400">
                                   {(personal.fullName || 'S').charAt(0)}
                                 </span>
                               )}
@@ -870,40 +792,20 @@ export const AdminDashboard = () => {
                                 <span className="font-extrabold text-xs sm:text-sm text-slate-900 group-hover:text-brand-600 transition-colors">
                                   {personal.fullName || 'Unnamed Student'}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold">
+                                <Badge variant="neutral" size="sm">
                                   {student.department || education.branch || 'General'}
-                                </span>
-                                {readiness >= 80 ? (
-                                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold">
-                                    Ready
-                                  </span>
-                                ) : readiness < 60 ? (
-                                  <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[10px] font-extrabold">
-                                    Developing
-                                  </span>
-                                ) : null}
+                                </Badge>
+                                {readiness >= 80 && (
+                                  <Badge variant="emerald" size="sm">Ready</Badge>
+                                )}
                               </div>
                               <div className="text-xs text-slate-500">
-                                {personal.email || student.email} • CGPA: {education.cgpa || '—'} • Class of {education.graduationYear || '2025'}
+                                {personal.email || student.email} • CGPA: {education.cgpa || '—'}
                               </div>
-                              {student.normalizedSkills && student.normalizedSkills.length > 0 && (
-                                <div className="flex flex-wrap gap-1 pt-1">
-                                  {student.normalizedSkills.slice(0, 5).map((sk, idx) => (
-                                    <span key={idx} className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-medium">
-                                      {sk}
-                                    </span>
-                                  ))}
-                                  {student.normalizedSkills.length > 5 && (
-                                    <span className="text-[10px] text-slate-400 font-semibold">
-                                      +{student.normalizedSkills.length - 5}
-                                    </span>
-                                  )}
-                                </div>
-                              )}
                             </div>
                           </div>
 
-                          <div className="flex items-center space-x-4 sm:space-x-6 justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                          <div className="flex items-center space-x-4 sm:space-x-6 justify-between sm:justify-end">
                             <div className="text-left sm:text-right">
                               <div className="text-[10px] font-bold text-slate-400 uppercase">Technical</div>
                               <div className="text-xs font-extrabold text-blue-600">{scores.technicalScore || student.latestTechnicalScore || 0}%</div>
@@ -922,7 +824,7 @@ export const AdminDashboard = () => {
                       );
                     })}
                   </div>
-                </div>
+                </Card>
               ) : (
                 <div className="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
                   No matching student records found.
@@ -935,31 +837,26 @@ export const AdminDashboard = () => {
               TAB 3: RECRUITMENT DRIVES
              ========================================================================= */}
           {activeTab === 'drives' && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight">Campus Recruitment Drives</h2>
-                  <p className="text-xs text-slate-500">Coordinate on-campus & virtual hiring drives and automatically match candidates</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAddDriveModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all w-fit"
-                >
-                  <Plus className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Schedule Recruitment Drive</span>
-                </button>
-              </div>
+            <div className="space-y-5 animate-fade-in">
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Recruitment Drives']}
+                title="Campus Recruitment Drives"
+                subtitle="Schedule on-campus hiring drives and automatically match candidates against corporate criteria."
+                actions={
+                  <Button variant="primary" size="sm" icon={Plus} onClick={() => setIsAddDriveModalOpen(true)}>
+                    Schedule Drive
+                  </Button>
+                }
+              />
 
               {loadingDrives ? (
-                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-white rounded-2xl border border-slate-200/80">
+                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-white rounded-2xl border border-slate-200/80 shadow-subtle">
                   <Loader2 className="w-4 h-4 animate-spin text-slate-900" />
                   <span>Loading recruitment drives...</span>
                 </div>
               ) : drives.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {drives.map((drive) => {
-                    // Match candidates against drive criteria
                     const matchedStudents = students.filter(s => {
                       const cgpa = parseFloat(s.education?.cgpa || 0) || 0;
                       const readiness = s.placementScores?.overallReadiness || 0;
@@ -973,7 +870,7 @@ export const AdminDashboard = () => {
                     });
 
                     return (
-                      <div key={drive.id} className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4 flex flex-col justify-between">
+                      <Card key={drive.id} className="p-5 space-y-4 flex flex-col justify-between">
                         <div className="space-y-3">
                           <div className="flex items-start justify-between">
                             <div className="flex items-center space-x-3">
@@ -981,28 +878,24 @@ export const AdminDashboard = () => {
                                 <Building2 className="w-5 h-5" />
                               </div>
                               <div>
-                                <h3 className="font-extrabold text-sm text-slate-900 leading-tight">{drive.companyName}</h3>
+                                <h4 className="font-extrabold text-sm text-slate-900 leading-tight">{drive.companyName}</h4>
                                 <p className="text-xs text-slate-500 font-medium">{drive.jobRole}</p>
                               </div>
                             </div>
-                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                              drive.status === 'Active' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
-                              drive.status === 'Completed' ? 'bg-slate-100 text-slate-600' :
-                              'bg-amber-50 text-amber-800 border border-amber-200'
-                            }`}>
+                            <Badge variant={drive.status === 'Active' ? "emerald" : "neutral"} size="sm">
                               {drive.status || 'Upcoming'}
-                            </span>
+                            </Badge>
                           </div>
 
                           {/* Drive Details */}
-                          <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+                          <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/80 p-3 rounded-xl border border-slate-200/60">
                             <div>
                               <span className="text-[10px] text-slate-400 block font-bold uppercase">Package / CTC</span>
-                              <span className="font-extrabold text-slate-800">{drive.packageCTC || 'Negotiable'}</span>
+                              <span className="font-extrabold text-slate-800">{drive.packageCTC || 'Competitive'}</span>
                             </div>
                             <div>
                               <span className="text-[10px] text-slate-400 block font-bold uppercase">Drive Date</span>
-                              <span className="font-extrabold text-slate-800">{drive.driveDate || 'Flexible'}</span>
+                              <span className="font-extrabold text-slate-800">{drive.driveDate || 'TBD'}</span>
                             </div>
                             <div>
                               <span className="text-[10px] text-slate-400 block font-bold uppercase">Min CGPA</span>
@@ -1013,113 +906,76 @@ export const AdminDashboard = () => {
                               <span className="font-bold text-emerald-700">{drive.minReadiness ? `${drive.minReadiness}%` : 'Open'}</span>
                             </div>
                           </div>
-
-                          {/* Eligible Departments */}
-                          <div className="space-y-1">
-                            <span className="text-[10px] text-slate-400 font-bold uppercase">Eligible Departments:</span>
-                            <div className="flex flex-wrap gap-1">
-                              {(drive.eligibleDepartments || ['All']).map((dept, i) => (
-                                <span key={i} className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold">
-                                  {dept}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
                         </div>
 
                         {/* Footer Match & Action */}
                         <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-xs font-bold text-emerald-700">
+                            {matchedStudents.length} candidate{matchedStudents.length === 1 ? '' : 's'} eligible
+                          </span>
                           <div className="flex items-center space-x-1.5">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                            <span className="text-xs font-extrabold text-emerald-700">
-                              {matchedStudents.length} candidate{matchedStudents.length === 1 ? '' : 's'} eligible
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-1.5">
-                            <button
-                              type="button"
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              icon={Download}
                               onClick={() => handleExportDriveCandidates(drive)}
-                              title="Export eligible candidate list as CSV"
-                              className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center space-x-1 transition-colors"
                             >
-                              <Download className="w-3 h-3" />
-                              <span>Export Roster</span>
-                            </button>
-                            <button
-                              type="button"
+                              Export Roster
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              icon={Trash2}
                               onClick={() => handleDeleteDrive(drive.id, drive.companyName)}
                               title="Delete drive"
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                              Delete
+                            </Button>
                           </div>
                         </div>
-                      </div>
+                      </Card>
                     );
                   })}
                 </div>
               ) : (
                 <div className="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200 space-y-3">
                   <p>No recruitment drives scheduled yet.</p>
-                  <button
-                    type="button"
-                    onClick={() => setIsAddDriveModalOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold text-xs"
-                  >
+                  <Button variant="primary" size="sm" icon={Plus} onClick={() => setIsAddDriveModalOpen(true)}>
                     Schedule First Drive
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
           )}
 
           {/* =========================================================================
-              TAB 4: PLACEMENT OFFICERS MANAGEMENT
+              TAB 4: PLACEMENT OFFICERS
              ========================================================================= */}
           {activeTab === 'officers' && (
             <div className="space-y-5 animate-fade-in">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight">Placement Officers & Administrators</h2>
-                  <p className="text-xs text-slate-500">Manage placement cell coordinators, directors, and institutional officers</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsAddOfficerModalOpen(true)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-1.5 shadow-xs transition-all w-fit"
-                >
-                  <UserPlus className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Add Placement Officer</span>
-                </button>
-              </div>
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Placement Officers']}
+                title="Placement Officers & Coordinators"
+                subtitle="Authorized administrators managing institutional placement and campus recruitments."
+                actions={
+                  <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
+                    Add Officer
+                  </Button>
+                }
+              />
 
-              {/* Officers Table / Cards */}
               {loadingOfficers ? (
-                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-white rounded-2xl border border-slate-200/80">
+                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-white rounded-2xl border border-slate-200/80 shadow-subtle">
                   <Loader2 className="w-4 h-4 animate-spin text-slate-900" />
-                  <span>Loading placement officer registry...</span>
+                  <span>Loading officer registry...</span>
                 </div>
               ) : officers.length > 0 ? (
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-                  <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <span className="font-extrabold text-xs text-slate-700 uppercase tracking-wider">
-                      Active Placement Officers ({officers.length})
-                    </span>
-                    <button
-                      type="button"
-                      onClick={loadOfficers}
-                      className="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center space-x-1"
-                    >
-                      <RefreshCw className="w-3 h-3" />
-                      <span>Refresh</span>
-                    </button>
-                  </div>
+                <Card className="overflow-hidden">
                   <div className="divide-y divide-slate-100">
                     {officers.map((officer) => (
                       <div key={officer.uid} className="p-4 hover:bg-slate-50/70 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center space-x-3.5">
-                          <div className="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-sm shadow-xs flex-shrink-0">
+                          <div className="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-sm shadow-subtle flex-shrink-0">
                             <ShieldCheck className="w-5 h-5" />
                           </div>
                           <div className="space-y-0.5">
@@ -1127,14 +983,10 @@ export const AdminDashboard = () => {
                               <span className="font-extrabold text-xs sm:text-sm text-slate-900">
                                 {officer.displayName || 'Placement Officer'}
                               </span>
-                              <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-black uppercase border border-amber-200">
-                                Administrator
-                              </span>
+                              <Badge variant="amber" size="sm">Administrator</Badge>
                             </div>
                             <div className="text-xs text-slate-500">
-                              <span className="font-semibold text-slate-700">{officer.designation || 'Placement Officer'}</span>
-                              <span className="mx-1.5">•</span>
-                              <span>{officer.department || 'Central Placement Cell'}</span>
+                              {officer.designation || 'Placement Officer'} • {officer.department || 'Central Placement Cell'}
                             </div>
                             <div className="text-[11px] text-slate-400 flex items-center space-x-2 pt-0.5">
                               <span className="flex items-center space-x-1">
@@ -1152,171 +1004,110 @@ export const AdminDashboard = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-2 self-end sm:self-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveOfficer(officer.uid, officer.displayName || officer.email)}
-                            className="p-1.5 rounded-lg border border-slate-200 hover:border-red-200 hover:bg-red-50 text-slate-400 hover:text-red-700 transition-colors"
-                            title="Revoke officer privileges"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          icon={Trash2}
+                          onClick={() => handleRemoveOfficer(officer.uid, officer.displayName || officer.email)}
+                        >
+                          Revoke Access
+                        </Button>
                       </div>
                     ))}
                   </div>
-                </div>
+                </Card>
               ) : (
                 <div className="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
                   No placement officers configured yet.
                 </div>
               )}
-
-              {/* Helpful Credentials Guide for Testing */}
-              <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-2.5 text-xs text-amber-900">
-                <div className="flex items-center space-x-2 font-bold text-amber-950">
-                  <ShieldCheck className="w-4 h-4 text-amber-700" />
-                  <span>How Placement Officers Sign In:</span>
-                </div>
-                <p className="leading-relaxed">
-                  Any Placement Officer configured above can sign in directly through the <strong className="text-slate-900">Admin Portal</strong> login screen using their official email address. New officers can be added anytime using the <strong>Add Placement Officer</strong> button above.
-                </p>
-                <div className="pt-1 flex flex-wrap gap-2 text-[11px]">
-                  <span className="bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200 font-mono">admin@placement.edu</span>
-                  <span className="bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200 font-mono">officer@placement.edu</span>
-                  <span className="bg-white/80 px-2.5 py-1 rounded-lg border border-amber-200 font-mono">placement.officer@college.edu</span>
-                </div>
-              </div>
             </div>
           )}
 
           {/* =========================================================================
-              TAB 5: K-MEANS MACHINE LEARNING STUDENT CLUSTERS (REPLACING PLACEHOLDER)
+              TAB 5: K-MEANS MACHINE LEARNING STUDENT CLUSTERS
              ========================================================================= */}
           {activeTab === 'kmeans' && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <h2 className="text-xl font-black text-slate-900 tracking-tight">K-Means Student Clustering Engine</h2>
-                    <span className="px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 text-[10px] font-black uppercase border border-brand-200">
-                      Unsupervised ML
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Real-time 4-dimensional clustering across Technical, Aptitude, Communication, and Placement Readiness
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2 text-xs">
-                  <span className="font-bold text-slate-500">Iterated: {kmeansResult.iterationsRun} cycles</span>
-                </div>
-              </div>
+            <div className="space-y-5 animate-fade-in">
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Machine Learning Clusters']}
+                title="K-Means Student Clustering Engine"
+                subtitle="Unsupervised 4-dimensional performance clustering across Technical, Aptitude, Communication, and Placement Readiness."
+                badge={<Badge variant="primary">Unsupervised ML</Badge>}
+              />
 
-              {/* Overview Explanation */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white space-y-2 shadow-sm">
-                <div className="flex items-center space-x-2 text-amber-400">
-                  <Brain className="w-4 h-4" />
-                  <span className="text-xs font-extrabold uppercase tracking-wide">Multi-Dimensional Pedagogical Cohorts</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Rather than imposing arbitrary cutoffs, unsupervised K-Means analyzes student performance vectors in 4D feature space to group candidates into targeted pedagogical intervention cohorts.
-                </p>
-              </div>
-
-              {/* 4 Clusters Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {kmeansResult.clusters.map((cluster) => {
-                  return (
-                    <div
-                      key={cluster.id}
-                      className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4 flex flex-col justify-between"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <span className={`w-2.5 h-2.5 rounded-full ${cluster.dotClass}`} />
-                              <h3 className="font-extrabold text-sm text-slate-900">{cluster.name}</h3>
-                            </div>
-                            <p className="text-[11px] text-slate-500 mt-0.5">{cluster.tagline}</p>
+                {kmeansResult.clusters.map((cluster) => (
+                  <Card key={cluster.id} className="p-5 space-y-4 flex flex-col justify-between">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <span className={`w-2.5 h-2.5 rounded-full ${cluster.dotClass}`} />
+                            <h4 className="font-extrabold text-sm text-slate-900">{cluster.name}</h4>
                           </div>
-                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-black ${cluster.badgeClass}`}>
-                            {cluster.count} Students ({cluster.percentage}%)
-                          </span>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{cluster.tagline}</p>
                         </div>
+                        <Badge variant="neutral" size="sm">
+                          {cluster.count} Students ({cluster.percentage}%)
+                        </Badge>
+                      </div>
 
-                        {/* Centroid Dimensions */}
-                        <div className="grid grid-cols-4 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase block">Tech</span>
-                            <span className="font-extrabold text-xs text-blue-600">{cluster.centroid.technical}%</span>
-                          </div>
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase block">Aptitude</span>
-                            <span className="font-extrabold text-xs text-indigo-600">{cluster.centroid.aptitude}%</span>
-                          </div>
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase block">Comm</span>
-                            <span className="font-extrabold text-xs text-amber-600">{cluster.centroid.communication}%</span>
-                          </div>
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase block">Readiness</span>
-                            <span className="font-extrabold text-xs text-emerald-600">{cluster.centroid.readiness}%</span>
-                          </div>
+                      {/* Centroid Dimensions */}
+                      <div className="grid grid-cols-4 gap-2 bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/60 text-center text-xs">
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Tech</span>
+                          <span className="font-extrabold text-blue-600">{cluster.centroid.technical}%</span>
                         </div>
-
-                        {/* Targeted Intervention Strategy */}
-                        <div className="space-y-1.5 text-xs">
-                          <span className="font-extrabold text-slate-700 uppercase text-[10px] tracking-wider block">
-                            Targeted Pedagogical Strategy:
-                          </span>
-                          <p className="text-slate-600 text-[11px] leading-relaxed">
-                            {cluster.interventionStrategy}
-                          </p>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Aptitude</span>
+                          <span className="font-extrabold text-indigo-600">{cluster.centroid.aptitude}%</span>
                         </div>
-
-                        {/* Recommended Actions */}
-                        <div className="space-y-1">
-                          <span className="font-bold text-slate-400 text-[10px] uppercase">Action Items:</span>
-                          <ul className="space-y-1 text-[11px] text-slate-600">
-                            {cluster.recommendedActions.map((act, idx) => (
-                              <li key={idx} className="flex items-start space-x-1.5">
-                                <span className="text-slate-400">•</span>
-                                <span>{act}</span>
-                              </li>
-                            ))}
-                          </ul>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Comm</span>
+                          <span className="font-extrabold text-purple-600">{cluster.centroid.communication}%</span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Readiness</span>
+                          <span className="font-extrabold text-emerald-600">{cluster.centroid.readiness}%</span>
                         </div>
                       </div>
 
-                      {/* Cluster Student Samples */}
-                      {cluster.students.length > 0 && (
-                        <div className="pt-3 border-t border-slate-100">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1.5">
-                            Cluster Candidates ({cluster.students.length}):
-                          </span>
-                          <div className="flex flex-wrap gap-1.5">
-                            {cluster.students.slice(0, 6).map((st) => (
-                              <button
-                                key={st.uid}
-                                type="button"
-                                onClick={() => handleOpenStudent(st)}
-                                className="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium transition-colors"
-                              >
-                                {st.personalInfo?.fullName || 'Student'} ({st.department || 'General'})
-                              </button>
-                            ))}
-                            {cluster.students.length > 6 && (
-                              <span className="px-2 py-1 text-[11px] text-slate-400 font-bold">
-                                +{cluster.students.length - 6} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                      {/* Strategy */}
+                      <div className="space-y-1 text-xs">
+                        <span className="font-bold text-slate-500 uppercase text-[10px] tracking-wider block">
+                          Pedagogical Intervention:
+                        </span>
+                        <p className="text-slate-600 text-[11px] leading-relaxed">
+                          {cluster.interventionStrategy}
+                        </p>
+                      </div>
                     </div>
-                  );
-                })}
+
+                    {/* Candidate Chips */}
+                    {cluster.students.length > 0 && (
+                      <div className="pt-2.5 border-t border-slate-100">
+                        <div className="flex flex-wrap gap-1.5">
+                          {cluster.students.slice(0, 5).map((st) => (
+                            <button
+                              key={st.uid}
+                              type="button"
+                              onClick={() => handleOpenStudent(st)}
+                              className="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium transition-colors"
+                            >
+                              {st.personalInfo?.fullName || 'Student'}
+                            </button>
+                          ))}
+                          {cluster.students.length > 5 && (
+                            <span className="text-[10px] text-slate-400 font-bold self-center">
+                              +{cluster.students.length - 5} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+                ))}
               </div>
             </div>
           )}
@@ -1325,66 +1116,61 @@ export const AdminDashboard = () => {
               TAB 6: DEPARTMENTS
              ========================================================================= */}
           {activeTab === 'departments' && (
-            <div className="space-y-4 animate-fade-in">
-              <div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight">Department-Wise Placement Analytics</h2>
-                <p className="text-xs text-slate-500">Comparative academic branch readiness discovered automatically from candidate profiles</p>
-              </div>
+            <div className="space-y-5 animate-fade-in">
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Departments']}
+                title="Department-Wise Placement Analytics"
+                subtitle="Comparative academic branch readiness discovered dynamically from registered student profiles."
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {departmentBreakdown.map((deptItem, idx) => (
-                  <div key={idx} className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-xs">
-                          {deptItem.dept.substring(0, 3)}
-                        </div>
-                        <div>
-                          <h4 className="font-extrabold text-sm text-slate-900">{deptItem.dept}</h4>
-                          <span className="text-xs text-slate-500">{deptItem.count} student{deptItem.count === 1 ? '' : 's'} registered</span>
-                        </div>
+                  <Card key={idx} className="p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                      <div>
+                        <h4 className="font-extrabold text-sm text-slate-900">{deptItem.dept}</h4>
+                        <span className="text-xs text-slate-500">{deptItem.count} candidates</span>
                       </div>
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-black">
-                        {deptItem.avgReadiness}% Readiness
-                      </span>
+                      <Badge variant="emerald">{deptItem.avgReadiness}% Readiness</Badge>
                     </div>
 
                     <div className="space-y-2 text-xs">
-                      <div className="space-y-1">
-                        <div className="flex justify-between font-semibold text-slate-600">
+                      <div>
+                        <div className="flex justify-between font-medium text-slate-600 mb-1">
                           <span>Average Technical Competency</span>
-                          <span className="text-blue-600 font-bold">{deptItem.avgTech}%</span>
+                          <span className="font-bold text-blue-600">{deptItem.avgTech}%</span>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
                           <div className="h-full bg-blue-600 rounded-full" style={{ width: `${deptItem.avgTech}%` }} />
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <div className="flex justify-between font-semibold text-slate-600">
+                      <div>
+                        <div className="flex justify-between font-medium text-slate-600 mb-1">
                           <span>Average Aptitude & Reasoning</span>
-                          <span className="text-indigo-600 font-bold">{deptItem.avgApt}%</span>
+                          <span className="font-bold text-indigo-600">{deptItem.avgApt}%</span>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
                           <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${deptItem.avgApt}%` }} />
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-                      <button
-                        type="button"
+                    <div className="pt-2 border-t border-slate-100">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        icon={ChevronRight}
+                        iconPosition="right"
                         onClick={() => {
                           setSelectedDept(deptItem.dept);
                           setActiveTab('students');
                         }}
-                        className="text-brand-600 hover:underline font-bold flex items-center space-x-1"
                       >
-                        <span>Inspect candidates in {deptItem.dept}</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
+                        Inspect candidates in {deptItem.dept}
+                      </Button>
                     </div>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </div>
@@ -1394,89 +1180,70 @@ export const AdminDashboard = () => {
               TAB 7: PERFORMANCE ANALYTICS & TIERS
              ========================================================================= */}
           {activeTab === 'performance' && (
-            <div className="space-y-6 animate-fade-in">
-              <div>
-                <h2 className="text-xl font-black text-slate-900 tracking-tight">Readiness Performance Tiers & Analytics</h2>
-                <p className="text-xs text-slate-500">Campus candidate distribution partitioned by placement readiness tiers</p>
-              </div>
+            <div className="space-y-5 animate-fade-in">
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Performance Tiers']}
+                title="Readiness Performance Tiers"
+                subtitle="Campus candidate distribution categorized by placement readiness benchmarks."
+              />
 
-              {/* 3 Tiers */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-5 rounded-2xl bg-white border border-emerald-200/80 shadow-xs space-y-2">
+                <Card className="p-5 space-y-2 border-emerald-200/80">
                   <div className="flex items-center justify-between text-emerald-700">
-                    <span className="text-xs font-extrabold uppercase tracking-wide">High Readiness</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">High Readiness</span>
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div className="text-3xl font-black text-emerald-900">{stats.highReadyCount}</div>
-                  <p className="text-xs text-slate-500">Readiness Score &ge; 80%. Interview ready for Day-1 companies.</p>
-                  <button
-                    type="button"
+                  <p className="text-xs text-slate-500">Readiness Score &ge; 80%. Interview ready for Day-1 recruiters.</p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       setReadinessTierFilter('high');
                       setActiveTab('students');
                     }}
-                    className="text-xs font-bold text-emerald-700 hover:underline pt-2 block"
                   >
                     View High-Readiness Cohort →
-                  </button>
-                </div>
+                  </Button>
+                </Card>
 
-                <div className="p-5 rounded-2xl bg-white border border-blue-200/80 shadow-xs space-y-2">
+                <Card className="p-5 space-y-2 border-blue-200/80">
                   <div className="flex items-center justify-between text-blue-700">
-                    <span className="text-xs font-extrabold uppercase tracking-wide">Moderate Readiness</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Moderate Readiness</span>
                     <Clock className="w-4 h-4" />
                   </div>
                   <div className="text-3xl font-black text-blue-900">{stats.moderateReadyCount}</div>
                   <p className="text-xs text-slate-500">Readiness Score 60% – 79%. Requires mock polishing & final tuning.</p>
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       setReadinessTierFilter('moderate');
                       setActiveTab('students');
                     }}
-                    className="text-xs font-bold text-blue-700 hover:underline pt-2 block"
                   >
                     View Moderate Cohort →
-                  </button>
-                </div>
+                  </Button>
+                </Card>
 
-                <div className="p-5 rounded-2xl bg-white border border-amber-200/80 shadow-xs space-y-2">
+                <Card className="p-5 space-y-2 border-amber-200/80">
                   <div className="flex items-center justify-between text-amber-700">
-                    <span className="text-xs font-extrabold uppercase tracking-wide">Needs Remedial Focus</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">Remedial Focus</span>
                     <AlertCircle className="w-4 h-4" />
                   </div>
                   <div className="text-3xl font-black text-amber-900">{stats.remedialCount}</div>
                   <p className="text-xs text-slate-500">Readiness Score &lt; 60%. Foundation bootcamps required.</p>
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                       setReadinessTierFilter('remedial');
                       setActiveTab('students');
                     }}
-                    className="text-xs font-bold text-amber-700 hover:underline pt-2 block"
                   >
                     View Remedial Cohort →
-                  </button>
-                </div>
-              </div>
-
-              {/* Actionable Institutional Roadmap */}
-              <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-3">
-                <h3 className="font-extrabold text-sm text-slate-900">Placement Cell Institutional Recommendations</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-                    <span className="font-extrabold text-slate-900 block">Tier-1 Company Scheduling</span>
-                    <p className="text-slate-600 text-[11px] leading-relaxed">
-                      With {stats.highReadyCount} candidates currently exceeding the 80% readiness benchmark, campus recruiters with CTC &ge; 14 LPA can be invited for early slot scheduling.
-                    </p>
-                  </div>
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-                    <span className="font-extrabold text-slate-900 block">Remedial Interventions</span>
-                    <p className="text-slate-600 text-[11px] leading-relaxed">
-                      Deploy 2-week intensive aptitude and coding sprints for the {stats.remedialCount} candidates in the foundation cohort to lift baseline pass rates.
-                    </p>
-                  </div>
-                </div>
+                  </Button>
+                </Card>
               </div>
             </div>
           )}
@@ -1507,7 +1274,7 @@ export const AdminDashboard = () => {
         onClose={() => setIsAddDriveModalOpen(false)}
         onDriveSaved={(newDrive) => {
           setDrives(prev => [newDrive, ...prev]);
-          showToast(`Campus recruitment drive for ${newDrive.companyName} published!`);
+          showToast(`Recruitment drive for ${newDrive.companyName} published!`);
         }}
       />
 
