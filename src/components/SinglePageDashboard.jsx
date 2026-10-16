@@ -111,12 +111,48 @@ export const SinglePageDashboard = () => {
     }
   };
 
-  const scrollToSubSection = (id) => {
-    setActiveSection(id);
-    const elem = document.getElementById(id);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const navigateTo = (tab, subOption = null) => {
+    if (tab === 'resume') {
+      setActiveTab('resume');
+      if (subOption) setResumeSubTab(subOption);
+    } else if (tab === 'tests' || tab === 'assessments') {
+      setActiveTab('assessments');
+      if (subOption) setTestCenterSubTab(subOption);
+    } else if (tab === 'technical' || tab === 'aptitude' || tab === 'interview' || tab === 'appearance') {
+      setActiveTab('assessments');
+      setTestCenterSubTab(tab);
+    } else if (tab === 'resume-builder') {
+      setActiveTab('resume');
+      setResumeSubTab('builder');
+    } else if (tab === 'resume-analyzer') {
+      setActiveTab('resume');
+      setResumeSubTab('analyzer');
+    } else {
+      setActiveTab(tab);
     }
+
+    if (tab === 'profile' && subOption) {
+      setActiveSection(subOption);
+      setTimeout(() => {
+        const elem = document.getElementById(subOption);
+        if (elem) {
+          elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          elem.classList.add('section-highlight');
+          setTimeout(() => {
+            elem.classList.remove('section-highlight');
+          }, 2000);
+        }
+      }, 150);
+    }
+
+    const isProfileSection = ['academics', 'skills', 'projects', 'experience', 'certifications', 'contact'].includes(subOption);
+    if (!isProfileSection) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToSubSection = (id) => {
+    navigateTo('profile', id);
   };
 
   if (profileLoading && !studentData) {
@@ -243,7 +279,7 @@ export const SinglePageDashboard = () => {
           subtext={currentReadiness >= 75 ? "Target met for Day-1 companies" : "Complete tests to boost score"}
           icon={Target}
           colorScheme={currentReadiness >= 75 ? "emerald" : currentReadiness >= 50 ? "brand" : "amber"}
-          onClick={() => setActiveTab('assessments')}
+          onClick={() => navigateTo('tests', 'overview')}
         />
 
         {/* Metric 2: Technical Skill Score */}
@@ -253,7 +289,7 @@ export const SinglePageDashboard = () => {
           subtext={latestAssessment ? "Adaptive AI coding assessment" : "Take technical test"}
           icon={Cpu}
           colorScheme="brand"
-          onClick={() => setIsAssessmentModalOpen(true)}
+          onClick={() => navigateTo('tests', 'technical')}
         />
 
         {/* Metric 3: Aptitude & Logic */}
@@ -263,7 +299,7 @@ export const SinglePageDashboard = () => {
           subtext={latestAptitudeAssessment ? "Quant, logical & verbal" : "Take 20-min aptitude test"}
           icon={Brain}
           colorScheme="indigo"
-          onClick={() => setIsAptitudeModalOpen(true)}
+          onClick={() => navigateTo('tests', 'aptitude')}
         />
 
         {/* Metric 4: Communication & Interview */}
@@ -273,7 +309,7 @@ export const SinglePageDashboard = () => {
           subtext={latestCommunicationAssessment ? "STAR response & clarity" : "Practice mock interview"}
           icon={MessageSquare}
           colorScheme="purple"
-          onClick={() => openCommunicationModal ? openCommunicationModal('assessment') : setIsCommunicationModalOpen(true)}
+          onClick={() => navigateTo('tests', 'interview')}
         />
       </div>
     );
@@ -285,7 +321,7 @@ export const SinglePageDashboard = () => {
   const renderRecommendedAction = () => {
     if (!hasProfile) {
       return (
-        <Card className="p-5 bg-gradient-to-r from-brand-50 to-indigo-50 border-brand-200/80">
+        <Card className="p-5 bg-gradient-to-r from-brand-50 to-indigo-50 border-brand-200/80 card-hover-lift">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <Badge variant="primary" dot>Next Step</Badge>
@@ -294,7 +330,7 @@ export const SinglePageDashboard = () => {
                 Add your degree details, technical skills, and software projects to generate ATS resumes and match with recruiters.
               </p>
             </div>
-            <Button variant="primary" icon={PlusCircle} onClick={() => setIsEditModalOpen(true)}>
+            <Button variant="primary" icon={PlusCircle} onClick={() => navigateTo('profile')}>
               Fill Profile Info
             </Button>
           </div>
@@ -304,7 +340,7 @@ export const SinglePageDashboard = () => {
 
     if (!latestAssessment) {
       return (
-        <Card className="p-5 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border-slate-800">
+        <Card className="p-5 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border-slate-800 card-hover-lift">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Recommended Milestone</span>
@@ -316,7 +352,7 @@ export const SinglePageDashboard = () => {
             <Button
               variant="gradient"
               icon={Cpu}
-              onClick={() => setIsAssessmentModalOpen(true)}
+              onClick={() => navigateTo('tests', 'technical')}
             >
               Start Technical Test
             </Button>
@@ -326,7 +362,7 @@ export const SinglePageDashboard = () => {
     }
 
     return (
-      <Card className="p-5 bg-gradient-to-r from-purple-900/90 via-indigo-950 to-slate-900 text-white border-purple-500/20">
+      <Card className="p-5 bg-gradient-to-r from-purple-900/90 via-indigo-950 to-slate-900 text-white border-purple-500/20 card-hover-lift">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-bold tracking-wider text-purple-300">Interview Readiness</span>
@@ -339,7 +375,7 @@ export const SinglePageDashboard = () => {
             <Button
               variant="gradient"
               icon={Mic}
-              onClick={() => openCommunicationModal ? openCommunicationModal('practice') : setIsCommunicationModalOpen(true)}
+              onClick={() => navigateTo('tests', 'interview')}
             >
               Practice in Studio
             </Button>
@@ -361,12 +397,16 @@ export const SinglePageDashboard = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Tool 1: ATS Resume Studio */}
-        <Card hover className="p-5 flex flex-col justify-between space-y-3">
+        <Card
+          hover
+          className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-emerald-500/50"
+          onClick={() => navigateTo('resume', 'builder')}
+        >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
               <FileText className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm">ATS Resume Studio</h4>
+            <h4 className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors">ATS Resume Studio</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
               Format and preview your ATS-ready single-page resume with clean recruiter templates.
             </p>
@@ -376,7 +416,10 @@ export const SinglePageDashboard = () => {
             size="sm"
             icon={ChevronRight}
             iconPosition="right"
-            onClick={() => setActiveTab('resume-builder')}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('resume', 'builder');
+            }}
             className="w-full justify-between"
           >
             Open Resume Studio
@@ -384,12 +427,16 @@ export const SinglePageDashboard = () => {
         </Card>
 
         {/* Tool 2: AI Resume Analyzer */}
-        <Card hover className="p-5 flex flex-col justify-between space-y-3">
+        <Card
+          hover
+          className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-brand-500/50"
+          onClick={() => navigateTo('resume', 'analyzer')}
+        >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Search className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm">AI Resume Analyzer</h4>
+            <h4 className="font-bold text-slate-900 text-sm group-hover:text-brand-700 transition-colors">AI Resume Analyzer</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
               Upload existing resume PDF/DOCX to uncover missing keywords against target job roles.
             </p>
@@ -399,7 +446,10 @@ export const SinglePageDashboard = () => {
             size="sm"
             icon={ChevronRight}
             iconPosition="right"
-            onClick={() => setActiveTab('resume-analyzer')}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('resume', 'analyzer');
+            }}
             className="w-full justify-between"
           >
             Scan Resume with AI
@@ -407,12 +457,16 @@ export const SinglePageDashboard = () => {
         </Card>
 
         {/* Tool 3: Career Roadmap */}
-        <Card hover className="p-5 flex flex-col justify-between space-y-3">
+        <Card
+          hover
+          className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-indigo-500/50"
+          onClick={() => navigateTo('roadmap')}
+        >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Map className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm">Career Roadmap</h4>
+            <h4 className="font-bold text-slate-900 text-sm group-hover:text-indigo-700 transition-colors">Career Roadmap</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
               Personalized weekly learning milestones and topic quizzes tailored to your career goal.
             </p>
@@ -422,7 +476,10 @@ export const SinglePageDashboard = () => {
             size="sm"
             icon={ChevronRight}
             iconPosition="right"
-            onClick={() => setActiveTab('roadmap')}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('roadmap');
+            }}
             className="w-full justify-between"
           >
             View Roadmap
@@ -430,12 +487,16 @@ export const SinglePageDashboard = () => {
         </Card>
 
         {/* Tool 4: Appearance & Posture */}
-        <Card hover className="p-5 flex flex-col justify-between space-y-3">
+        <Card
+          hover
+          className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-purple-500/50"
+          onClick={() => navigateTo('tests', 'appearance')}
+        >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Camera className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm">Appearance & Posture</h4>
+            <h4 className="font-bold text-slate-900 text-sm group-hover:text-purple-700 transition-colors">Appearance & Posture</h4>
             <p className="text-xs text-slate-500 leading-relaxed">
               Inspect video posture alignment, head leveling, and interview attire using AI vision.
             </p>
@@ -445,7 +506,10 @@ export const SinglePageDashboard = () => {
             size="sm"
             icon={ChevronRight}
             iconPosition="right"
-            onClick={() => setActiveTab('appearance')}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigateTo('tests', 'appearance');
+            }}
             className="w-full justify-between"
           >
             Launch Vision AI
@@ -1188,13 +1252,17 @@ export const SinglePageDashboard = () => {
             {/* 4 Interactive Test Launchers */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Launcher 1: Technical Coding */}
-              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+              <Card
+                hover
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-blue-500/50"
+                onClick={() => setTestCenterSubTab('technical')}
+              >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Cpu className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm">Technical Coding</h4>
+                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors">Technical Coding</h4>
                     {latestAssessment?.technicalScore !== undefined && (
                       <Badge variant="primary">{latestAssessment.technicalScore}%</Badge>
                     )}
@@ -1208,7 +1276,10 @@ export const SinglePageDashboard = () => {
                     variant="primary"
                     size="sm"
                     className="w-full justify-center"
-                    onClick={() => setIsAssessmentModalOpen(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsAssessmentModalOpen(true);
+                    }}
                   >
                     {latestAssessment ? "Retake Test" : "Start Test"}
                   </Button>
@@ -1216,13 +1287,17 @@ export const SinglePageDashboard = () => {
               </Card>
 
               {/* Launcher 2: Aptitude */}
-              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+              <Card
+                hover
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-indigo-500/50"
+                onClick={() => setTestCenterSubTab('aptitude')}
+              >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Brain className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm">Aptitude & Logic</h4>
+                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">Aptitude & Logic</h4>
                     {latestAptitudeAssessment?.finalScore !== undefined && (
                       <Badge variant="primary">{latestAptitudeAssessment.finalScore}%</Badge>
                     )}
@@ -1236,7 +1311,10 @@ export const SinglePageDashboard = () => {
                     variant="primary"
                     size="sm"
                     className="w-full justify-center"
-                    onClick={() => setIsAptitudeModalOpen(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsAptitudeModalOpen(true);
+                    }}
                   >
                     {latestAptitudeAssessment ? "Retake Test" : "Start Test"}
                   </Button>
@@ -1244,13 +1322,17 @@ export const SinglePageDashboard = () => {
               </Card>
 
               {/* Launcher 3: Mock Interview */}
-              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+              <Card
+                hover
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-purple-500/50"
+                onClick={() => setTestCenterSubTab('interview')}
+              >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Mic className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm">Mock Interview</h4>
+                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">Mock Interview</h4>
                     {latestCommunicationAssessment?.finalScore !== undefined && (
                       <Badge variant="primary">{latestCommunicationAssessment.finalScore}%</Badge>
                     )}
@@ -1264,7 +1346,10 @@ export const SinglePageDashboard = () => {
                     variant="primary"
                     size="sm"
                     className="w-full justify-center"
-                    onClick={() => openCommunicationModal ? openCommunicationModal('practice') : setIsCommunicationModalOpen(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openCommunicationModal ? openCommunicationModal('practice') : setIsCommunicationModalOpen(true);
+                    }}
                   >
                     Enter Studio
                   </Button>
@@ -1272,13 +1357,17 @@ export const SinglePageDashboard = () => {
               </Card>
 
               {/* Launcher 4: Posture & Attire */}
-              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+              <Card
+                hover
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-pink-500/50"
+                onClick={() => setTestCenterSubTab('appearance')}
+              >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Camera className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm">Posture & Attire</h4>
+                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-pink-600 transition-colors">Posture & Attire</h4>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-50 text-pink-700 border border-pink-200 font-bold uppercase">Vision</span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
@@ -1290,7 +1379,10 @@ export const SinglePageDashboard = () => {
                     variant="secondary"
                     size="sm"
                     className="w-full justify-center"
-                    onClick={() => setTestCenterSubTab('appearance')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTestCenterSubTab('appearance');
+                    }}
                   >
                     Open Vision AI
                   </Button>
@@ -1375,7 +1467,7 @@ export const SinglePageDashboard = () => {
 
       case 'tests':
       case 'assessments':
-        return renderTestCenter('overview');
+        return renderTestCenter();
 
       case 'technical':
         return renderTestCenter('technical');
@@ -1452,6 +1544,9 @@ export const SinglePageDashboard = () => {
         setActiveTab={setActiveTab}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
+        onNavigate={navigateTo}
+        testCenterSubTab={testCenterSubTab}
+        resumeSubTab={resumeSubTab}
         studentData={studentData}
         hasProfile={hasProfile}
         readinessScore={readinessScore}
@@ -1578,9 +1673,14 @@ export const SinglePageDashboard = () => {
           </div>
         )}
 
-        {/* Main View Layout */}
+        {/* Main View Layout with Animated View Transition */}
         <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-          {renderActiveTabContent()}
+          <div
+            key={`${activeTab}-${activeTab === 'resume' ? resumeSubTab : ['tests', 'assessments'].includes(activeTab) ? testCenterSubTab : activeSection}`}
+            className="animate-tab-enter"
+          >
+            {renderActiveTabContent()}
+          </div>
         </main>
       </div>
 

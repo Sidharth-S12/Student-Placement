@@ -31,13 +31,15 @@ export const StatCard = ({
 
   return (
     <Card
-      className={`p-5 flex flex-col justify-between ${onClick ? 'cursor-pointer hover:border-slate-300 transition-all' : ''} ${className}`}
+      className={`p-5 flex flex-col justify-between ${
+        onClick ? 'cursor-pointer card-hover-lift hover:border-brand-500/50 hover:shadow-md group' : ''
+      } ${className}`}
       onClick={onClick}
     >
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</span>
         {Icon && (
-          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBgStyles[colorScheme] || iconBgStyles.slate}`}>
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform ${onClick ? 'group-hover:scale-110' : ''} ${iconBgStyles[colorScheme] || iconBgStyles.slate}`}>
             <Icon className="w-4 h-4" />
           </div>
         )}
@@ -52,14 +54,19 @@ export const StatCard = ({
         )}
       </div>
 
-      {trend && (
+      {trend ? (
         <div className="mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
           <span>{trend.label}</span>
           <span className={`font-bold ${trend.positive ? 'text-emerald-600' : 'text-slate-600'}`}>
             {trend.value}
           </span>
         </div>
-      )}
+      ) : onClick ? (
+        <div className="mt-2 pt-1.5 border-t border-slate-100/60 text-[10px] text-slate-400 group-hover:text-brand-600 font-semibold flex items-center justify-between transition-colors">
+          <span>Open Module</span>
+          <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+        </div>
+      ) : null}
     </Card>
   );
 };

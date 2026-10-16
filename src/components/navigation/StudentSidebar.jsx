@@ -32,6 +32,9 @@ export const StudentSidebar = ({
   setActiveTab,
   activeSection,
   setActiveSection,
+  onNavigate,
+  testCenterSubTab = 'overview',
+  resumeSubTab = 'builder',
   studentData,
   hasProfile,
   readinessScore,
@@ -61,14 +64,18 @@ export const StudentSidebar = ({
     : (readinessScore || 0);
 
   const handleNavClick = (tab, section = null) => {
-    setActiveTab(tab);
-    if (section && setActiveSection) {
-      setActiveSection(section);
+    if (onNavigate) {
+      onNavigate(tab, section);
+    } else {
+      setActiveTab(tab);
+      if (section && setActiveSection) {
+        setActiveSection(section);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     if (mobileOpen) {
       setMobileOpen(false);
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navItemClass = (isActive) =>
@@ -281,7 +288,7 @@ export const StudentSidebar = ({
             <button
               type="button"
               onClick={() => {
-                handleNavClick('assessments');
+                handleNavClick('assessments', 'overview');
                 if (!isCollapsed) setAssessmentsSubmenuOpen(!assessmentsSubmenuOpen);
               }}
               className={navItemClass(activeTab === 'assessments' || activeTab === 'technical' || activeTab === 'aptitude' || activeTab === 'interview' || activeTab === 'appearance')}
@@ -305,8 +312,8 @@ export const StudentSidebar = ({
               <div className="pl-5 pr-1 mt-1 space-y-0.5 border-l border-slate-800 ml-4 animate-fade-in">
                 <button
                   type="button"
-                  onClick={() => handleNavClick('technical')}
-                  className={subNavItemClass(activeTab === 'technical')}
+                  onClick={() => handleNavClick('assessments', 'technical')}
+                  className={subNavItemClass(activeTab === 'technical' || (['tests', 'assessments'].includes(activeTab) && testCenterSubTab === 'technical'))}
                 >
                   <Cpu className="w-3.5 h-3.5 text-blue-400" />
                   <span className="flex-1 text-left truncate">Technical Skill Test</span>
@@ -319,8 +326,8 @@ export const StudentSidebar = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNavClick('aptitude')}
-                  className={subNavItemClass(activeTab === 'aptitude')}
+                  onClick={() => handleNavClick('assessments', 'aptitude')}
+                  className={subNavItemClass(activeTab === 'aptitude' || (['tests', 'assessments'].includes(activeTab) && testCenterSubTab === 'aptitude'))}
                 >
                   <Brain className="w-3.5 h-3.5 text-indigo-400" />
                   <span className="flex-1 text-left truncate">Aptitude & Reasoning</span>
@@ -333,8 +340,8 @@ export const StudentSidebar = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNavClick('interview')}
-                  className={subNavItemClass(activeTab === 'interview')}
+                  onClick={() => handleNavClick('assessments', 'interview')}
+                  className={subNavItemClass(activeTab === 'interview' || (['tests', 'assessments'].includes(activeTab) && testCenterSubTab === 'interview'))}
                 >
                   <Mic className="w-3.5 h-3.5 text-purple-400" />
                   <span className="flex-1 text-left truncate">Mock Interview</span>
@@ -347,8 +354,8 @@ export const StudentSidebar = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNavClick('appearance')}
-                  className={subNavItemClass(activeTab === 'appearance')}
+                  onClick={() => handleNavClick('assessments', 'appearance')}
+                  className={subNavItemClass(activeTab === 'appearance' || (['tests', 'assessments'].includes(activeTab) && testCenterSubTab === 'appearance'))}
                 >
                   <Camera className="w-3.5 h-3.5 text-pink-400" />
                   <span className="flex-1 text-left truncate">Posture & Attire</span>
@@ -374,7 +381,7 @@ export const StudentSidebar = ({
             <button
               type="button"
               onClick={() => {
-                handleNavClick('resume');
+                handleNavClick('resume', 'builder');
                 if (!isCollapsed) setResumeSubmenuOpen(!resumeSubmenuOpen);
               }}
               className={navItemClass(activeTab === 'resume' || activeTab === 'resume-builder' || activeTab === 'resume-analyzer')}
@@ -397,8 +404,8 @@ export const StudentSidebar = ({
               <div className="pl-5 pr-1 mt-1 space-y-0.5 border-l border-slate-800 ml-4 animate-fade-in">
                 <button
                   type="button"
-                  onClick={() => handleNavClick('resume-builder')}
-                  className={subNavItemClass(activeTab === 'resume-builder')}
+                  onClick={() => handleNavClick('resume', 'builder')}
+                  className={subNavItemClass(activeTab === 'resume-builder' || (activeTab === 'resume' && resumeSubTab === 'builder'))}
                 >
                   <FileText className="w-3.5 h-3.5 text-emerald-400" />
                   <span className="flex-1 text-left truncate">ATS Resume PDF</span>
@@ -406,8 +413,8 @@ export const StudentSidebar = ({
 
                 <button
                   type="button"
-                  onClick={() => handleNavClick('resume-analyzer')}
-                  className={subNavItemClass(activeTab === 'resume-analyzer')}
+                  onClick={() => handleNavClick('resume', 'analyzer')}
+                  className={subNavItemClass(activeTab === 'resume-analyzer' || (activeTab === 'resume' && resumeSubTab === 'analyzer'))}
                 >
                   <Search className="w-3.5 h-3.5 text-teal-400" />
                   <span className="flex-1 text-left truncate">AI Keyword Gap</span>
