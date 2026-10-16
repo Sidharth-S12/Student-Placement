@@ -85,31 +85,31 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
       {/* 2. Questions Attempted, Correct, Incorrect Summary */}
       <div className="grid grid-cols-3 gap-4">
         {/* Questions Attempted */}
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 text-center space-y-1 shadow-sm">
-          <div className="text-3xl font-black text-slate-900">{effectiveAttempted}</div>
-          <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Questions Attempted</div>
+        <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-1 shadow-lg backdrop-blur-sm">
+          <div className="text-3xl font-black text-white">{effectiveAttempted}</div>
+          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Questions Attempted</div>
         </div>
 
         {/* Correct Answers */}
-        <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-1 shadow-sm">
-          <div className="text-3xl font-black text-emerald-700">{effectiveCorrect}</div>
-          <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Correct Answers</div>
+        <div className="p-5 rounded-2xl bg-emerald-950/30 border border-emerald-800/50 text-center space-y-1 shadow-lg backdrop-blur-sm">
+          <div className="text-3xl font-black text-emerald-400">{effectiveCorrect}</div>
+          <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Correct Answers</div>
         </div>
 
         {/* Incorrect Answers */}
-        <div className="p-5 rounded-2xl bg-red-50 border border-red-200 text-center space-y-1 shadow-sm">
-          <div className="text-3xl font-black text-red-700">{effectiveIncorrect}</div>
-          <div className="text-xs font-bold text-red-800 uppercase tracking-wider">Incorrect Answers</div>
+        <div className="p-5 rounded-2xl bg-rose-950/30 border border-rose-800/50 text-center space-y-1 shadow-lg backdrop-blur-sm">
+          <div className="text-3xl font-black text-rose-400">{effectiveIncorrect}</div>
+          <div className="text-xs font-bold text-rose-400 uppercase tracking-wider">Incorrect Answers</div>
         </div>
       </div>
 
       {/* 3. SKILLS ASSESSED */}
       {skillsAssessed && skillsAssessed.length > 0 && (
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
+        <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-2.5 backdrop-blur-sm">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Skills Assessed</div>
           <div className="flex flex-wrap gap-2">
             {skillsAssessed.map((skill, idx) => (
-              <span key={idx} className="px-3 py-1 rounded-lg bg-brand-50 text-brand-700 font-bold text-xs border border-brand-200">
+              <span key={idx} className="px-3 py-1 rounded-lg bg-brand-950/60 text-brand-300 font-bold text-xs border border-brand-800/60">
                 {skill}
               </span>
             ))}
@@ -118,13 +118,13 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
       )}
 
       {/* 4. SKILL-WISE PERFORMANCE BREAKDOWN */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4 backdrop-blur-sm">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
-            <Cpu className="w-5 h-5 text-brand-600" />
-            <h3 className="font-extrabold text-slate-900 text-base">Skill-Wise Performance</h3>
+            <Cpu className="w-5 h-5 text-brand-400" />
+            <h3 className="font-extrabold text-white text-base">Skill-Wise Performance</h3>
           </div>
-          <span className="text-xs text-slate-500 font-medium">Profile Skills Evaluated</span>
+          <span className="text-xs text-slate-400 font-medium">Profile Skills Evaluated</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -134,24 +134,24 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
             const status = data.status || (score >= 75 ? 'Strong' : score >= 50 ? 'Average' : 'Needs Improvement');
 
             const statusColors = {
-              'Strong': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-              'Average': 'bg-amber-50 text-amber-700 border-amber-200',
-              'Needs Improvement': 'bg-red-50 text-red-700 border-red-200'
+              'Strong': 'bg-emerald-950/60 text-emerald-300 border-emerald-800/60',
+              'Average': 'bg-amber-950/60 text-amber-300 border-amber-800/60',
+              'Needs Improvement': 'bg-rose-950/60 text-rose-300 border-rose-800/60'
             };
 
             return (
-              <div key={skill} className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between space-x-3">
+              <div key={skill} className="p-4 rounded-xl bg-slate-850/80 border border-slate-800 flex items-center justify-between space-x-3">
                 <div className="space-y-1">
-                  <div className="font-extrabold text-slate-900 text-sm">
+                  <div className="font-extrabold text-white text-sm">
                     {skill}
                   </div>
-                  <div className="text-xs text-slate-500">
-                    {data.correctAnswers || 0} / {data.questionsAttempted || 0} correct • Level: <span className="font-semibold text-slate-700">{data.currentDifficulty || 'EASY'}</span>
+                  <div className="text-xs text-slate-400">
+                    {data.correctAnswers || 0} / {data.questionsAttempted || 0} correct • Level: <span className="font-semibold text-slate-300">{data.currentDifficulty || 'EASY'}</span>
                   </div>
                 </div>
 
                 <div className="text-right space-y-1">
-                  <div className="text-lg font-black text-brand-700">{score}%</div>
+                  <div className="text-lg font-black text-brand-400">{score}%</div>
                   <span className={`inline-block px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase ${statusColors[status] || statusColors['Average']}`}>
                     {status}
                   </span>
@@ -164,22 +164,22 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
 
       {/* 5. TOPIC-WISE PERFORMANCE */}
       {topicPerformance && Object.keys(topicPerformance).length > 0 && (
-        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
-            <BarChart3 className="w-5 h-5 text-indigo-600" />
-            <h3 className="font-extrabold text-slate-900 text-base">Topic-Wise Breakdown</h3>
+        <div className="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4 backdrop-blur-sm">
+          <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
+            <BarChart3 className="w-5 h-5 text-indigo-400" />
+            <h3 className="font-extrabold text-white text-base">Topic-Wise Breakdown</h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {Object.keys(topicPerformance).map(topic => {
               const item = topicPerformance[topic];
               return (
-                <div key={topic} className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center text-xs">
+                <div key={topic} className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 flex justify-between items-center text-xs">
                   <div>
-                    <div className="font-bold text-slate-800">{topic}</div>
+                    <div className="font-bold text-slate-200">{topic}</div>
                     <div className="text-[11px] text-slate-400">{item.skill} ({item.correct}/{item.attempts} correct)</div>
                   </div>
-                  <span className="font-mono font-bold text-brand-700">{item.accuracy}%</span>
+                  <span className="font-mono font-bold text-brand-400">{item.accuracy}%</span>
                 </div>
               );
             })}
@@ -190,41 +190,41 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
       {/* 6. STRENGTHS & AREAS FOR IMPROVEMENT */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Strengths */}
-        <div className="bg-emerald-50/50 rounded-2xl p-5 border border-emerald-200 space-y-3">
-          <div className="flex items-center space-x-2 text-emerald-800 font-extrabold text-sm">
-            <CheckCircle className="w-4 h-4 text-emerald-600" />
+        <div className="bg-emerald-950/20 rounded-2xl p-5 border border-emerald-800/40 space-y-3 backdrop-blur-sm">
+          <div className="flex items-center space-x-2 text-emerald-400 font-extrabold text-sm">
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
             <span>Identified Strengths</span>
           </div>
-          <ul className="space-y-2 text-xs text-slate-700">
+          <ul className="space-y-2 text-xs text-slate-300">
             {strengths && strengths.length > 0 ? (
               strengths.map((str, idx) => (
                 <li key={idx} className="flex items-start space-x-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 flex-shrink-0" />
                   <span>{str}</span>
                 </li>
               ))
             ) : (
-              <li className="text-slate-400 italic">No specific strengths identified yet.</li>
+              <li className="text-slate-500 italic">No specific strengths identified yet.</li>
             )}
           </ul>
         </div>
 
         {/* Areas for Improvement */}
-        <div className="bg-amber-50/50 rounded-2xl p-5 border border-amber-200 space-y-3">
-          <div className="flex items-center space-x-2 text-amber-800 font-extrabold text-sm">
-            <Target className="w-4 h-4 text-amber-600" />
+        <div className="bg-amber-950/20 rounded-2xl p-5 border border-amber-800/40 space-y-3 backdrop-blur-sm">
+          <div className="flex items-center space-x-2 text-amber-400 font-extrabold text-sm">
+            <Target className="w-4 h-4 text-amber-400" />
             <span>Areas for Improvement</span>
           </div>
-          <ul className="space-y-2 text-xs text-slate-700">
+          <ul className="space-y-2 text-xs text-slate-300">
             {areasForImprovement && areasForImprovement.length > 0 ? (
               areasForImprovement.map((area, idx) => (
                 <li key={idx} className="flex items-start space-x-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 flex-shrink-0" />
                   <span>{area}</span>
                 </li>
               ))
             ) : (
-              <li className="text-slate-400 italic">Consistent performance across all tested domains.</li>
+              <li className="text-slate-500 italic">Consistent performance across all tested domains.</li>
             )}
           </ul>
         </div>
@@ -232,22 +232,22 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
 
       {/* Aptitude Module Notice Modal / Banner */}
       {showAptitudeNotice && (
-        <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs sm:text-sm space-y-1 animate-fade-in">
+        <div className="p-4 rounded-xl bg-indigo-950/40 border border-indigo-800/60 text-indigo-200 text-xs sm:text-sm space-y-1 animate-fade-in">
           <div className="font-bold flex items-center space-x-2">
-            <Sparkles className="w-4 h-4 text-indigo-600" />
+            <Sparkles className="w-4 h-4 text-indigo-400" />
             <span>Aptitude & Communication Modules Coming Soon!</span>
           </div>
-          <p className="text-slate-600">
+          <p className="text-slate-400">
             Technical Assessment is active. Your technical score has been registered for Placement Readiness calculations.
           </p>
         </div>
       )}
 
       {/* Bottom Action Controls */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
         <button
           onClick={handleAptitudeClick}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm border border-slate-300 transition-colors flex items-center justify-center space-x-2"
+          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold text-xs sm:text-sm border border-slate-700 transition-colors flex items-center justify-center space-x-2"
         >
           <span>Continue to Aptitude Assessment</span>
           <ArrowRight className="w-4 h-4 text-slate-400" />
@@ -255,7 +255,7 @@ export const AssessmentResultView = ({ summaryData, onReturnToDashboard }) => {
 
         <button
           onClick={onReturnToDashboard}
-          className="w-full sm:w-auto px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-brand-600/30 transition-all hover:scale-105 flex items-center justify-center space-x-2"
+          className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-brand-500/25 transition-all hover:scale-105 flex items-center justify-center space-x-2"
         >
           <RotateCcw className="w-4 h-4" />
           <span>Return to Placement Dashboard</span>

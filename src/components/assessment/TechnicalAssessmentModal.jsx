@@ -163,13 +163,13 @@ export const TechnicalAssessmentModal = ({
   const totalQ = session?.totalQuestions || 15;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fade-in">
-      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+      <div className="bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col max-h-[92vh] text-slate-100">
         
         {/* Top Assessment Header */}
         <header className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between border-b border-slate-800">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-600/30">
               <Cpu className="w-4 h-4" />
             </div>
             <div>
@@ -180,7 +180,7 @@ export const TechnicalAssessmentModal = ({
 
           {/* Live Score Display */}
           {session && !summaryData && (
-            <div className="hidden sm:flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+            <div className="hidden sm:flex items-center space-x-2 bg-slate-850/80 px-3 py-1.5 rounded-xl border border-slate-700/80">
               <Target className="w-4 h-4 text-brand-400" />
               <span className="text-xs text-slate-300 font-medium">Technical Score:</span>
               <span className="text-sm font-black text-white">{liveScore}%</span>
@@ -196,29 +196,29 @@ export const TechnicalAssessmentModal = ({
         </header>
 
         {/* Modal Main Body */}
-        <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
+        <div className="p-6 overflow-y-auto flex-1 bg-slate-950/40">
           
           {/* Error View on Session Initialization */}
           {errorMessage && (
             <div className="max-w-xl mx-auto py-10 space-y-4 text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 rounded-full bg-amber-950/40 border border-amber-800/40 text-amber-400 flex items-center justify-center mx-auto">
                 <AlertCircle className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">Assessment Initialization</h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-lg font-bold text-white">Assessment Initialization</h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 {errorMessage}
               </p>
               <div className="pt-2 flex justify-center space-x-3">
                 <button
                   onClick={initializeAssessment}
-                  className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md flex items-center space-x-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-brand-600/30 flex items-center space-x-1.5"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                   <span>Retry</span>
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs"
+                  className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 font-bold text-xs"
                 >
                   Close
                 </button>
@@ -229,15 +229,15 @@ export const TechnicalAssessmentModal = ({
           {/* Initial Session Loading State */}
           {isLoadingSession && !errorMessage && (
             <div className="max-w-lg mx-auto py-16 text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center mx-auto shadow-inner border border-brand-100 animate-pulse">
+              <div className="w-14 h-14 rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center mx-auto shadow-inner border border-brand-500/30 animate-pulse">
                 <Loader2 className="w-7 h-7 animate-spin" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-base font-extrabold text-slate-900">
+                <h3 className="text-base font-extrabold text-white">
                   Generating Question 1...
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Groq AI is dynamically generating a personalized question based on your verified skills and EASY difficulty target.
+                <p className="text-xs text-slate-400">
+                  Groq AI is dynamically generating a personalized question based on your verified skills and target difficulty.
                 </p>
               </div>
             </div>
@@ -246,14 +246,14 @@ export const TechnicalAssessmentModal = ({
           {/* Generating Next Question Loading State */}
           {isGeneratingNext && !errorMessage && (
             <div className="max-w-lg mx-auto py-16 text-center space-y-4 animate-fade-in">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto shadow-inner border border-indigo-100 animate-pulse">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center mx-auto shadow-inner border border-indigo-500/30 animate-pulse">
                 <Loader2 className="w-7 h-7 animate-spin" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-base font-extrabold text-slate-900">
+                <h3 className="text-base font-extrabold text-white">
                   Generating your next question...
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-400">
                   Preparing a question based on your skills and performance.
                 </p>
               </div>
@@ -265,24 +265,24 @@ export const TechnicalAssessmentModal = ({
             <div className="space-y-6 max-w-3xl mx-auto">
               
               {/* Progress Indicator & Badges */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+              <div className="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 shadow-xl space-y-3 backdrop-blur-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <div className="font-extrabold text-slate-900 flex items-center space-x-2">
+                  <div className="font-extrabold text-white flex items-center space-x-2">
                     <span>Question {currentQNum} of {totalQ}</span>
-                    <span className="sm:hidden font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">
+                    <span className="sm:hidden font-bold text-brand-300 bg-brand-500/15 border border-brand-500/30 px-2 py-0.5 rounded-md">
                       Score: {liveScore}%
                     </span>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     {/* Skill Badge */}
-                    <span className="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-700 font-bold border border-brand-200">
+                    <span className="px-2.5 py-1 rounded-lg bg-brand-500/15 text-brand-300 font-bold border border-brand-500/30">
                       Skill: {currentQuestion.skill}
                     </span>
 
                     {/* Topic Badge */}
                     {currentQuestion.topic && (
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-semibold border border-slate-200">
+                      <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-semibold border border-slate-700">
                         Topic: {currentQuestion.topic}
                       </span>
                     )}
@@ -290,10 +290,10 @@ export const TechnicalAssessmentModal = ({
                     {/* Difficulty Badge */}
                     <span className={`px-2.5 py-1 rounded-lg font-bold uppercase border ${
                       currentQuestion.difficulty === 'HARD'
-                        ? 'bg-red-50 text-red-700 border-red-200'
+                        ? 'bg-rose-950/40 text-rose-300 border-rose-800/40'
                         : currentQuestion.difficulty === 'MEDIUM'
-                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                        : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        ? 'bg-amber-950/40 text-amber-300 border-amber-800/40'
+                        : 'bg-emerald-950/40 text-emerald-300 border-emerald-800/40'
                     }`}>
                       {currentQuestion.difficulty}
                     </span>
@@ -301,9 +301,9 @@ export const TechnicalAssessmentModal = ({
                 </div>
 
                 {/* Progress Bar */}
-                <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                   <div
-                    className="h-full bg-brand-600 transition-all duration-300 rounded-full"
+                    className="h-full bg-gradient-to-r from-brand-500 to-indigo-500 transition-all duration-300 rounded-full"
                     style={{
                       width: `${(currentQNum / totalQ) * 100}%`
                     }}
@@ -311,17 +311,17 @@ export const TechnicalAssessmentModal = ({
                 </div>
               </div>
 
-              {/* Next Question Generation Error Banner (preserves session & score) */}
+              {/* Next Question Generation Error Banner */}
               {nextQuestionError && (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-3 text-xs sm:text-sm text-amber-900 animate-fade-in">
+                <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/40 flex items-center justify-between gap-3 text-xs sm:text-sm text-amber-200 animate-fade-in">
                   <div className="flex items-center space-x-2.5">
-                    <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
                     <span>{nextQuestionError}</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleNextQuestion}
-                    className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs flex items-center space-x-1"
+                    className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-xs flex items-center space-x-1"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     <span>Retry</span>
@@ -330,7 +330,7 @@ export const TechnicalAssessmentModal = ({
               )}
 
               {/* Question View (MCQ / Coding) */}
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-card">
+              <div className="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 shadow-xl backdrop-blur-sm">
                 {currentQuestion.type === 'mcq' ? (
                   <MCQQuestionView
                     question={currentQuestion}
