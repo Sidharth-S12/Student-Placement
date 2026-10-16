@@ -98,18 +98,24 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
     sendPasswordReset
   } = useAuth();
 
+  // Active portal role state (persisted and user-switchable)
+  const [activeRoleKey, setActiveRoleKey] = useState(() => {
+    if (initialRole && PORTAL_CONFIG[initialRole]) return initialRole;
+    if (selectedRole && PORTAL_CONFIG[selectedRole]) return selectedRole;
+    return 'student';
+  });
+
   const [mode, setMode] = useState(initialMode || 'login'); // 'login' | 'register'
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Sync only when initialRole prop from parent explicitly updates
   React.useEffect(() => {
     if (initialRole && PORTAL_CONFIG[initialRole]) {
+      setActiveRoleKey(initialRole);
       setSelectedRole(initialRole);
-    } else if (!selectedRole) {
-      // Default to student if no preference set yet
-      setSelectedRole('student');
     }
-  }, [initialRole, selectedRole, setSelectedRole]);
+  }, [initialRole]);
 
   React.useEffect(() => {
     if (initialMode) {
@@ -136,7 +142,6 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
   const [resetSentSuccess, setResetSentSuccess] = useState(false);
   const [resetError, setResetError] = useState(null);
 
-  const activeRoleKey = selectedRole || 'student';
   const currentPortal = PORTAL_CONFIG[activeRoleKey] || PORTAL_CONFIG.student;
 
   const handleInputChange = (field, value) => {
@@ -146,6 +151,7 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
   };
 
   const handleSwitchPortal = (roleKey) => {
+    setActiveRoleKey(roleKey);
     setSelectedRole(roleKey);
     setErrorMessage(null);
     setRoleMismatch(null);

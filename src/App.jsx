@@ -246,12 +246,13 @@ const MainAppContent = () => {
     if (!showAuth && !isAdminPath) {
       return (
         <LandingPage
-          onGetStarted={() => {
-            setAuthRolePref('student');
+          onGetStarted={(role = 'student') => {
+            setAuthRolePref(role);
             setAuthModePref('register');
             setShowAuth(true);
           }}
-          onSignIn={() => {
+          onSignIn={(role = 'student') => {
+            setAuthRolePref(role);
             setAuthModePref('login');
             setShowAuth(true);
           }}

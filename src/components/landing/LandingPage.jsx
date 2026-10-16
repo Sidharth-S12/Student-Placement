@@ -605,7 +605,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </div>
 
               <button
-                onClick={onGetStarted}
+                onClick={() => onSignIn ? onSignIn('student') : onGetStarted()}
                 className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-colors"
               >
                 Access Student Portal
@@ -645,7 +645,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </div>
 
               <button
-                onClick={onSignIn}
+                onClick={() => onSignIn('company')}
                 className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-colors"
               >
                 Recruiter Portal Sign In
@@ -685,7 +685,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </div>
 
               <button
-                onClick={onSignIn}
+                onClick={() => onSignIn('admin')}
                 className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-bold text-xs border border-slate-700 transition-colors"
               >
                 Placement Officer Sign In
