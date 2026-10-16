@@ -157,17 +157,17 @@ export const SinglePageDashboard = () => {
 
   if (profileLoading && !studentData) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-4">
         <div className="text-center space-y-4 max-w-sm">
-          <div className="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center mx-auto shadow-sm animate-pulse">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-purple-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-600/30 animate-pulse">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h2 className="font-extrabold text-base text-slate-900 font-display">Placement Genie</h2>
-            <p className="text-xs text-slate-500">Loading student profile...</p>
+            <h2 className="font-extrabold text-base text-white font-display">Placement Genie</h2>
+            <p className="text-xs text-slate-400">Loading student profile...</p>
           </div>
           <div className="pt-2">
-            <Loader2 className="w-5 h-5 text-brand-600 animate-spin mx-auto" />
+            <Loader2 className="w-5 h-5 text-brand-400 animate-spin mx-auto" />
           </div>
         </div>
       </div>
@@ -178,7 +178,7 @@ export const SinglePageDashboard = () => {
   // 1. REFINED PROFILE HEADER (Hero Banner)
   // =========================================================================
   const renderProfileHeader = (compact = false) => (
-    <Card className="p-6 relative overflow-hidden animate-fade-in border-slate-200/80">
+    <Card className="p-6 relative overflow-hidden animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         
         {/* Avatar & Info */}
@@ -187,7 +187,7 @@ export const SinglePageDashboard = () => {
             <img
               src={personalInfo.profilePhoto || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5'><circle cx='12' cy='7' r='4'/><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/></svg>"}
               alt={personalInfo.fullName || 'Student'}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-2 ring-slate-100 border border-slate-200/80 shadow-subtle"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-2 ring-slate-700/80 border border-slate-800 shadow-md"
             />
 
             <input
@@ -201,7 +201,7 @@ export const SinglePageDashboard = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               title="Change profile photo"
-              className="absolute -bottom-1 -right-1 bg-slate-900 hover:bg-slate-800 text-white p-1.5 rounded-xl shadow-sm transition-transform hover:scale-105"
+              className="absolute -bottom-1 -right-1 bg-slate-800 hover:bg-slate-700 text-white p-1.5 rounded-xl border border-slate-700 shadow-sm transition-transform hover:scale-105"
             >
               <Camera className="w-3.5 h-3.5" />
             </button>
@@ -209,7 +209,7 @@ export const SinglePageDashboard = () => {
 
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-display">
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
                 {personalInfo.fullName || 'Welcome, Student'}
               </h1>
               {hasProfile ? (
@@ -223,16 +223,16 @@ export const SinglePageDashboard = () => {
               )}
             </div>
 
-            <p className="text-xs sm:text-sm font-semibold text-brand-700">
+            <p className="text-xs sm:text-sm font-semibold text-brand-400">
               {education.degree || 'Degree'} {education.branch ? `in ${education.branch}` : ''} {education.graduationYear ? `• Class of ${education.graduationYear}` : ''}
             </p>
 
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-slate-400 font-medium">
               {education.college || 'Campus Placement Candidate'}
             </p>
 
             {!compact && personalInfo.summary && (
-              <p className="text-xs text-slate-600 leading-relaxed max-w-2xl pt-1">
+              <p className="text-xs text-slate-300 leading-relaxed max-w-2xl pt-1">
                 {personalInfo.summary}
               </p>
             )}
@@ -321,12 +321,12 @@ export const SinglePageDashboard = () => {
   const renderRecommendedAction = () => {
     if (!hasProfile) {
       return (
-        <Card className="p-5 bg-gradient-to-r from-brand-50 to-indigo-50 border-brand-200/80 card-hover-lift">
+        <Card className="p-5 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 border-slate-800 text-white card-hover-lift">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <Badge variant="primary" dot>Next Step</Badge>
-              <h3 className="font-extrabold text-slate-900 text-sm">Complete Your Placement Profile</h3>
-              <p className="text-xs text-slate-600 leading-relaxed max-w-xl">
+              <h3 className="font-extrabold text-white text-sm">Complete Your Placement Profile</h3>
+              <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
                 Add your degree details, technical skills, and software projects to generate ATS resumes and match with recruiters.
               </p>
             </div>
@@ -391,7 +391,7 @@ export const SinglePageDashboard = () => {
   const renderQuickToolsGrid = () => (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">Placement Preparation Tools</h3>
+        <h3 className="text-sm font-extrabold text-white tracking-tight font-display">Placement Preparation Tools</h3>
         <span className="text-xs text-slate-400">All tools integrated</span>
       </div>
 
@@ -403,11 +403,11 @@ export const SinglePageDashboard = () => {
           onClick={() => navigateTo('resume', 'builder')}
         >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <FileText className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors">ATS Resume Studio</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h4 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">ATS Resume Studio</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Format and preview your ATS-ready single-page resume with clean recruiter templates.
             </p>
           </div>
@@ -433,11 +433,11 @@ export const SinglePageDashboard = () => {
           onClick={() => navigateTo('resume', 'analyzer')}
         >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-brand-500/15 text-brand-400 border border-brand-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Search className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm group-hover:text-brand-700 transition-colors">AI Resume Analyzer</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h4 className="font-bold text-white text-sm group-hover:text-brand-400 transition-colors">AI Resume Analyzer</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Upload existing resume PDF/DOCX to uncover missing keywords against target job roles.
             </p>
           </div>
@@ -463,11 +463,11 @@ export const SinglePageDashboard = () => {
           onClick={() => navigateTo('roadmap')}
         >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Map className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm group-hover:text-indigo-700 transition-colors">Career Roadmap</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h4 className="font-bold text-white text-sm group-hover:text-indigo-400 transition-colors">Career Roadmap</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Personalized weekly learning milestones and topic quizzes tailored to your career goal.
             </p>
           </div>
@@ -493,11 +493,11 @@ export const SinglePageDashboard = () => {
           onClick={() => navigateTo('tests', 'appearance')}
         >
           <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Camera className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-sm group-hover:text-purple-700 transition-colors">Appearance & Posture</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h4 className="font-bold text-white text-sm group-hover:text-purple-400 transition-colors">Appearance & Posture</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Inspect video posture alignment, head leveling, and interview attire using AI vision.
             </p>
           </div>
@@ -523,22 +523,22 @@ export const SinglePageDashboard = () => {
   // 5. TECHNICAL ASSESSMENT REPORT
   // =========================================================================
   const renderTechnicalReport = () => (
-    <Card id="technical-report" className="p-6 space-y-5 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+    <Card id="technical-report" className="p-6 space-y-5 animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 text-brand-600 flex items-center justify-center shadow-subtle">
+          <div className="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 border border-brand-500/30 flex items-center justify-center shadow-subtle">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+              <h3 className="font-extrabold text-white text-sm sm:text-base">
                 Technical Assessment Report
               </h3>
               <Badge variant={latestAssessment ? "emerald" : "neutral"} dot={!!latestAssessment}>
                 {latestAssessment ? 'Completed' : 'Not Attempted'}
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5">
               Evaluated via Adaptive AI question generation and automated test cases
             </p>
           </div>
@@ -556,26 +556,26 @@ export const SinglePageDashboard = () => {
 
       {latestAssessment ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 text-center">
+          <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800 text-center">
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Score</div>
-            <div className="text-2xl font-black text-slate-900 mt-0.5">{latestAssessment.technicalScore}%</div>
+            <div className="text-2xl font-black text-white mt-0.5">{latestAssessment.technicalScore}%</div>
           </div>
-          <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/70 text-center">
-            <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Correct</div>
-            <div className="text-2xl font-black text-emerald-800 mt-0.5">
+          <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-center">
+            <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Correct</div>
+            <div className="text-2xl font-black text-emerald-300 mt-0.5">
               {latestAssessment.correctAnswers !== undefined ? latestAssessment.correctAnswers : (latestAssessment.correctCount || 0)}
             </div>
           </div>
-          <div className="p-3.5 rounded-xl bg-rose-50/60 border border-rose-200/70 text-center">
-            <div className="text-[11px] font-bold text-rose-700 uppercase tracking-wider">Incorrect</div>
-            <div className="text-2xl font-black text-rose-800 mt-0.5">
+          <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-800/40 text-center">
+            <div className="text-[11px] font-bold text-rose-400 uppercase tracking-wider">Incorrect</div>
+            <div className="text-2xl font-black text-rose-300 mt-0.5">
               {latestAssessment.incorrectAnswers !== undefined ? latestAssessment.incorrectAnswers : (latestAssessment.incorrectCount || 0)}
             </div>
           </div>
         </div>
       ) : (
-        <div className="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2">
-          <p className="text-xs text-slate-500">You haven't completed the Technical Skill Assessment yet.</p>
+        <div className="text-center py-6 bg-slate-850/50 rounded-xl border border-dashed border-slate-800 space-y-2">
+          <p className="text-xs text-slate-400">You haven't completed the Technical Skill Assessment yet.</p>
           <Button variant="primary" size="sm" icon={Cpu} onClick={() => setIsAssessmentModalOpen(true)}>
             Launch Technical Test Now
           </Button>
@@ -588,22 +588,22 @@ export const SinglePageDashboard = () => {
   // 6. APTITUDE ASSESSMENT REPORT
   // =========================================================================
   const renderAptitudeReport = () => (
-    <Card id="aptitude-report" className="p-6 space-y-5 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+    <Card id="aptitude-report" className="p-6 space-y-5 animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-subtle">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 flex items-center justify-center shadow-subtle">
             <Brain className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+              <h3 className="font-extrabold text-white text-sm sm:text-base">
                 Placement Aptitude & Reasoning Report
               </h3>
               <Badge variant={latestAptitudeAssessment ? "indigo" : "neutral"} dot={!!latestAptitudeAssessment}>
                 {latestAptitudeAssessment ? 'Completed' : 'Not Attempted'}
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5">
               20-Question Aptitude Battery (Quant, Logical, Verbal Reasoning)
             </p>
           </div>
@@ -622,32 +622,32 @@ export const SinglePageDashboard = () => {
       {latestAptitudeAssessment ? (
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 text-center">
+            <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800 text-center">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Aptitude Score</div>
-              <div className="text-2xl font-black text-indigo-900 mt-0.5">
+              <div className="text-2xl font-black text-indigo-400 mt-0.5">
                 {latestAptitudeAssessment.finalScore ?? latestAptitudeAssessment.score}%
               </div>
             </div>
-            <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200/70 text-center">
-              <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Correct Answers</div>
-              <div className="text-2xl font-black text-emerald-800 mt-0.5">
+            <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-center">
+              <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Correct Answers</div>
+              <div className="text-2xl font-black text-emerald-300 mt-0.5">
                 {latestAptitudeAssessment.correctAnswers ?? 0}/20
               </div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 text-center">
+            <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800 text-center">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Duration</div>
-              <div className="text-2xl font-black text-slate-800 mt-0.5">20 Mins</div>
+              <div className="text-2xl font-black text-white mt-0.5">20 Mins</div>
             </div>
           </div>
 
           {latestAptitudeAssessment.domains && (
-            <div className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-2.5">
-              <div className="text-xs font-bold text-slate-700">Domain Performance Breakdown</div>
+            <div className="p-4 rounded-xl bg-slate-850/80 border border-slate-800 space-y-2.5">
+              <div className="text-xs font-bold text-slate-300">Domain Performance Breakdown</div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                 {Object.entries(latestAptitudeAssessment.domains).map(([domain, data]) => (
-                  <div key={domain} className="bg-white p-3 rounded-xl border border-slate-200/80 space-y-1">
-                    <div className="text-[11px] font-medium text-slate-500 truncate">{domain}</div>
-                    <div className="text-sm font-extrabold text-slate-900">
+                  <div key={domain} className="bg-slate-800 p-3 rounded-xl border border-slate-700/80 space-y-1">
+                    <div className="text-[11px] font-medium text-slate-400 truncate">{domain}</div>
+                    <div className="text-sm font-extrabold text-white">
                       {typeof data === 'object' ? `${data.score || 0}%` : `${data}%`}
                     </div>
                   </div>
@@ -657,8 +657,8 @@ export const SinglePageDashboard = () => {
           )}
         </div>
       ) : (
-        <div className="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2">
-          <p className="text-xs text-slate-500">You haven't completed the Placement Aptitude Test yet.</p>
+        <div className="text-center py-6 bg-slate-850/50 rounded-xl border border-dashed border-slate-800 space-y-2">
+          <p className="text-xs text-slate-400">You haven't completed the Placement Aptitude Test yet.</p>
           <Button variant="primary" size="sm" icon={Brain} onClick={() => setIsAptitudeModalOpen(true)}>
             Launch Aptitude Test Now
           </Button>
@@ -671,22 +671,22 @@ export const SinglePageDashboard = () => {
   // 7. COMMUNICATION ASSESSMENT REPORT
   // =========================================================================
   const renderCommunicationReport = () => (
-    <Card id="communication-report" className="p-6 space-y-5 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+    <Card id="communication-report" className="p-6 space-y-5 animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shadow-subtle">
+          <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center shadow-subtle">
             <MessageSquare className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+              <h3 className="font-extrabold text-white text-sm sm:text-base">
                 Interview & Communication Report
               </h3>
               <Badge variant={latestCommunicationAssessment ? "purple" : "neutral"} dot={!!latestCommunicationAssessment}>
                 {latestCommunicationAssessment ? 'Completed' : 'Not Attempted'}
               </Badge>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5">
               Evaluated on Clarity, Fluency, Grammar, and STAR Response Delivery
             </p>
           </div>
@@ -715,27 +715,27 @@ export const SinglePageDashboard = () => {
       {latestCommunicationAssessment ? (
         <div className="space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div className="p-3.5 rounded-xl bg-purple-50/60 border border-purple-200/70">
-              <div className="text-[11px] font-bold text-purple-700 uppercase tracking-wider">Overall Score</div>
-              <div className="text-2xl font-black text-purple-950 mt-0.5">{latestCommunicationAssessment.finalScore}%</div>
+            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-800/40">
+              <div className="text-[11px] font-bold text-purple-400 uppercase tracking-wider">Overall Score</div>
+              <div className="text-2xl font-black text-purple-300 mt-0.5">{latestCommunicationAssessment.finalScore}%</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70">
+            <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Grammar</div>
-              <div className="text-2xl font-black text-slate-900 mt-0.5">{latestCommunicationAssessment.grammarScore || 85}%</div>
+              <div className="text-2xl font-black text-white mt-0.5">{latestCommunicationAssessment.grammarScore || 85}%</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70">
+            <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Fluency</div>
-              <div className="text-2xl font-black text-slate-900 mt-0.5">{latestCommunicationAssessment.fluencyScore || 80}%</div>
+              <div className="text-2xl font-black text-white mt-0.5">{latestCommunicationAssessment.fluencyScore || 80}%</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70">
+            <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Vocabulary</div>
-              <div className="text-2xl font-black text-slate-900 mt-0.5">{latestCommunicationAssessment.vocabularyScore || 88}%</div>
+              <div className="text-2xl font-black text-white mt-0.5">{latestCommunicationAssessment.vocabularyScore || 88}%</div>
             </div>
           </div>
         </div>
       ) : (
-        <div className="text-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2">
-          <p className="text-xs text-slate-500">You haven't completed the Communication & Interview Assessment yet.</p>
+        <div className="text-center py-6 bg-slate-850/50 rounded-xl border border-dashed border-slate-800 space-y-2">
+          <p className="text-xs text-slate-400">You haven't completed the Communication & Interview Assessment yet.</p>
           <div className="flex justify-center gap-2 pt-1">
             <Button
               variant="secondary"
@@ -766,11 +766,11 @@ export const SinglePageDashboard = () => {
     <div id="education-skills-section" className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
       
       {/* Education Summary */}
-      <Card id="academics" className="p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <Card id="academics" className="p-6 space-y-4 border-slate-800 bg-slate-900/90 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
-            <GraduationCap className="w-5 h-5 text-brand-600" />
-            <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">Education & Academics</h3>
+            <GraduationCap className="w-5 h-5 text-brand-400" />
+            <h3 className="font-extrabold text-white text-sm sm:text-base">Education & Academics</h3>
           </div>
           <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
             Edit
@@ -778,37 +778,37 @@ export const SinglePageDashboard = () => {
         </div>
 
         <div className="space-y-3 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1">
+          <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800 space-y-1">
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Degree & Branch</div>
-            <div className="font-extrabold text-slate-900 text-sm">
+            <div className="font-extrabold text-white text-sm">
               {education.degree || 'Degree Not Specified'} {education.branch ? `— ${education.branch}` : ''}
             </div>
-            <div className="text-slate-500">{education.college || 'College Not Specified'}</div>
+            <div className="text-slate-400">{education.college || 'College Not Specified'}</div>
           </div>
 
           <div className="grid grid-cols-3 gap-2.5 text-center">
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70">
+            <div className="p-3 rounded-xl bg-slate-850/80 border border-slate-800">
               <div className="text-[10px] font-bold text-slate-400 uppercase">CGPA</div>
-              <div className="text-base font-extrabold text-slate-900 mt-0.5">{education.cgpa || '—'}</div>
+              <div className="text-base font-extrabold text-white mt-0.5">{education.cgpa || '—'}</div>
             </div>
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70">
+            <div className="p-3 rounded-xl bg-slate-850/80 border border-slate-800">
               <div className="text-[10px] font-bold text-slate-400 uppercase">12th %</div>
-              <div className="text-base font-extrabold text-slate-900 mt-0.5">{education.twelfthPercentage ? `${education.twelfthPercentage}%` : '—'}</div>
+              <div className="text-base font-extrabold text-white mt-0.5">{education.twelfthPercentage ? `${education.twelfthPercentage}%` : '—'}</div>
             </div>
-            <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70">
+            <div className="p-3 rounded-xl bg-slate-850/80 border border-slate-800">
               <div className="text-[10px] font-bold text-slate-400 uppercase">10th %</div>
-              <div className="text-base font-extrabold text-slate-900 mt-0.5">{education.tenthPercentage ? `${education.tenthPercentage}%` : '—'}</div>
+              <div className="text-base font-extrabold text-white mt-0.5">{education.tenthPercentage ? `${education.tenthPercentage}%` : '—'}</div>
             </div>
           </div>
         </div>
       </Card>
 
       {/* Technical Skills */}
-      <Card id="skills" className="p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <Card id="skills" className="p-6 space-y-4 border-slate-800 bg-slate-900/90 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
-            <Code2 className="w-5 h-5 text-indigo-600" />
-            <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">Technical Skills</h3>
+            <Code2 className="w-5 h-5 text-indigo-400" />
+            <h3 className="font-extrabold text-white text-sm sm:text-base">Technical Skills</h3>
           </div>
           <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
             Edit
@@ -827,7 +827,7 @@ export const SinglePageDashboard = () => {
                   </Badge>
                 ))
               ) : (
-                <span className="text-slate-400 italic">None specified yet</span>
+                <span className="text-slate-500 italic">None specified yet</span>
               )}
             </div>
           </div>
@@ -843,7 +843,7 @@ export const SinglePageDashboard = () => {
                   </Badge>
                 ))
               ) : (
-                <span className="text-slate-400 italic">None specified yet</span>
+                <span className="text-slate-500 italic">None specified yet</span>
               )}
             </div>
           </div>
@@ -859,7 +859,7 @@ export const SinglePageDashboard = () => {
                   </Badge>
                 ))
               ) : (
-                <span className="text-slate-400 italic">None specified yet</span>
+                <span className="text-slate-500 italic">None specified yet</span>
               )}
             </div>
           </div>
@@ -873,11 +873,11 @@ export const SinglePageDashboard = () => {
   // 9. SOFTWARE PROJECTS SECTION
   // =========================================================================
   const renderProjects = () => (
-    <Card id="projects" className="p-6 space-y-4 animate-fade-in">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+    <Card id="projects" className="p-6 space-y-4 animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center space-x-2">
-          <FolderGit2 className="w-5 h-5 text-brand-600" />
-          <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">Software Projects ({projects.length})</h3>
+          <FolderGit2 className="w-5 h-5 text-brand-400" />
+          <h3 className="font-extrabold text-white text-sm sm:text-base">Software Projects ({projects.length})</h3>
         </div>
         <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
           Manage
@@ -886,14 +886,14 @@ export const SinglePageDashboard = () => {
 
       <div className="space-y-3">
         {projects.map((proj) => (
-          <div key={proj.id} className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-2">
+          <div key={proj.id} className="p-4 rounded-xl bg-slate-850/80 border border-slate-800 space-y-2">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h4 className="font-extrabold text-sm text-slate-900">{proj.title}</h4>
+                <h4 className="font-extrabold text-sm text-white">{proj.title}</h4>
                 {proj.technologies && (
                   <div className="flex flex-wrap gap-1 pt-1">
                     {proj.technologies.map((t, idx) => (
-                      <span key={idx} className="px-1.5 py-0.5 rounded bg-white text-slate-600 border border-slate-200 text-[10px] font-medium">
+                      <span key={idx} className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-medium">
                         {t}
                       </span>
                     ))}
@@ -902,25 +902,25 @@ export const SinglePageDashboard = () => {
               </div>
               <div className="flex items-center space-x-1 flex-shrink-0">
                 {proj.githubLink && (
-                  <a href={proj.githubLink} target="_blank" rel="noreferrer" className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-900">
+                  <a href={proj.githubLink} target="_blank" rel="noreferrer" className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
                     <Github className="w-4 h-4" />
                   </a>
                 )}
                 {proj.liveLink && (
-                  <a href={proj.liveLink} target="_blank" rel="noreferrer" className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-brand-600">
+                  <a href={proj.liveLink} target="_blank" rel="noreferrer" className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-brand-400 transition-colors">
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 )}
               </div>
             </div>
             {proj.description && (
-              <p className="text-xs text-slate-600 leading-relaxed">{proj.description}</p>
+              <p className="text-xs text-slate-300 leading-relaxed">{proj.description}</p>
             )}
           </div>
         ))}
 
         {projects.length === 0 && (
-          <div className="text-center py-6 text-slate-400 text-xs italic">
+          <div className="text-center py-6 text-slate-500 text-xs italic">
             No projects added yet. Click Manage to add your software projects.
           </div>
         )}
@@ -932,11 +932,11 @@ export const SinglePageDashboard = () => {
   // 10. WORK EXPERIENCE & INTERNSHIPS
   // =========================================================================
   const renderExperience = () => (
-    <Card id="experience" className="p-6 space-y-4 animate-fade-in">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+    <Card id="experience" className="p-6 space-y-4 animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
         <div className="flex items-center space-x-2">
-          <Briefcase className="w-5 h-5 text-indigo-600" />
-          <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">Work Experience & Internships ({experience.length})</h3>
+          <Briefcase className="w-5 h-5 text-indigo-400" />
+          <h3 className="font-extrabold text-white text-sm sm:text-base">Work Experience & Internships ({experience.length})</h3>
         </div>
         <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
           Manage
@@ -945,20 +945,20 @@ export const SinglePageDashboard = () => {
 
       <div className="space-y-3">
         {experience.map((exp) => (
-          <div key={exp.id} className="p-4 rounded-xl bg-slate-50/70 border border-slate-200/70 space-y-1.5">
+          <div key={exp.id} className="p-4 rounded-xl bg-slate-850/80 border border-slate-800 space-y-1.5">
             <div className="flex items-center justify-between">
-              <h4 className="font-extrabold text-sm text-slate-900">{exp.role}</h4>
+              <h4 className="font-extrabold text-sm text-white">{exp.role}</h4>
               <span className="text-[11px] text-slate-400 font-medium">{exp.duration}</span>
             </div>
-            <div className="text-xs font-semibold text-brand-700">{exp.company}</div>
+            <div className="text-xs font-semibold text-brand-400">{exp.company}</div>
             {exp.description && (
-              <p className="text-xs text-slate-600 leading-relaxed pt-1">{exp.description}</p>
+              <p className="text-xs text-slate-300 leading-relaxed pt-1">{exp.description}</p>
             )}
           </div>
         ))}
 
         {experience.length === 0 && (
-          <div className="text-center py-6 text-slate-400 text-xs italic">
+          <div className="text-center py-6 text-slate-500 text-xs italic">
             No work experience recorded yet.
           </div>
         )}
@@ -973,11 +973,11 @@ export const SinglePageDashboard = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
       
       {/* Certifications */}
-      <Card id="certifications" className="p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <Card id="certifications" className="p-6 space-y-4 border-slate-800 bg-slate-900/90 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
-            <Award className="w-5 h-5 text-amber-600" />
-            <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">Certifications ({certifications.length})</h3>
+            <Award className="w-5 h-5 text-amber-400" />
+            <h3 className="font-extrabold text-white text-sm sm:text-base">Certifications ({certifications.length})</h3>
           </div>
           <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
             Manage
@@ -986,13 +986,13 @@ export const SinglePageDashboard = () => {
 
         <div className="space-y-2 text-xs">
           {certifications.map((cert) => (
-            <div key={cert.id} className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70 flex items-center justify-between">
+            <div key={cert.id} className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 flex items-center justify-between">
               <div>
-                <span className="font-bold text-slate-900 block">{cert.name}</span>
-                <span className="text-slate-500 text-[11px]">{cert.issuer} {cert.date ? `• ${cert.date}` : ''}</span>
+                <span className="font-bold text-white block">{cert.name}</span>
+                <span className="text-slate-400 text-[11px]">{cert.issuer} {cert.date ? `• ${cert.date}` : ''}</span>
               </div>
               {cert.link && (
-                <a href={cert.link} target="_blank" rel="noreferrer" className="text-brand-600 hover:text-brand-700">
+                <a href={cert.link} target="_blank" rel="noreferrer" className="text-brand-400 hover:text-brand-300">
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
@@ -1000,7 +1000,7 @@ export const SinglePageDashboard = () => {
           ))}
 
           {certifications.length === 0 && (
-            <div className="text-center py-4 text-slate-400 text-xs italic">
+            <div className="text-center py-4 text-slate-500 text-xs italic">
               No certifications listed yet.
             </div>
           )}
@@ -1008,11 +1008,11 @@ export const SinglePageDashboard = () => {
       </Card>
 
       {/* Achievements */}
-      <Card id="achievements" className="p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <Card id="achievements" className="p-6 space-y-4 border-slate-800 bg-slate-900/90 shadow-xl">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center space-x-2">
-            <Star className="w-5 h-5 text-amber-500" />
-            <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">Achievements & Honors ({achievements.length})</h3>
+            <Star className="w-5 h-5 text-amber-400" />
+            <h3 className="font-extrabold text-white text-sm sm:text-base">Achievements & Honors ({achievements.length})</h3>
           </div>
           <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
             Manage
@@ -1021,15 +1021,15 @@ export const SinglePageDashboard = () => {
 
         <div className="space-y-2 text-xs">
           {achievements.map((ach) => (
-            <div key={ach.id} className="p-3 rounded-xl bg-amber-50/50 border border-amber-200/70 space-y-0.5">
-              <div className="font-bold text-slate-900">{ach.title}</div>
-              <div className="text-[11px] text-slate-600">{ach.organization} {ach.date ? `• ${ach.date}` : ''}</div>
-              {ach.description && <p className="text-[11px] text-slate-600 pt-0.5">{ach.description}</p>}
+            <div key={ach.id} className="p-3 rounded-xl bg-amber-950/30 border border-amber-800/40 space-y-0.5">
+              <div className="font-bold text-amber-200">{ach.title}</div>
+              <div className="text-[11px] text-amber-300/80">{ach.organization} {ach.date ? `• ${ach.date}` : ''}</div>
+              {ach.description && <p className="text-[11px] text-amber-200/90 pt-0.5">{ach.description}</p>}
             </div>
           ))}
 
           {achievements.length === 0 && (
-            <div className="text-center py-4 text-slate-400 text-xs italic">
+            <div className="text-center py-4 text-slate-500 text-xs italic">
               No achievements listed yet.
             </div>
           )}
@@ -1043,9 +1043,9 @@ export const SinglePageDashboard = () => {
   // 12. CONTACT CREDENTIALS
   // =========================================================================
   const renderContact = () => (
-    <Card id="contact" className="p-6 space-y-4 animate-fade-in">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
+    <Card id="contact" className="p-6 space-y-4 animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 className="font-extrabold text-white text-sm sm:text-base">
           Contact Credentials & Online Profiles
         </h3>
         <Button variant="ghost" size="sm" icon={Edit3} onClick={() => setIsEditModalOpen(true)}>
@@ -1054,39 +1054,39 @@ export const SinglePageDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-        <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70 flex items-center space-x-2.5">
-          <Mail className="w-4 h-4 text-slate-500 flex-shrink-0" />
-          <span className="font-medium text-slate-800 truncate">{personalInfo.email || 'Email Not Specified'}</span>
+        <div className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 flex items-center space-x-2.5">
+          <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <span className="font-medium text-slate-200 truncate">{personalInfo.email || 'Email Not Specified'}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70 flex items-center space-x-2.5">
-          <Phone className="w-4 h-4 text-slate-500 flex-shrink-0" />
-          <span className="font-medium text-slate-800">{personalInfo.phone || 'Phone Not Specified'}</span>
+        <div className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 flex items-center space-x-2.5">
+          <Phone className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <span className="font-medium text-slate-200">{personalInfo.phone || 'Phone Not Specified'}</span>
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-50/70 border border-slate-200/70 flex items-center space-x-2.5">
-          <MapPin className="w-4 h-4 text-slate-500 flex-shrink-0" />
-          <span className="font-medium text-slate-800 truncate">{personalInfo.location || 'Location Not Specified'}</span>
+        <div className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 flex items-center space-x-2.5">
+          <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <span className="font-medium text-slate-200 truncate">{personalInfo.location || 'Location Not Specified'}</span>
         </div>
 
         {professionalLinks.linkedin && (
-          <a href={professionalLinks.linkedin} target="_blank" rel="noreferrer" className="p-3 rounded-xl border border-slate-200/70 hover:bg-slate-50 flex items-center justify-between">
-            <span className="flex items-center font-medium text-slate-800"><Linkedin className="w-4 h-4 text-blue-600 mr-2" /> LinkedIn</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+          <a href={professionalLinks.linkedin} target="_blank" rel="noreferrer" className="p-3 rounded-xl border border-slate-800 bg-slate-850/80 hover:bg-slate-800 flex items-center justify-between transition-colors">
+            <span className="flex items-center font-medium text-slate-200"><Linkedin className="w-4 h-4 text-blue-400 mr-2" /> LinkedIn</span>
+            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
           </a>
         )}
 
         {professionalLinks.github && (
-          <a href={professionalLinks.github} target="_blank" rel="noreferrer" className="p-3 rounded-xl border border-slate-200/70 hover:bg-slate-50 flex items-center justify-between">
-            <span className="flex items-center font-medium text-slate-800"><Github className="w-4 h-4 text-slate-900 mr-2" /> GitHub</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+          <a href={professionalLinks.github} target="_blank" rel="noreferrer" className="p-3 rounded-xl border border-slate-800 bg-slate-850/80 hover:bg-slate-800 flex items-center justify-between transition-colors">
+            <span className="flex items-center font-medium text-slate-200"><Github className="w-4 h-4 text-slate-300 mr-2" /> GitHub</span>
+            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
           </a>
         )}
 
         {professionalLinks.portfolio && (
-          <a href={professionalLinks.portfolio} target="_blank" rel="noreferrer" className="p-3 rounded-xl border border-slate-200/70 hover:bg-slate-50 flex items-center justify-between">
-            <span className="flex items-center font-medium text-slate-800"><Globe className="w-4 h-4 text-purple-600 mr-2" /> Portfolio</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+          <a href={professionalLinks.portfolio} target="_blank" rel="noreferrer" className="p-3 rounded-xl border border-slate-800 bg-slate-850/80 hover:bg-slate-800 flex items-center justify-between transition-colors">
+            <span className="flex items-center font-medium text-slate-200"><Globe className="w-4 h-4 text-purple-400 mr-2" /> Portfolio</span>
+            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
           </a>
         )}
       </div>
@@ -1155,14 +1155,14 @@ export const SinglePageDashboard = () => {
         </div>
 
         {/* Dual Tab Switcher */}
-        <div className="flex items-center p-1.5 bg-white rounded-xl border border-slate-200/80 shadow-subtle max-w-md">
+        <div className="flex items-center p-1.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl max-w-md backdrop-blur-sm">
           <button
             type="button"
             onClick={() => setResumeSubTab('builder')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-colors ${
+            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-all ${
               currentSubTab === 'builder'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-600/30'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
@@ -1171,10 +1171,10 @@ export const SinglePageDashboard = () => {
           <button
             type="button"
             onClick={() => setResumeSubTab('analyzer')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-colors ${
+            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-all ${
               currentSubTab === 'analyzer'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-600/30'
+                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
             <Search className="w-3.5 h-3.5" />
@@ -1222,7 +1222,7 @@ export const SinglePageDashboard = () => {
         </div>
 
         {/* Test Center Sub-Tab Bar */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white rounded-xl border border-slate-200/80 shadow-subtle">
+        <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl backdrop-blur-sm">
           {[
             { id: 'overview', label: 'All Modules & Analytics', icon: Target },
             { id: 'technical', label: 'Technical Coding Test', icon: Cpu },
@@ -1234,10 +1234,10 @@ export const SinglePageDashboard = () => {
               key={tab.id}
               type="button"
               onClick={() => setTestCenterSubTab(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
                 currentSubTab === tab.id
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-600/30'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
               }`}
             >
               <tab.icon className="w-3.5 h-3.5" />
@@ -1254,20 +1254,20 @@ export const SinglePageDashboard = () => {
               {/* Launcher 1: Technical Coding */}
               <Card
                 hover
-                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-blue-500/50"
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-blue-500/50 bg-slate-900/90 border-slate-800"
                 onClick={() => setTestCenterSubTab('technical')}
               >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-400 border border-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Cpu className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition-colors">Technical Coding</h4>
+                    <h4 className="font-bold text-white text-sm group-hover:text-blue-400 transition-colors">Technical Coding</h4>
                     {latestAssessment?.technicalScore !== undefined && (
                       <Badge variant="primary">{latestAssessment.technicalScore}%</Badge>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-400 leading-relaxed">
                     Adaptive multiple-choice and coding challenges testing DSA and language fundamentals.
                   </p>
                 </div>
@@ -1289,20 +1289,20 @@ export const SinglePageDashboard = () => {
               {/* Launcher 2: Aptitude */}
               <Card
                 hover
-                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-indigo-500/50"
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-indigo-500/50 bg-slate-900/90 border-slate-800"
                 onClick={() => setTestCenterSubTab('aptitude')}
               >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Brain className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">Aptitude & Logic</h4>
+                    <h4 className="font-bold text-white text-sm group-hover:text-indigo-400 transition-colors">Aptitude & Logic</h4>
                     {latestAptitudeAssessment?.finalScore !== undefined && (
                       <Badge variant="primary">{latestAptitudeAssessment.finalScore}%</Badge>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-400 leading-relaxed">
                     20-minute timed assessment covering Quantitative, Logical Reasoning, and Verbal ability.
                   </p>
                 </div>
@@ -1324,20 +1324,20 @@ export const SinglePageDashboard = () => {
               {/* Launcher 3: Mock Interview */}
               <Card
                 hover
-                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-purple-500/50"
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-purple-500/50 bg-slate-900/90 border-slate-800"
                 onClick={() => setTestCenterSubTab('interview')}
               >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Mic className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">Mock Interview</h4>
+                    <h4 className="font-bold text-white text-sm group-hover:text-purple-400 transition-colors">Mock Interview</h4>
                     {latestCommunicationAssessment?.finalScore !== undefined && (
                       <Badge variant="primary">{latestCommunicationAssessment.finalScore}%</Badge>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-400 leading-relaxed">
                     Speech & voice interview simulator asking 7 corporate questions with STAR analysis.
                   </p>
                 </div>
@@ -1359,18 +1359,18 @@ export const SinglePageDashboard = () => {
               {/* Launcher 4: Posture & Attire */}
               <Card
                 hover
-                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-pink-500/50"
+                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-pink-500/50 bg-slate-900/90 border-slate-800"
                 onClick={() => setTestCenterSubTab('appearance')}
               >
                 <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-pink-500/15 text-pink-400 border border-pink-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Camera className="w-4 h-4" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 text-sm group-hover:text-pink-600 transition-colors">Posture & Attire</h4>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-50 text-pink-700 border border-pink-200 font-bold uppercase">Vision</span>
+                    <h4 className="font-bold text-white text-sm group-hover:text-pink-400 transition-colors">Posture & Attire</h4>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/15 text-pink-300 border border-pink-500/30 font-bold uppercase">Vision</span>
                   </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-400 leading-relaxed">
                     Webcam computer vision measuring head level, shoulder tilt, slouching, and dress code.
                   </p>
                 </div>
@@ -1432,7 +1432,7 @@ export const SinglePageDashboard = () => {
             {renderProfileHeader(false)}
 
             {/* Sub-section Navigation */}
-            <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white rounded-xl border border-slate-200/80 shadow-subtle">
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-slate-900/90 rounded-xl border border-slate-800 shadow-xl backdrop-blur-sm">
               <span className="text-xs font-bold text-slate-400 px-2">Jump to:</span>
               {[
                 { id: 'academics', label: 'Academics', icon: GraduationCap },
@@ -1445,10 +1445,10 @@ export const SinglePageDashboard = () => {
                 <button
                   key={item.id}
                   onClick={() => scrollToSubSection(item.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all ${
                     activeSection === item.id
-                      ? 'bg-slate-900 text-white'
-                      : 'text-slate-600 hover:bg-slate-100'
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md shadow-brand-600/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
                   }`}
                 >
                   <item.icon className="w-3.5 h-3.5" />
@@ -1536,7 +1536,13 @@ export const SinglePageDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex">
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex relative selection:bg-brand-500 selection:text-white overflow-x-hidden">
+      {/* Ambient background glow to match landing page */}
+      <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-600/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 -left-40 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 right-1/3 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
+      </div>
       
       {/* 1. Left Navigation Sidebar */}
       <StudentSidebar
@@ -1574,17 +1580,17 @@ export const SinglePageDashboard = () => {
       />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen relative z-10">
         
         {/* Top Navbar Header */}
-        <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 shadow-subtle flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 shadow-xl flex items-center justify-between gap-4">
           
           {/* Mobile hamburger & Breadcrumb */}
           <div className="flex items-center space-x-3 min-w-0">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="md:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="md:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               title="Open Navigation Menu"
             >
               <Menu className="w-5 h-5" />
@@ -1593,10 +1599,10 @@ export const SinglePageDashboard = () => {
             <div className="truncate">
               <div className="flex items-center space-x-1.5 text-xs text-slate-400 font-medium">
                 <span>Student Portal</span>
-                <ChevronRight className="w-3 h-3 text-slate-300" />
-                <span className="text-brand-600 font-semibold capitalize">{activeTab}</span>
+                <ChevronRight className="w-3 h-3 text-slate-500" />
+                <span className="text-brand-400 font-semibold capitalize">{activeTab}</span>
               </div>
-              <h1 className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight truncate font-display">
+              <h1 className="font-extrabold text-white text-sm sm:text-base leading-tight truncate font-display">
                 {getBreadcrumbTitle()}
               </h1>
             </div>
@@ -1625,11 +1631,11 @@ export const SinglePageDashboard = () => {
             </Button>
 
             {/* User Profile Pill & Sign Out */}
-            <div className="flex items-center space-x-2 pl-2 border-l border-slate-200">
+            <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
               <img
                 src={personalInfo.profilePhoto || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><circle cx='12' cy='7' r='4'/><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/></svg>"}
                 alt={personalInfo.fullName || 'Student'}
-                className="w-8 h-8 rounded-xl object-cover ring-1 ring-slate-200"
+                className="w-8 h-8 rounded-xl object-cover ring-1 ring-slate-700"
               />
               <button
                 type="button"
@@ -1641,7 +1647,7 @@ export const SinglePageDashboard = () => {
                     window.location.reload();
                   }
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                 title="Sign Out"
               >
                 <LogOut className="w-4 h-4" />

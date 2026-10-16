@@ -15,14 +15,14 @@ export const Badge = ({
   };
 
   const variantStyles = {
-    neutral: 'bg-slate-100 text-slate-700 border border-slate-200/70',
-    primary: 'bg-brand-50 text-brand-700 border border-brand-200/60',
-    indigo: 'bg-indigo-50 text-indigo-700 border border-indigo-200/60',
-    emerald: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
-    amber: 'bg-amber-50 text-amber-800 border border-amber-200/60',
-    rose: 'bg-rose-50 text-rose-700 border border-rose-200/60',
-    purple: 'bg-purple-50 text-purple-700 border border-purple-200/60',
-    dark: 'bg-slate-900 text-white border border-slate-800',
+    neutral: 'bg-slate-800 text-slate-300 border border-slate-700/80',
+    primary: 'bg-brand-500/15 text-brand-300 border border-brand-500/30',
+    indigo: 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/30',
+    emerald: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30',
+    amber: 'bg-amber-500/15 text-amber-300 border border-amber-500/30',
+    rose: 'bg-rose-500/15 text-rose-300 border border-rose-500/30',
+    purple: 'bg-purple-500/15 text-purple-300 border border-purple-500/30',
+    dark: 'bg-slate-950 text-slate-200 border border-slate-800',
   };
 
   const dotColors = {

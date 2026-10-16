@@ -232,8 +232,8 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
         <div className="lg:col-span-5 space-y-5">
           
           {/* Target Interview Context Selector */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card space-y-3">
-            <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+          <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-3 backdrop-blur-sm">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
               1. Select Interview Context
             </label>
 
@@ -248,25 +248,25 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                     onClick={() => setInterviewContext(opt.id)}
                     className={`w-full text-left p-3 rounded-xl border transition-all flex items-start space-x-3 ${
                       isSelected
-                        ? 'border-brand-600 bg-brand-50/70 shadow-xs ring-1 ring-brand-500'
-                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        ? 'border-brand-500 bg-brand-500/15 shadow-xs ring-1 ring-brand-500'
+                        : 'border-slate-800 hover:border-slate-700 bg-slate-850/60 hover:bg-slate-800/60'
                     }`}
                   >
                     <div className={`p-2 rounded-lg mt-0.5 ${
-                      isSelected ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-600'
+                      isSelected ? 'bg-brand-600 text-white' : 'bg-slate-800 text-slate-400'
                     }`}>
                       <IconComponent className="w-4 h-4" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <span className={`text-xs font-bold ${isSelected ? 'text-brand-900' : 'text-slate-900'}`}>
+                        <span className={`text-xs font-bold ${isSelected ? 'text-brand-300' : 'text-white'}`}>
                           {opt.title}
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/80 text-slate-500 font-semibold border border-slate-200">
+                        <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-semibold border border-slate-700">
                           {opt.badge}
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                      <p className="text-[11px] text-slate-400 mt-1 leading-snug">
                         {opt.desc}
                       </p>
                     </div>
@@ -277,8 +277,8 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
           </div>
 
           {/* Upload Box */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card space-y-3">
-            <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
+          <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-3 backdrop-blur-sm">
+            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
               2. Upload Candidate Photo
             </label>
 
@@ -294,13 +294,13 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
             {!imagePreview ? (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-slate-50/60 hover:bg-brand-50/20 group space-y-3"
+                className="border-2 border-dashed border-slate-700 hover:border-brand-500 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-slate-850/40 hover:bg-brand-500/10 group space-y-3"
               >
-                <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-slate-400 group-hover:text-brand-600 group-hover:border-brand-300 flex items-center justify-center mx-auto shadow-xs transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 text-slate-400 group-hover:text-brand-400 group-hover:border-brand-500/40 flex items-center justify-center mx-auto shadow-xs transition-colors">
                   <Upload className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-slate-800 block">
+                  <span className="text-xs font-bold text-slate-200 block">
                     Click to browse or drop interview photo
                   </span>
                   <span className="text-[11px] text-slate-400 block mt-0.5">
@@ -310,7 +310,7 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
               </div>
             ) : (
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs text-slate-600 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                <div className="flex items-center justify-between text-xs text-slate-300 p-2.5 rounded-xl bg-slate-850/80 border border-slate-800">
                   <span className="font-medium truncate max-w-[180px]">
                     {selectedFile?.name || 'interview_photo.jpg'}
                   </span>
@@ -318,14 +318,14 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-2 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-semibold border border-slate-200 transition-colors"
+                      className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 transition-colors"
                     >
                       Replace
                     </button>
                     <button
                       type="button"
                       onClick={handleRemovePhoto}
-                      className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                       title="Remove Photo"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -338,13 +338,13 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                   <button
                     type="button"
                     onClick={() => setShowLandmarkOverlay(!showLandmarkOverlay)}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-50/70 border border-indigo-200 text-indigo-900 text-xs font-semibold hover:bg-indigo-100/70 transition-colors"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-950/40 border border-indigo-800/40 text-indigo-300 text-xs font-semibold hover:bg-indigo-950/60 transition-colors"
                   >
                     <div className="flex items-center space-x-2">
-                      {showLandmarkOverlay ? <Eye className="w-3.5 h-3.5 text-indigo-600" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
+                      {showLandmarkOverlay ? <Eye className="w-3.5 h-3.5 text-indigo-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
                       <span>Show Alignment Landmarks</span>
                     </div>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white text-indigo-700 font-bold">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-900 text-indigo-200 font-bold">
                       {showLandmarkOverlay ? 'Visible' : 'Hidden'}
                     </span>
                   </button>
@@ -401,17 +401,17 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
         {/* Right Column: Live Image Preview with Landmark Canvas Overlay (7 cols) */}
         <div className="lg:col-span-7 flex flex-col justify-start">
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card flex flex-col h-full">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-              <span className="text-xs font-bold text-slate-900">Image & Landmark Inspection</span>
+          <div className="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl flex flex-col h-full backdrop-blur-sm">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+              <span className="text-xs font-bold text-white">Image & Landmark Inspection</span>
               {imagePreview && (
-                <span className="text-[11px] text-emerald-600 font-bold flex items-center">
+                <span className="text-[11px] text-emerald-400 font-bold flex items-center">
                   <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Ready for Analysis
                 </span>
               )}
             </div>
 
-            <div className="relative flex-1 min-h-[340px] max-h-[460px] bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
+            <div className="relative flex-1 min-h-[340px] max-h-[460px] bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
               {imagePreview ? (
                 <div className="relative max-w-full max-h-full flex items-center justify-center">
                   {/* Base Image */}
@@ -440,7 +440,7 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
               ) : (
                 <div className="text-center p-6 text-slate-500 space-y-2">
                   <Camera className="w-10 h-10 text-slate-600 mx-auto stroke-[1.5]" />
-                  <p className="text-xs">No photograph selected yet.</p>
+                  <p className="text-xs text-slate-400">No photograph selected yet.</p>
                   <p className="text-[11px] text-slate-500 max-w-xs mx-auto">
                     Upload an interview photo facing the camera to view live posture alignment guides.
                   </p>
@@ -449,7 +449,7 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
             </div>
 
             {/* Helper tips under preview */}
-            <div className="grid grid-cols-2 gap-2 pt-3 text-[11px] text-slate-500">
+            <div className="grid grid-cols-2 gap-2 pt-3 text-[11px] text-slate-400">
               <div className="flex items-center space-x-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
                 <span>Shoulder Level Guide</span>
@@ -466,28 +466,28 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
       {/* 3. Combined Alignment Index (Only if posture analyzed) */}
       {alignmentIndex !== null && (
-        <div className="bg-gradient-to-r from-indigo-50 via-brand-50 to-purple-50 p-5 rounded-2xl border border-indigo-200/80 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-5 rounded-2xl border border-indigo-500/30 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
           <div className="space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-black uppercase text-indigo-900 tracking-wider">
+              <span className="text-xs font-black uppercase text-indigo-400 tracking-wider">
                 Alignment & Presentation Index
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">
                 Framing Check Only
               </span>
             </div>
-            <p className="text-xs text-slate-600 max-w-2xl">
+            <p className="text-xs text-slate-300 max-w-2xl">
               Calculated from geometric shoulder level ({postureResult?.shoulderAngleDeg}° tilt), head vertical alignment ({postureResult?.headAngleDeg}°), and upper-torso camera visibility.
-              <span className="block text-[11px] text-slate-500 font-medium italic mt-0.5">
+              <span className="block text-[11px] text-slate-400 font-medium italic mt-0.5">
                 Note: Kept completely separate from your academic placement-readiness score.
               </span>
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 bg-white px-4 py-2.5 rounded-2xl border border-indigo-100 shadow-xs flex-shrink-0">
+          <div className="flex items-center space-x-3 bg-slate-850/90 px-4 py-2.5 rounded-2xl border border-indigo-500/30 shadow-md flex-shrink-0">
             <div className="text-right">
-              <div className="text-2xl font-black text-indigo-950">{alignmentIndex}/100</div>
-              <div className="text-[10px] font-bold text-emerald-600 uppercase">
+              <div className="text-2xl font-black text-white">{alignmentIndex}/100</div>
+              <div className="text-[10px] font-bold text-emerald-400 uppercase">
                 {alignmentIndex >= 85 ? 'Excellent Alignment' : alignmentIndex >= 70 ? 'Good Composure' : 'Needs Minor Adjustment'}
               </div>
             </div>
@@ -502,17 +502,17 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
           {/* ========================================================= */}
           {/* A. DRESS CODE ANALYSIS SECTION */}
           {/* ========================================================= */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-card flex flex-col justify-between space-y-5">
+          <div className="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl flex flex-col justify-between space-y-5">
             <div className="space-y-4">
               
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-xl bg-brand-500/15 text-brand-400 border border-brand-500/30 flex items-center justify-center font-bold">
                     👔
                   </div>
                   <div>
-                    <h2 className="font-extrabold text-slate-900 text-sm leading-tight">
+                    <h2 className="font-extrabold text-white text-sm leading-tight">
                       Dress Code Analysis
                     </h2>
                     <span className="text-[11px] text-slate-400 capitalize">
@@ -524,12 +524,12 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                 {dressResult && (
                   <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                     dressResult.suitability === 'Highly Suitable'
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/40'
                       : dressResult.suitability === 'Moderately Suitable'
-                      ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                      ? 'bg-blue-950/40 text-blue-300 border border-blue-800/40'
                       : dressResult.suitability === 'Unable to Determine' || dressResult.status === 'Unable to Assess'
-                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                      : 'bg-rose-100 text-rose-800 border border-rose-200'
+                      ? 'bg-amber-950/40 text-amber-300 border border-amber-800/40'
+                      : 'bg-rose-950/40 text-rose-300 border border-rose-800/40'
                   }`}>
                     {dressResult.suitability}
                   </span>
@@ -538,20 +538,20 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
               {/* Setup Guide Banner (If Vision AI Key is unavailable) */}
               {setupGuide && (
-                <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-2 text-xs">
-                  <div className="flex items-center space-x-1.5 font-bold text-amber-900">
-                    <HelpCircle className="w-4 h-4 text-amber-600" />
+                <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/40 space-y-2 text-xs">
+                  <div className="flex items-center space-x-1.5 font-bold text-amber-300">
+                    <HelpCircle className="w-4 h-4 text-amber-400" />
                     <span>Vision AI Model Setup Required</span>
                   </div>
-                  <p className="text-amber-800/90 leading-relaxed text-[11px]">
+                  <p className="text-amber-200/90 leading-relaxed text-[11px]">
                     {setupGuide.message}
                   </p>
-                  <ul className="list-disc list-inside text-[11px] text-amber-900 font-medium space-y-0.5 pt-1">
+                  <ul className="list-disc list-inside text-[11px] text-amber-300 font-medium space-y-0.5 pt-1">
                     {setupGuide.options.map((opt, i) => (
                       <li key={i}>{opt}</li>
                     ))}
                   </ul>
-                  <div className="pt-1 text-[10px] text-slate-500">
+                  <div className="pt-1 text-[10px] text-slate-400">
                     * Posture Analysis runs locally in your browser and is fully functional above!
                   </div>
                 </div>
@@ -562,13 +562,13 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                 <div className="space-y-4 text-xs">
                   
                   {/* Category & Assessment */}
-                  <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                  <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800 space-y-1">
                     <div className="flex justify-between items-center text-[11px]">
-                      <span className="text-slate-500">Suggested Dress Category:</span>
-                      <span className="font-bold text-slate-900">{dressResult.suggestedCategory}</span>
+                      <span className="text-slate-400">Suggested Dress Category:</span>
+                      <span className="font-bold text-white">{dressResult.suggestedCategory}</span>
                     </div>
                     {dressResult.suitabilityExplanation && (
-                      <p className="text-slate-700 text-[11px] pt-1 leading-relaxed">
+                      <p className="text-slate-300 text-[11px] pt-1 leading-relaxed">
                         {dressResult.suitabilityExplanation}
                       </p>
                     )}
@@ -577,10 +577,10 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                   {/* Observations */}
                   {dressResult.observations?.length > 0 && (
                     <div className="space-y-1.5">
-                      <div className="font-bold text-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+                      <div className="font-bold text-[11px] uppercase tracking-wider text-slate-400">
                         Observable Attire Features
                       </div>
-                      <ul className="space-y-1 list-disc list-inside text-slate-700 text-xs">
+                      <ul className="space-y-1 list-disc list-inside text-slate-300 text-xs">
                         {dressResult.observations.map((obs, i) => (
                           <li key={i} className="leading-snug">{obs}</li>
                         ))}
@@ -590,12 +590,12 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
                   {/* Observable Strengths */}
                   {dressResult.strengths?.length > 0 && (
-                    <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-1.5">
-                      <div className="font-bold text-emerald-900 flex items-center space-x-1.5 text-[11px]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/40 space-y-1.5">
+                      <div className="font-bold text-emerald-400 flex items-center space-x-1.5 text-[11px]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Observable Strengths</span>
                       </div>
-                      <ul className="space-y-1 text-slate-700 text-[11px] list-disc list-inside">
+                      <ul className="space-y-1 text-slate-300 text-[11px] list-disc list-inside">
                         {dressResult.strengths.map((s, i) => (
                           <li key={i}>{s}</li>
                         ))}
@@ -605,19 +605,19 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
                   {/* Improvement Suggestions with Explanations */}
                   {dressResult.improvements?.length > 0 && (
-                    <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200 space-y-2">
-                      <div className="font-bold text-amber-900 flex items-center space-x-1.5 text-[11px]">
-                        <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                    <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 space-y-2">
+                      <div className="font-bold text-amber-400 flex items-center space-x-1.5 text-[11px]">
+                        <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
                         <span>Specific Improvement Suggestions</span>
                       </div>
                       <div className="space-y-2">
                         {dressResult.improvements.map((imp, i) => (
                           <div key={i} className="space-y-0.5">
-                            <div className="font-bold text-slate-900 text-xs">
+                            <div className="font-bold text-slate-200 text-xs">
                               • {imp.suggestion}
                             </div>
                             {imp.explanation && (
-                              <div className="text-[11px] text-slate-600 pl-3">
+                              <div className="text-[11px] text-slate-400 pl-3">
                                 {imp.explanation}
                               </div>
                             )}
@@ -633,15 +633,15 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
             {/* Dress Confidence & Limitations Footer */}
             {dressResult && (
-              <div className="pt-3 border-t border-slate-100 text-[10px] text-slate-400 space-y-1">
+              <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 space-y-1">
                 <div className="flex justify-between">
-                  <span>Assessment Confidence: <strong className="text-slate-600">{dressResult.confidence}</strong></span>
-                  <span>Model: <strong className="text-slate-600">Vision AI</strong></span>
+                  <span>Assessment Confidence: <strong className="text-slate-200">{dressResult.confidence}</strong></span>
+                  <span>Model: <strong className="text-slate-200">Vision AI</strong></span>
                 </div>
                 {dressResult.limitations && (
                   <div>
-                    <span className="font-semibold text-slate-500">Framing Limitations: </span>
-                    <span>{dressResult.limitations}</span>
+                    <span className="font-semibold text-slate-400">Framing Limitations: </span>
+                    <span className="text-slate-300">{dressResult.limitations}</span>
                   </div>
                 )}
               </div>
@@ -651,17 +651,17 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
           {/* ========================================================= */}
           {/* B. POSTURE ANALYSIS SECTION */}
           {/* ========================================================= */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-card flex flex-col justify-between space-y-5">
+          <div className="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-xl flex flex-col justify-between space-y-5">
             <div className="space-y-4">
               
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold">
                     📐
                   </div>
                   <div>
-                    <h2 className="font-extrabold text-slate-900 text-sm leading-tight">
+                    <h2 className="font-extrabold text-white text-sm leading-tight">
                       Posture & Alignment Analysis
                     </h2>
                     <span className="text-[11px] text-slate-400">
@@ -673,10 +673,10 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                 {postureResult && (
                   <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                     postureResult.status === 'Completed'
-                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-800/40'
                       : postureResult.status === 'No Person Detected'
-                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                      : 'bg-slate-100 text-slate-800 border border-slate-200'
+                      ? 'bg-amber-950/40 text-amber-300 border border-amber-800/40'
+                      : 'bg-slate-800 text-slate-300 border border-slate-700'
                   }`}>
                     {postureResult.status}
                   </span>
@@ -690,42 +690,42 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                   {/* Metric Chips if subject detected, else info box */}
                   {postureResult.shoulderAngleDeg !== null ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center">
-                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800">
                         <div className="text-[10px] font-bold text-slate-400 uppercase">Shoulder Level</div>
-                        <div className="text-sm font-black text-slate-900 mt-0.5">
+                        <div className="text-sm font-black text-white mt-0.5">
                           {postureResult.shoulderAngleDeg}°
                         </div>
-                        <div className="text-[9px] text-slate-500 font-medium">
+                        <div className="text-[9px] text-slate-400 font-medium">
                           {postureResult.shoulderAngleDeg <= 2.5 ? 'Balanced' : 'Mild Tilt'}
                         </div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800">
                         <div className="text-[10px] font-bold text-slate-400 uppercase">Head Angle</div>
-                        <div className="text-sm font-black text-slate-900 mt-0.5">
+                        <div className="text-sm font-black text-white mt-0.5">
                           {postureResult.headAngleDeg}°
                         </div>
-                        <div className="text-[9px] text-slate-500 font-medium">
+                        <div className="text-[9px] text-slate-400 font-medium">
                           {postureResult.headAngleDeg <= 2.5 ? 'Vertical' : 'Tilted'}
                         </div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 col-span-2 sm:col-span-1">
+                      <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800 col-span-2 sm:col-span-1">
                         <div className="text-[10px] font-bold text-slate-400 uppercase">Framing Mode</div>
-                        <div className="text-[11px] font-bold text-indigo-700 mt-1 truncate">
+                        <div className="text-[11px] font-bold text-indigo-400 mt-1 truncate">
                           {postureResult.postureFraming?.split(' ')[0] || 'Framing'}
                         </div>
-                        <div className="text-[9px] text-slate-500 font-medium">
+                        <div className="text-[9px] text-slate-400 font-medium">
                           {postureResult.isSufficientlyVisible ? 'Sufficient' : 'Partial'}
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs flex items-start space-x-2.5">
-                      <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-800/40 text-amber-300 text-xs flex items-start space-x-2.5">
+                      <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
                       <div className="space-y-0.5">
-                        <div className="font-bold text-amber-950">No Human Landmarks Detected</div>
-                        <div className="text-[11px] text-amber-800 leading-snug">
+                        <div className="font-bold text-amber-200">No Human Landmarks Detected</div>
+                        <div className="text-[11px] text-amber-300/90 leading-snug">
                           Camera alignment and posture angles require a portrait showing your head and shoulders.
                         </div>
                       </div>
@@ -738,7 +738,7 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
                       <div className="font-bold text-[11px] uppercase tracking-wider text-slate-400">
                         Observable Geometric Features
                       </div>
-                      <ul className="space-y-1 list-disc list-inside text-slate-700 text-xs">
+                      <ul className="space-y-1 list-disc list-inside text-slate-300 text-xs">
                         {postureResult.observations.map((obs, i) => (
                           <li key={i} className="leading-snug">{obs}</li>
                         ))}
@@ -748,12 +748,12 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
                   {/* Strengths */}
                   {postureResult.strengths?.length > 0 && (
-                    <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-1.5">
-                      <div className="font-bold text-emerald-900 flex items-center space-x-1.5 text-[11px]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/40 space-y-1.5">
+                      <div className="font-bold text-emerald-400 flex items-center space-x-1.5 text-[11px]">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Posture Strengths</span>
                       </div>
-                      <ul className="space-y-1 text-slate-700 text-[11px] list-disc list-inside">
+                      <ul className="space-y-1 text-slate-300 text-[11px] list-disc list-inside">
                         {postureResult.strengths.map((s, i) => (
                           <li key={i}>{s}</li>
                         ))}
@@ -763,19 +763,19 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
                   {/* Specific Improvement Suggestions with Explanations */}
                   {postureResult.improvements?.length > 0 && (
-                    <div className="p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-200 space-y-2">
-                      <div className="font-bold text-indigo-900 flex items-center space-x-1.5 text-[11px]">
-                        <Sliders className="w-3.5 h-3.5 text-indigo-600" />
+                    <div className="p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-800/40 space-y-2">
+                      <div className="font-bold text-indigo-300 flex items-center space-x-1.5 text-[11px]">
+                        <Sliders className="w-3.5 h-3.5 text-indigo-400" />
                         <span>Practical Posture Improvements</span>
                       </div>
                       <div className="space-y-2">
                         {postureResult.improvements.map((imp, i) => (
                           <div key={i} className="space-y-0.5">
-                            <div className="font-bold text-slate-900 text-xs">
+                            <div className="font-bold text-white text-xs">
                               • {imp.suggestion}
                             </div>
                             {imp.explanation && (
-                              <div className="text-[11px] text-slate-600 pl-3">
+                              <div className="text-[11px] text-slate-300 pl-3">
                                 {imp.explanation}
                               </div>
                             )}
@@ -791,15 +791,15 @@ export const AppearancePostureAnalyzer = ({ onOpenEditProfile }) => {
 
             {/* Posture Confidence & Limitations Footer */}
             {postureResult && (
-              <div className="pt-3 border-t border-slate-100 text-[10px] text-slate-400 space-y-1">
+              <div className="pt-3 border-t border-slate-800 text-[10px] text-slate-400 space-y-1">
                 <div className="flex justify-between">
-                  <span>Confidence: <strong className="text-slate-600">{postureResult.confidence}</strong></span>
-                  <span>Reliability: <strong className="text-slate-600">{postureResult.isSufficientlyVisible ? 'Sufficient Body Visibility' : 'Framing Warning'}</strong></span>
+                  <span>Confidence: <strong className="text-slate-200">{postureResult.confidence}</strong></span>
+                  <span>Reliability: <strong className="text-slate-200">{postureResult.isSufficientlyVisible ? 'Sufficient Body Visibility' : 'Framing Warning'}</strong></span>
                 </div>
                 {postureResult.limitations && (
                   <div>
-                    <span className="font-semibold text-slate-500">Limitations: </span>
-                    <span>{postureResult.limitations}</span>
+                    <span className="font-semibold text-slate-400">Limitations: </span>
+                    <span className="text-slate-300">{postureResult.limitations}</span>
                   </div>
                 )}
                 <div className="pt-1 text-[9px] text-slate-400 italic">

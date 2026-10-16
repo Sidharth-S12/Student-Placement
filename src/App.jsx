@@ -30,7 +30,7 @@ const StudentDashboardContent = () => {
   } = useStudent();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased relative">
+    <div className="min-h-screen bg-slate-900 text-slate-100 antialiased relative selection:bg-brand-500 selection:text-white">
       {/* Single Page Placement Profile Dashboard with Left Navigation Sidebar */}
       <SinglePageDashboard />
 
@@ -224,17 +224,17 @@ const MainAppContent = () => {
   // 1. Initial Authentication Restoration Screen
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 text-slate-100">
         <div className="text-center space-y-4 max-w-sm">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-600/30 animate-pulse">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h2 className="font-extrabold text-base text-slate-900">Placement Genie</h2>
-            <p className="text-xs text-slate-500">Restoring authentication session...</p>
+            <h2 className="font-extrabold text-base text-white">Placement Genie</h2>
+            <p className="text-xs text-slate-400">Restoring authentication session...</p>
           </div>
           <div className="pt-2">
-            <Loader2 className="w-5 h-5 text-brand-600 animate-spin mx-auto" />
+            <Loader2 className="w-5 h-5 text-brand-400 animate-spin mx-auto" />
           </div>
         </div>
       </div>

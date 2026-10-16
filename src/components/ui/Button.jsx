@@ -22,13 +22,13 @@ export const Button = ({
   };
 
   const variantStyles = {
-    primary: 'bg-slate-900 hover:bg-slate-800 text-white shadow-subtle focus:ring-slate-900/20',
-    gradient: 'bg-gradient-to-r from-brand-600 via-indigo-600 to-indigo-700 hover:from-brand-700 hover:to-indigo-800 text-white shadow-subtle focus:ring-brand-500/25',
-    secondary: 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-subtle focus:ring-slate-300',
-    ghost: 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 focus:ring-slate-300',
-    danger: 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 focus:ring-rose-400',
-    success: 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-subtle focus:ring-emerald-500/20',
-    subtle: 'bg-slate-100 hover:bg-slate-200 text-slate-700 focus:ring-slate-300',
+    primary: 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-md shadow-brand-600/20 focus:ring-brand-500/30',
+    gradient: 'bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white shadow-lg shadow-brand-600/30 focus:ring-brand-500/30',
+    secondary: 'bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700 shadow-sm focus:ring-slate-700',
+    ghost: 'text-slate-400 hover:text-white hover:bg-slate-800/80 focus:ring-slate-700',
+    danger: 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 focus:ring-rose-500/40',
+    success: 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 focus:ring-emerald-500/30',
+    subtle: 'bg-slate-800/60 hover:bg-slate-800 text-slate-300 focus:ring-slate-700',
   };
 
   return (

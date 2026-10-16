@@ -261,28 +261,28 @@ export const EditProfileModal = () => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in">
+      <div className="bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden text-slate-100">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <User className="w-5 h-5 text-brand-600" />
-            <h2 className="text-lg font-bold text-slate-900">
+            <User className="w-5 h-5 text-brand-400" />
+            <h2 className="text-lg font-bold text-white">
               {hasProfile ? 'Edit Placement Profile' : 'Create Your Placement Profile'}
             </h2>
           </div>
 
           <button
             onClick={() => setIsEditModalOpen(false)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form Subtabs */}
-        <div className="flex border-b border-slate-200 bg-slate-100/70 overflow-x-auto px-4 pt-2 gap-1 scrollbar-none">
+        <div className="flex border-b border-slate-800 bg-slate-950/60 overflow-x-auto px-4 pt-2 gap-1 scrollbar-none">
           {subTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeSubTab === tab.id;
@@ -293,8 +293,8 @@ export const EditProfileModal = () => {
                 onClick={() => setActiveSubTab(tab.id)}
                 className={`flex items-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-white text-brand-600 border-t-2 border-brand-600 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                    ? 'bg-slate-900 text-brand-400 border-t-2 border-brand-500 shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850/60'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -937,18 +937,18 @@ export const EditProfileModal = () => {
             )}
 
             {/* Save Actions Bar */}
-            <div className="pt-4 border-t border-slate-200 flex justify-end space-x-3">
+            <div className="pt-4 border-t border-slate-800 flex justify-end space-x-3 bg-slate-900">
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-semibold transition-colors"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-md flex items-center space-x-1.5"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md shadow-brand-600/30 flex items-center space-x-1.5 transition-all"
               >
                 <Save className="w-4 h-4" />
                 <span>Save Placement Profile</span>
