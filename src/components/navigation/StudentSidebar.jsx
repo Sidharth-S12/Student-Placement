@@ -52,6 +52,7 @@ export const StudentSidebar = ({
 }) => {
   const [profileSubmenuOpen, setProfileSubmenuOpen] = useState(true);
   const [assessmentsSubmenuOpen, setAssessmentsSubmenuOpen] = useState(true);
+  const [resumeSubmenuOpen, setResumeSubmenuOpen] = useState(true);
 
   const { personalInfo = {}, education = {}, placementScores = {} } = studentData || {};
 
@@ -268,11 +269,11 @@ export const StudentSidebar = ({
           </div>
         </div>
 
-        {/* GROUP 2: ASSESSMENTS */}
+        {/* GROUP 2: TEST CENTER */}
         <div className="space-y-1 pt-1">
           {!isCollapsed && (
             <div className="px-3 text-[10px] font-bold uppercase text-slate-500 tracking-wider">
-              Assessments Hub
+              Test Center
             </div>
           )}
 
@@ -283,12 +284,12 @@ export const StudentSidebar = ({
                 handleNavClick('assessments');
                 if (!isCollapsed) setAssessmentsSubmenuOpen(!assessmentsSubmenuOpen);
               }}
-              className={navItemClass(activeTab === 'assessments')}
-              title={isCollapsed ? "Assessments Hub" : undefined}
+              className={navItemClass(activeTab === 'assessments' || activeTab === 'technical' || activeTab === 'aptitude' || activeTab === 'interview' || activeTab === 'appearance')}
+              title={isCollapsed ? "Placement Test Center" : undefined}
             >
               <div className="flex items-center space-x-2.5">
-                <Target className={`w-4 h-4 ${activeTab === 'assessments' ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
-                {!isCollapsed && <span>Assessments Hub</span>}
+                <Target className={`w-4 h-4 ${['assessments', 'technical', 'aptitude', 'interview', 'appearance'].includes(activeTab) ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
+                {!isCollapsed && <span>Test Center</span>}
               </div>
               {!isCollapsed && (
                 <ChevronDown
@@ -343,49 +344,77 @@ export const StudentSidebar = ({
                     </span>
                   )}
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('appearance')}
+                  className={subNavItemClass(activeTab === 'appearance')}
+                >
+                  <Camera className="w-3.5 h-3.5 text-pink-400" />
+                  <span className="flex-1 text-left truncate">Posture & Attire</span>
+                  <span className="text-[9px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 font-bold uppercase">
+                    AI
+                  </span>
+                </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* GROUP 3: CAREER & PREPARATION TOOLS */}
+        {/* GROUP 3: RESUME & ROADMAP */}
         <div className="space-y-1 pt-1">
           {!isCollapsed && (
             <div className="px-3 text-[10px] font-bold uppercase text-slate-500 tracking-wider">
-              Preparation Tools
+              Resume & Career
             </div>
           )}
 
-          {/* ATS Resume Builder */}
-          <button
-            type="button"
-            onClick={() => handleNavClick('resume-builder')}
-            className={navItemClass(activeTab === 'resume-builder')}
-            title={isCollapsed ? "ATS Resume Builder" : undefined}
-          >
-            <div className="flex items-center space-x-2.5">
-              <FileText className={`w-4 h-4 ${activeTab === 'resume-builder' ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
-              {!isCollapsed && <span>ATS Resume Builder</span>}
-            </div>
-          </button>
+          {/* Unified Resume Studio */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                handleNavClick('resume');
+                if (!isCollapsed) setResumeSubmenuOpen(!resumeSubmenuOpen);
+              }}
+              className={navItemClass(activeTab === 'resume' || activeTab === 'resume-builder' || activeTab === 'resume-analyzer')}
+              title={isCollapsed ? "Resume Studio" : undefined}
+            >
+              <div className="flex items-center space-x-2.5">
+                <FileText className={`w-4 h-4 ${['resume', 'resume-builder', 'resume-analyzer'].includes(activeTab) ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
+                {!isCollapsed && <span>Resume Studio</span>}
+              </div>
+              {!isCollapsed && (
+                <ChevronDown
+                  className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                    resumeSubmenuOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              )}
+            </button>
 
-          {/* AI Resume Analyzer */}
-          <button
-            type="button"
-            onClick={() => handleNavClick('resume-analyzer')}
-            className={navItemClass(activeTab === 'resume-analyzer')}
-            title={isCollapsed ? "AI Resume Analyzer" : undefined}
-          >
-            <div className="flex items-center space-x-2.5">
-              <Search className={`w-4 h-4 ${activeTab === 'resume-analyzer' ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
-              {!isCollapsed && <span>AI Resume Analyzer</span>}
-            </div>
-            {!isCollapsed && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-bold uppercase">
-                AI
-              </span>
+            {!isCollapsed && resumeSubmenuOpen && (
+              <div className="pl-5 pr-1 mt-1 space-y-0.5 border-l border-slate-800 ml-4 animate-fade-in">
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('resume-builder')}
+                  className={subNavItemClass(activeTab === 'resume-builder')}
+                >
+                  <FileText className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="flex-1 text-left truncate">ATS Resume PDF</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavClick('resume-analyzer')}
+                  className={subNavItemClass(activeTab === 'resume-analyzer')}
+                >
+                  <Search className="w-3.5 h-3.5 text-teal-400" />
+                  <span className="flex-1 text-left truncate">AI Keyword Gap</span>
+                </button>
+              </div>
             )}
-          </button>
+          </div>
 
           {/* Career Roadmap */}
           <button
@@ -398,24 +427,6 @@ export const StudentSidebar = ({
               <Map className={`w-4 h-4 ${activeTab === 'roadmap' ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
               {!isCollapsed && <span>Career Roadmap</span>}
             </div>
-          </button>
-
-          {/* AI Appearance & Posture Analyzer */}
-          <button
-            type="button"
-            onClick={() => handleNavClick('appearance')}
-            className={navItemClass(activeTab === 'appearance')}
-            title={isCollapsed ? "Appearance & Posture" : undefined}
-          >
-            <div className="flex items-center space-x-2.5">
-              <Camera className={`w-4 h-4 ${activeTab === 'appearance' ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
-              {!isCollapsed && <span>Appearance & Posture</span>}
-            </div>
-            {!isCollapsed && (
-              <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold uppercase">
-                Vision
-              </span>
-            )}
           </button>
 
           {/* Full Page View Mode */}

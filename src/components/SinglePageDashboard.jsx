@@ -72,6 +72,8 @@ export const SinglePageDashboard = () => {
   const [activeSection, setActiveSection] = useState('all');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [resumeSubTab, setResumeSubTab] = useState('builder'); // 'builder' | 'analyzer'
+  const [testCenterSubTab, setTestCenterSubTab] = useState('overview'); // 'overview' | 'technical' | 'aptitude' | 'interview' | 'appearance'
 
   const fileInputRef = useRef(null);
 
@@ -1062,6 +1064,261 @@ export const SinglePageDashboard = () => {
   );
 
   // =========================================================================
+  // 14. DUAL-TAB RESUME STUDIO
+  // =========================================================================
+  const renderResumeStudio = (overrideSubTab = null) => {
+    const currentSubTab = overrideSubTab || resumeSubTab;
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Header Banner */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border border-slate-800 shadow-xl">
+          <div className="space-y-1.5 max-w-xl">
+            <Badge variant="emerald" dot>Resume Studio</Badge>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight font-display">ATS Resume & Keyword Studio</h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Generate standardized 1-page ATS resumes formatted specifically for campus recruitment, or scan your existing document for missing job keywords.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="success"
+              icon={Download}
+              onClick={handleQuickDownloadPDF}
+            >
+              Download ATS PDF
+            </Button>
+          </div>
+        </div>
+
+        {/* Dual Tab Switcher */}
+        <div className="flex items-center p-1.5 bg-white rounded-xl border border-slate-200/80 shadow-subtle max-w-md">
+          <button
+            type="button"
+            onClick={() => setResumeSubTab('builder')}
+            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-colors ${
+              currentSubTab === 'builder'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>ATS Resume Generator</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setResumeSubTab('analyzer')}
+            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-2 transition-colors ${
+              currentSubTab === 'analyzer'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Search className="w-3.5 h-3.5" />
+            <span>AI Keyword Scanner</span>
+          </button>
+        </div>
+
+        {/* View Selection */}
+        {currentSubTab === 'builder' ? (
+          renderResumeBuilder()
+        ) : (
+          <Card className="p-6">
+            <ResumeAnalyzer />
+          </Card>
+        )}
+      </div>
+    );
+  };
+
+  // =========================================================================
+  // 15. DEDICATED PLACEMENT TEST CENTER
+  // =========================================================================
+  const renderTestCenter = (overrideSubTab = null) => {
+    const currentSubTab = overrideSubTab || testCenterSubTab;
+    return (
+      <div className="space-y-6 animate-fade-in">
+        {/* Test Center Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border border-slate-800 shadow-xl">
+          <div className="space-y-1.5 max-w-xl">
+            <Badge variant="emerald" dot>AI Testing Center</Badge>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight font-display">Placement Test Center</h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Practice and benchmark your technical, aptitude, mock interview, and video posture readiness for tier-1 campus hiring drives.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="gradient"
+              icon={Target}
+              onClick={() => setIsAssessmentModalOpen(true)}
+            >
+              Start Technical Test
+            </Button>
+          </div>
+        </div>
+
+        {/* Test Center Sub-Tab Bar */}
+        <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white rounded-xl border border-slate-200/80 shadow-subtle">
+          {[
+            { id: 'overview', label: 'All Modules & Analytics', icon: Target },
+            { id: 'technical', label: 'Technical Coding Test', icon: Cpu },
+            { id: 'aptitude', label: 'Aptitude & Reasoning', icon: Brain },
+            { id: 'interview', label: 'AI Mock Interview', icon: Mic },
+            { id: 'appearance', label: 'Posture & Attire AI', icon: Camera },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setTestCenterSubTab(tab.id)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-colors ${
+                currentSubTab === tab.id
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <tab.icon className="w-3.5 h-3.5" />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Content based on sub-tab */}
+        {currentSubTab === 'overview' && (
+          <div className="space-y-6">
+            {/* 4 Interactive Test Launchers */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Launcher 1: Technical Coding */}
+              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Cpu className="w-4 h-4" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-slate-900 text-sm">Technical Coding</h4>
+                    {latestAssessment?.technicalScore !== undefined && (
+                      <Badge variant="primary">{latestAssessment.technicalScore}%</Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Adaptive multiple-choice and coding challenges testing DSA and language fundamentals.
+                  </p>
+                </div>
+                <div className="pt-2 flex gap-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="w-full justify-center"
+                    onClick={() => setIsAssessmentModalOpen(true)}
+                  >
+                    {latestAssessment ? "Retake Test" : "Start Test"}
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Launcher 2: Aptitude */}
+              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <Brain className="w-4 h-4" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-slate-900 text-sm">Aptitude & Logic</h4>
+                    {latestAptitudeAssessment?.finalScore !== undefined && (
+                      <Badge variant="primary">{latestAptitudeAssessment.finalScore}%</Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    20-minute timed assessment covering Quantitative, Logical Reasoning, and Verbal ability.
+                  </p>
+                </div>
+                <div className="pt-2 flex gap-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="w-full justify-center"
+                    onClick={() => setIsAptitudeModalOpen(true)}
+                  >
+                    {latestAptitudeAssessment ? "Retake Test" : "Start Test"}
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Launcher 3: Mock Interview */}
+              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <Mic className="w-4 h-4" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-slate-900 text-sm">Mock Interview</h4>
+                    {latestCommunicationAssessment?.finalScore !== undefined && (
+                      <Badge variant="primary">{latestCommunicationAssessment.finalScore}%</Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Speech & voice interview simulator asking 7 corporate questions with STAR analysis.
+                  </p>
+                </div>
+                <div className="pt-2 flex gap-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="w-full justify-center"
+                    onClick={() => openCommunicationModal ? openCommunicationModal('practice') : setIsCommunicationModalOpen(true)}
+                  >
+                    Enter Studio
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Launcher 4: Posture & Attire */}
+              <Card hover className="p-5 flex flex-col justify-between space-y-3">
+                <div className="space-y-2">
+                  <div className="w-9 h-9 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-slate-900 text-sm">Posture & Attire</h4>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-50 text-pink-700 border border-pink-200 font-bold uppercase">Vision</span>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Webcam computer vision measuring head level, shoulder tilt, slouching, and dress code.
+                  </p>
+                </div>
+                <div className="pt-2 flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="w-full justify-center"
+                    onClick={() => setTestCenterSubTab('appearance')}
+                  >
+                    Open Vision AI
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
+            {/* Overall Score Metrics Strip */}
+            {renderReadinessMetrics()}
+
+            {/* Reports */}
+            {renderTechnicalReport()}
+            {renderAptitudeReport()}
+            {renderCommunicationReport()}
+          </div>
+        )}
+
+        {currentSubTab === 'technical' && renderTechnicalReport()}
+        {currentSubTab === 'aptitude' && renderAptitudeReport()}
+        {currentSubTab === 'interview' && renderCommunicationReport()}
+        {currentSubTab === 'appearance' && (
+          <AppearancePostureAnalyzer onOpenEditProfile={() => setIsEditModalOpen(true)} />
+        )}
+      </div>
+    );
+  };
+
+  // =========================================================================
   // VIEW RENDERER DISPATCHER
   // =========================================================================
   const renderActiveTabContent = () => {
@@ -1116,59 +1373,36 @@ export const SinglePageDashboard = () => {
           </div>
         );
 
+      case 'tests':
       case 'assessments':
-        return (
-          <div className="space-y-6">
-            {renderReadinessMetrics()}
-            {renderTechnicalReport()}
-            {renderAptitudeReport()}
-            {renderCommunicationReport()}
-          </div>
-        );
+        return renderTestCenter('overview');
 
       case 'technical':
-        return (
-          <div className="space-y-6">
-            {renderTechnicalReport()}
-          </div>
-        );
+        return renderTestCenter('technical');
 
       case 'aptitude':
-        return (
-          <div className="space-y-6">
-            {renderAptitudeReport()}
-          </div>
-        );
+        return renderTestCenter('aptitude');
 
       case 'interview':
-        return (
-          <div className="space-y-6">
-            {renderCommunicationReport()}
-          </div>
-        );
+        return renderTestCenter('interview');
+
+      case 'appearance':
+        return renderTestCenter('appearance');
+
+      case 'resume':
+        return renderResumeStudio();
 
       case 'resume-builder':
-        return renderResumeBuilder();
+        return renderResumeStudio('builder');
 
       case 'resume-analyzer':
-        return (
-          <Card className="p-6 animate-fade-in">
-            <ResumeAnalyzer />
-          </Card>
-        );
+        return renderResumeStudio('analyzer');
 
       case 'roadmap':
         return (
           <Card className="p-6 animate-fade-in">
             <PersonalizedRoadmap />
           </Card>
-        );
-
-      case 'appearance':
-        return (
-          <div className="animate-fade-in">
-            <AppearancePostureAnalyzer onOpenEditProfile={() => setIsEditModalOpen(true)} />
-          </div>
         );
 
       case 'all':
@@ -1192,16 +1426,18 @@ export const SinglePageDashboard = () => {
 
   const getBreadcrumbTitle = () => {
     switch (activeTab) {
-      case 'dashboard': return 'Dashboard Overview';
+      case 'dashboard': return 'Overview & Analytics';
       case 'profile': return 'Placement Profile';
-      case 'assessments': return 'Assessments Hub';
-      case 'technical': return 'Technical Skill Test';
-      case 'aptitude': return 'Aptitude & Reasoning';
-      case 'interview': return 'AI Mock Interview';
+      case 'tests':
+      case 'assessments': return 'Placement Test Center';
+      case 'technical': return 'Technical Coding Test';
+      case 'aptitude': return 'Aptitude & Reasoning Test';
+      case 'interview': return 'AI Mock Interview Studio';
+      case 'appearance': return 'Posture & Attire Vision AI';
+      case 'resume':
       case 'resume-builder': return 'ATS Resume Studio';
-      case 'resume-analyzer': return 'AI Resume Analyzer';
-      case 'roadmap': return 'Career Roadmap';
-      case 'appearance': return 'Appearance & Posture Analyzer';
+      case 'resume-analyzer': return 'AI Resume Keyword Gap Scanner';
+      case 'roadmap': return 'Career Learning Roadmap';
       case 'all': return 'Full Placement Profile';
       default: return 'Student Portal';
     }

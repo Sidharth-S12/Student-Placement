@@ -5,6 +5,7 @@ import { SinglePageDashboard } from './components/SinglePageDashboard';
 import { CompanyDashboard } from './components/company/CompanyDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AuthPage } from './components/auth/AuthPage';
+import { LandingPage } from './components/landing/LandingPage';
 import { EditProfileModal } from './components/profile/EditProfileModal';
 import { ATSResumeModal } from './components/resume/ATSResumeModal';
 import { TechnicalAssessmentModal } from './components/assessment/TechnicalAssessmentModal';
@@ -216,6 +217,10 @@ const MainAppContent = () => {
     }
   }, [currentUser, isAdminPath]);
 
+  const [showAuth, setShowAuth] = React.useState(false);
+  const [authRolePref, setAuthRolePref] = React.useState(null);
+  const [authModePref, setAuthModePref] = React.useState('login');
+
   // 1. Initial Authentication Restoration Screen
   if (authLoading) {
     return (
@@ -236,9 +241,31 @@ const MainAppContent = () => {
     );
   }
 
-  // 3. Unauthenticated -> Unified Auth Entry Page
+  // 3. Unauthenticated -> Landing Page with Seamless Auth Transition
   if (!currentUser) {
-    return <AuthPage />;
+    if (!showAuth && !isAdminPath) {
+      return (
+        <LandingPage
+          onGetStarted={() => {
+            setAuthRolePref('student');
+            setAuthModePref('register');
+            setShowAuth(true);
+          }}
+          onSignIn={() => {
+            setAuthModePref('login');
+            setShowAuth(true);
+          }}
+        />
+      );
+    }
+
+    return (
+      <AuthPage
+        onBackToHome={() => setShowAuth(false)}
+        initialRole={authRolePref}
+        initialMode={authModePref}
+      />
+    );
   }
 
   // 4. Role Resolution Error -> Render Error Screen (NEVER fallback to Student)

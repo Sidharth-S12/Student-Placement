@@ -15,7 +15,8 @@ import {
   X,
   Sparkles,
   Info,
-  ChevronRight
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
 
 const PORTAL_CONFIG = {
@@ -63,7 +64,7 @@ const PORTAL_CONFIG = {
   }
 };
 
-export const AuthPage = () => {
+export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
   const {
     selectedRole,
     setSelectedRole,
@@ -73,7 +74,19 @@ export const AuthPage = () => {
     sendPasswordReset
   } = useAuth();
 
-  const [mode, setMode] = useState('login'); // 'login' | 'register'
+  const [mode, setMode] = useState(initialMode || 'login'); // 'login' | 'register'
+
+  React.useEffect(() => {
+    if (initialRole && PORTAL_CONFIG[initialRole]) {
+      setSelectedRole(initialRole);
+    }
+  }, [initialRole, setSelectedRole]);
+
+  React.useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
   const [formData, setFormData] = useState({
     name: '',
     companyName: '',
@@ -257,6 +270,18 @@ export const AuthPage = () => {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans antialiased text-slate-800">
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-3">
+          {onBackToHome && (
+            <div className="text-left mb-2">
+              <button
+                type="button"
+                onClick={onBackToHome}
+                className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>← Back to Home</span>
+              </button>
+            </div>
+          )}
           <div className="inline-flex items-center justify-center space-x-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-brand-600/20">
               <GraduationCap className="w-6 h-6" />
@@ -318,6 +343,18 @@ export const AuthPage = () => {
       
       {/* Top Brand Logo */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2 mb-6">
+        {onBackToHome && (
+          <div className="text-left mb-2">
+            <button
+              type="button"
+              onClick={onBackToHome}
+              className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>← Back to Home</span>
+            </button>
+          </div>
+        )}
         <div className="inline-flex items-center justify-center space-x-2.5">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 flex items-center justify-center text-white shadow-sm shadow-brand-600/20">
             <GraduationCap className="w-5 h-5" />
