@@ -74,7 +74,7 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans">
       <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
-        
+
         {/* Modal Top Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
           <div className="flex items-center space-x-3">
@@ -175,7 +175,7 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
 
         {/* Modal Scrollable Content */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
-          
+
           {/* TAB 1: OVERVIEW & EDUCATION */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
@@ -261,7 +261,7 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
             <div className="space-y-4">
               <div className="space-y-3">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Technical Skills Breakdown</h4>
-                
+
                 {/* Languages */}
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
                   <div className="text-xs font-bold text-slate-700">Programming Languages</div>
@@ -341,7 +341,7 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
                   projects.map((proj, i) => (
                     <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <div className="font-bold text-xs text-slate-900">{proj.title || 'Untitled Project'}</div>
+                        <div className="font-bold text-xs text-slate-900">{proj.name || proj.title || 'Untitled Project'}</div>
                         {proj.githubLink && (
                           <a href={proj.githubLink} target="_blank" rel="noreferrer" className="text-brand-600 hover:underline text-[11px] flex items-center space-x-1">
                             <span>Repository</span>
@@ -374,8 +374,15 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
                         <span className="font-bold text-slate-900">{exp.role || 'Intern'}</span>
                         <span className="text-slate-500">{exp.duration || ''}</span>
                       </div>
-                      <div className="text-[11px] font-semibold text-brand-700">{exp.company || ''}</div>
-                      <p className="text-xs text-slate-600 leading-relaxed pt-1">{exp.description}</p>
+                      <div className="text-[11px] font-semibold text-brand-700">{exp.organization || exp.company || ''}</div>
+                      {exp.description && <p className="text-xs text-slate-600 leading-relaxed pt-1">{exp.description}</p>}
+                      {exp.responsibilities && exp.responsibilities.length > 0 && (
+                        <ul className="list-disc pl-4 text-[11px] text-slate-600 space-y-0.5 pt-0.5">
+                          {exp.responsibilities.map((r, rIdx) => (
+                            <li key={rIdx}>{r}</li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   ))
                 ) : (
@@ -391,7 +398,7 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
           {activeTab === 'history' && (
             <div className="space-y-4">
               <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Verified Assessment Records</h4>
-              
+
               {loadingHistory ? (
                 <div className="py-8 text-center text-xs text-slate-400 flex items-center justify-center space-x-2">
                   <Loader2 className="w-4 h-4 animate-spin text-brand-600" />

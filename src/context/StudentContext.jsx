@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useMemo, useEffect } from '
 import { defaultAvatarSvg } from '../data/mockStudentData';
 import { fetchLatestCompletedAssessment } from '../services/assessmentService';
 import { fetchLatestCompletedAptitude } from '../services/aptitudeService';
+import { fetchLatestCompletedCommunication } from '../services/communicationService';
 import { calculateReadinessScore } from '../services/readinessService';
 import {
   fetchStudentProfile,
@@ -13,7 +14,7 @@ import { useAuth } from './AuthContext';
 
 const StudentContext = createContext();
 
-export const emptyStudentProfile = {
+const emptyStudentProfile = {
   personalInfo: {
     fullName: "",
     headline: "",
@@ -76,9 +77,17 @@ export const StudentProvider = ({ children }) => {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isAssessmentModalOpen, setIsAssessmentModalOpen] = useState(false);
   const [isAptitudeModalOpen, setIsAptitudeModalOpen] = useState(false);
+  const [isCommunicationModalOpen, setIsCommunicationModalOpen] = useState(false);
+  const [communicationModalMode, setCommunicationModalMode] = useState('assessment');
   const [toastMessage, setToastMessage] = useState(null);
   const [latestAssessment, setLatestAssessment] = useState(null);
   const [latestAptitudeAssessment, setLatestAptitudeAssessment] = useState(null);
+  const [latestCommunicationAssessment, setLatestCommunicationAssessment] = useState(null);
+
+  const openCommunicationModal = (mode = 'assessment') => {
+    setCommunicationModalMode(mode);
+    setIsCommunicationModalOpen(true);
+  };
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -87,9 +96,13 @@ export const StudentProvider = ({ children }) => {
     }, 3500);
   };
 
-  // Profile existence check: Must have full name and at least college or contact info
+  // Profile existence check: Must have full name, college and degree specified
   const hasProfile = useMemo(() => {
-    return Boolean(studentData?.personalInfo?.fullName && (studentData?.education?.college || studentData?.personalInfo?.email));
+    return Boolean(
+      studentData?.personalInfo?.fullName &&
+      studentData?.education?.college &&
+      studentData?.education?.degree
+    );
   }, [studentData]);
 
   // Load and sync authenticated student profile from Firestore / Backend strictly by UID
@@ -100,6 +113,7 @@ export const StudentProvider = ({ children }) => {
       setStudentData(null);
       setLatestAssessment(null);
       setLatestAptitudeAssessment(null);
+      setLatestCommunicationAssessment(null);
       setProfileLoading(false);
       return;
     }
@@ -120,21 +134,23 @@ export const StudentProvider = ({ children }) => {
 
         // 2. Fetch latest assessments strictly filtered by this user's UID
         try {
-          const [assessment, aptitude] = await Promise.all([
+          const [assessment, aptitude, communication] = await Promise.all([
             fetchLatestCompletedAssessment(currentUid),
-            fetchLatestCompletedAptitude(currentUid)
+            fetchLatestCompletedAptitude(currentUid),
+            fetchLatestCompletedCommunication(currentUid)
           ]);
 
           if (isMounted) {
             if (assessment) setLatestAssessment(assessment);
             if (aptitude) setLatestAptitudeAssessment(aptitude);
+            if (communication) setLatestCommunicationAssessment(communication);
 
-            if (assessment || aptitude) {
+            if (assessment || aptitude || communication) {
               setStudentData((prev) => {
                 if (!prev) return prev;
                 const techScore = assessment?.technicalScore ?? prev.placementScores?.technicalScore ?? 0;
                 const aptScore = aptitude?.finalScore ?? aptitude?.score ?? prev.placementScores?.aptitudeScore ?? 0;
-                const commScore = prev.placementScores?.communicationScore ?? 75;
+                const commScore = communication?.finalScore ?? communication?.score ?? prev.placementScores?.communicationScore ?? 0;
 
                 const newReadiness = calculateReadinessScore({
                   technicalScore: techScore,
@@ -148,6 +164,7 @@ export const StudentProvider = ({ children }) => {
                     ...prev.placementScores,
                     technicalScore: techScore,
                     aptitudeScore: aptScore,
+                    communicationScore: commScore,
                     overallReadiness: newReadiness
                   }
                 };
@@ -212,11 +229,11 @@ export const StudentProvider = ({ children }) => {
   // Handler when technical assessment finishes
   const handleAssessmentCompleted = (summary) => {
     if (!summary || !studentData) return;
-    
+
     setLatestAssessment(summary);
     const techScore = summary.technicalScore;
     const aptScore = studentData.placementScores?.aptitudeScore ?? 0;
-    const commScore = studentData.placementScores?.communicationScore ?? 75;
+    const commScore = studentData.placementScores?.communicationScore ?? 0;
 
     const newReadiness = calculateReadinessScore({
       technicalScore: techScore,
@@ -246,7 +263,7 @@ export const StudentProvider = ({ children }) => {
     setLatestAptitudeAssessment(summary);
     const aptScore = summary.finalScore ?? summary.score ?? 0;
     const techScore = studentData.placementScores?.technicalScore ?? 0;
-    const commScore = studentData.placementScores?.communicationScore ?? 75;
+    const commScore = studentData.placementScores?.communicationScore ?? 0;
 
     const newReadiness = calculateReadinessScore({
       technicalScore: techScore,
@@ -267,6 +284,36 @@ export const StudentProvider = ({ children }) => {
 
     saveStudentData(updatedStudent);
     showToast(`Aptitude Score updated to ${aptScore}%! Overall Readiness: ${newReadiness}%`);
+  };
+
+  // Handler when communication assessment finishes
+  const handleCommunicationCompleted = (summary) => {
+    if (!summary || !studentData) return;
+
+    setLatestCommunicationAssessment(summary);
+    const commScore = summary.finalScore ?? summary.score ?? 0;
+    const techScore = studentData.placementScores?.technicalScore ?? 0;
+    const aptScore = studentData.placementScores?.aptitudeScore ?? 0;
+
+    const newReadiness = calculateReadinessScore({
+      technicalScore: techScore,
+      aptitudeScore: aptScore,
+      communicationScore: commScore
+    });
+
+    const updatedScores = {
+      ...studentData.placementScores,
+      communicationScore: commScore,
+      overallReadiness: newReadiness
+    };
+
+    const updatedStudent = {
+      ...studentData,
+      placementScores: updatedScores
+    };
+
+    saveStudentData(updatedStudent);
+    showToast(`Communication Score updated to ${commScore}%! Overall Readiness: ${newReadiness}%`);
   };
 
   // Device file upload for profile photo
@@ -309,14 +356,23 @@ export const StudentProvider = ({ children }) => {
 
   // Placement readiness score calculation
   const readinessScore = useMemo(() => {
-    if (studentData?.placementScores?.overallReadiness) {
-      return studentData.placementScores.overallReadiness;
+    const scores = studentData?.placementScores || {};
+    const hasAnyAssessment = (scores.technicalScore > 0) || (scores.aptitudeScore > 0) || (scores.communicationScore > 0);
+
+    if (hasAnyAssessment && scores.overallReadiness !== undefined) {
+      return scores.overallReadiness;
     }
-    let score = 0;
+
     if (!studentData) return 0;
 
-    if (studentData.personalInfo?.fullName) score += 10;
-    if (studentData.personalInfo?.summary) score += 10;
+    // A brand new account without basic profile completion (college and degree) and without tests starts at 0%
+    const hasBasicProfile = Boolean(studentData.education?.college && studentData.education?.degree);
+    if (!hasBasicProfile && !hasAnyAssessment) {
+      return 0;
+    }
+
+    let score = 0;
+    if (studentData.personalInfo?.fullName && studentData.personalInfo?.summary) score += 10;
     if (studentData.education?.cgpa) score += 15;
     if (studentData.education?.degree && studentData.education?.college) score += 15;
     if (studentData.professionalLinks?.linkedin) score += 5;
@@ -353,6 +409,13 @@ export const StudentProvider = ({ children }) => {
         setIsAptitudeModalOpen,
         handleAptitudeCompleted,
         latestAptitudeAssessment,
+        isCommunicationModalOpen,
+        setIsCommunicationModalOpen,
+        communicationModalMode,
+        setCommunicationModalMode,
+        openCommunicationModal,
+        handleCommunicationCompleted,
+        latestCommunicationAssessment,
         toastMessage,
         showToast
       }}

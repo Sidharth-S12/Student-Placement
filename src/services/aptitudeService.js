@@ -2,7 +2,7 @@ import { getAuthHeaders } from './firebaseClient';
 
 /**
  * Aptitude Assessment Frontend Service
- * 
+ *
  * Interacts with /api/aptitude backend endpoints:
  * - 20 dynamically generated questions via Groq (Zero hardcoded bank)
  * - 20-minute countdown timer with backend-enforced endTime
@@ -115,7 +115,7 @@ export async function fetchLatestCompletedAptitude(studentId = 'default_student'
     });
     if (res.ok) {
       const data = await res.json();
-      return data;
+      return data.found === false ? null : data;
     }
   } catch (err) {
     console.warn('[Aptitude Service] Failed to fetch latest aptitude assessment:', err.message);

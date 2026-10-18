@@ -37,6 +37,7 @@ export const AptitudeAssessmentModal = ({
   // Timer state (in seconds)
   const [remainingSeconds, setRemainingSeconds] = useState(1200); // 20:00 default
   const timerRef = useRef(null);
+  const pendingSummaryRef = useRef(null);
 
   // Initialize new session when modal opens
   const initializeAssessment = async () => {
@@ -50,6 +51,7 @@ export const AptitudeAssessmentModal = ({
     setSummaryData(null);
     setLiveScore(0);
     setRemainingSeconds(1200);
+    pendingSummaryRef.current = null;
 
     try {
       const newSession = await startAptitudeSession(studentData);
@@ -83,7 +85,7 @@ export const AptitudeAssessmentModal = ({
 
   // Master countdown timer: ticks every 1 second based on backend endTime
   useEffect(() => {
-    if (!session || !session.endTime || summaryData || isSubmitted && session.isCompleted) {
+    if (!session || !session.endTime || summaryData || (isSubmitted && (session.isCompleted || pendingSummaryRef.current))) {
       clearInterval(timerRef.current);
       return;
     }
@@ -142,11 +144,9 @@ export const AptitudeAssessmentModal = ({
       setIsSubmitted(true);
       setLiveScore(result.currentScore !== undefined ? result.currentScore : session.currentScore);
 
-      if (result.isComplete) {
-        setSummaryData(result.assessment);
-        if (onAssessmentCompleted) {
-          onAssessmentCompleted(result.assessment);
-        }
+      if (result.isComplete && result.assessment) {
+        pendingSummaryRef.current = result.assessment;
+        // Keep summaryData null so student can review final question answer/explanation
       } else if (result.nextQuestion) {
         setNextQuestionCache(result.nextQuestion);
       }
@@ -161,11 +161,14 @@ export const AptitudeAssessmentModal = ({
   const handleNextQuestion = () => {
     if (!session) return;
 
-    if (session.isCompleted || (currentQuestion?.questionIndex >= 20)) {
-      if (onAssessmentCompleted && summaryData) {
-        onAssessmentCompleted(summaryData);
+    if (pendingSummaryRef.current || session.isCompleted || (currentQuestion?.questionIndex >= 20)) {
+      const finalRes = pendingSummaryRef.current || submittedResult?.assessment;
+      if (finalRes) {
+        setSummaryData(finalRes);
+        if (onAssessmentCompleted) {
+          onAssessmentCompleted(finalRes);
+        }
       }
-      onClose();
       return;
     }
 
@@ -211,31 +214,31 @@ export const AptitudeAssessmentModal = ({
 
   const timerColorClass =
     remainingSeconds <= 120
-      ? 'bg-rose-50 border-rose-300 text-rose-700 animate-pulse'
+      ? 'bg-rose-950/60 border-rose-800/60 text-rose-300 animate-pulse'
       : remainingSeconds <= 300
-      ? 'bg-amber-50 border-amber-300 text-amber-800'
-      : 'bg-slate-100 border-slate-200 text-slate-800';
+      ? 'bg-amber-950/60 border-amber-800/60 text-amber-300'
+      : 'bg-slate-800 border-slate-700 text-slate-200';
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 md:p-6 animate-fade-in">
-      <div className="relative bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-        
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 md:p-6 animate-fade-in">
+      <div className="relative bg-slate-900 w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col max-h-[92vh] text-slate-100">
+
         {/* Modal Top Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 backdrop-blur-sm">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-brand-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                <h1 className="text-base sm:text-lg font-bold text-white leading-tight">
                   Placement Aptitude Assessment
                 </h1>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-950/60 text-indigo-300 border border-indigo-800/60">
                   Groq Dynamic AI
                 </span>
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 20 Questions • 4 Mixed Domains • 5 Marks per Question
               </p>
             </div>
@@ -255,24 +258,27 @@ export const AptitudeAssessmentModal = ({
 
             {/* Live Score Badge */}
             {!summaryData && session && (
-              <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-semibold">
-                <span>Score:</span>
-                <span className="font-mono font-bold text-indigo-700">{liveScore}%</span>
+              <div className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold">
+                <span className="text-slate-400">Score:</span>
+                <span className="font-mono font-bold text-indigo-400">{liveScore}%</span>
               </div>
             )}
 
             {/* Close / Exit Button */}
             <button
               onClick={() => {
-                if (!summaryData && session) {
+                if (!summaryData && session && !pendingSummaryRef.current) {
                   const confirmExit = window.confirm(
                     'Do you want to exit the Aptitude Test? Your current progress will be lost.'
                   );
                   if (!confirmExit) return;
                 }
+                if (pendingSummaryRef.current && !summaryData && onAssessmentCompleted) {
+                  onAssessmentCompleted(pendingSummaryRef.current);
+                }
                 onClose();
               }}
-              className="w-8 h-8 rounded-full hover:bg-slate-200/80 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors"
+              className="w-8 h-8 rounded-full hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
               title="Close modal"
             >
               <X className="w-5 h-5" />
@@ -282,9 +288,9 @@ export const AptitudeAssessmentModal = ({
 
         {/* Progress Bar */}
         {!summaryData && currentQuestion && (
-          <div className="w-full bg-slate-100 h-1.5">
+          <div className="w-full bg-slate-800 h-1.5">
             <div
-              className="bg-indigo-600 h-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-indigo-500 to-brand-500 h-full transition-all duration-300 ease-out"
               style={{
                 width: `${((currentQuestion.questionIndex - 1) / 20) * 100}%`
               }}
@@ -293,20 +299,20 @@ export const AptitudeAssessmentModal = ({
         )}
 
         {/* Modal Scrollable Body */}
-        <div className="p-5 sm:p-6 md:p-8 overflow-y-auto flex-1">
+        <div className="p-5 sm:p-6 md:p-8 overflow-y-auto flex-1 bg-slate-950/40">
           {/* 1. Loading Initial Question State */}
           {isLoadingSession && (
             <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
               <div className="relative">
-                <div className="w-16 h-16 rounded-3xl bg-indigo-50 border-2 border-indigo-200 flex items-center justify-center">
-                  <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+                <div className="w-16 h-16 rounded-3xl bg-indigo-950/40 border-2 border-indigo-800/60 flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
                 </div>
               </div>
               <div className="space-y-1 max-w-sm">
-                <h3 className="text-base font-bold text-slate-800">
+                <h3 className="text-base font-bold text-white">
                   Generating Aptitude Test dynamically...
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-400">
                   Connecting to Groq AI to formulate original questions across Quantitative, Logical, Verbal, and Technical aptitude.
                 </p>
               </div>
@@ -316,16 +322,16 @@ export const AptitudeAssessmentModal = ({
           {/* 2. Error State */}
           {errorMessage && !isLoadingSession && (
             <div className="py-12 flex flex-col items-center justify-center text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+              <div className="w-14 h-14 rounded-2xl bg-rose-950/40 border border-rose-800/60 flex items-center justify-center text-rose-400">
                 <AlertTriangle className="w-7 h-7" />
               </div>
               <div className="space-y-1 max-w-md">
-                <h3 className="text-base font-bold text-slate-800">Unable to Start Assessment</h3>
-                <p className="text-xs text-rose-600">{errorMessage}</p>
+                <h3 className="text-base font-bold text-white">Unable to Start Assessment</h3>
+                <p className="text-xs text-rose-400">{errorMessage}</p>
               </div>
               <button
                 onClick={initializeAssessment}
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm flex items-center space-x-2 transition-all shadow-md shadow-indigo-200"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-600 hover:from-indigo-500 hover:to-brand-500 text-white font-semibold text-xs sm:text-sm flex items-center space-x-2 transition-all shadow-lg shadow-indigo-600/30"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Try Again</span>

@@ -1,0 +1,15 @@
+node_modules
+
+# Dependencies and generated files
+node_modules/
+dist/
+
+# Environment secrets
+.env
+**/.env
+
+# Local student and assessment data
+server/.data/
+
+# Local backup archive
+Student-Placement.zip

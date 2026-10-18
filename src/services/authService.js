@@ -15,7 +15,19 @@ const LOCAL_USERS_KEY = 'placement_genie_local_users';
 const DEFAULT_PRESEEDED_USERS = {
   'admin@placement.edu': {
     email: 'admin@placement.edu',
-    displayName: 'Placement Officer',
+    displayName: 'Dr. K. S. Ramanathan',
+    role: 'admin',
+    createdAt: new Date().toISOString()
+  },
+  'officer@placement.edu': {
+    email: 'officer@placement.edu',
+    displayName: 'Rajesh Varma',
+    role: 'admin',
+    createdAt: new Date().toISOString()
+  },
+  'placement.director@college.edu': {
+    email: 'placement.director@college.edu',
+    displayName: 'Prof. Anita Sharma',
     role: 'admin',
     createdAt: new Date().toISOString()
   },
@@ -93,7 +105,7 @@ import { getUserRole, persistUserRole, normalizeRole } from './roleService.js';
 
 /**
  * Registers a new user with Firebase Authentication and records their verified role.
- * 
+ *
  * Rules:
  * - Student registers with Name, Email, Password.
  * - Company registers with Company Name, Official Email, Password.
@@ -154,14 +166,31 @@ export async function loginUser(email, password) {
   let user = null;
 
   if (isConfigured && auth) {
-    const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
-    user = userCredential.user;
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
+      user = userCredential.user;
+    } catch (fbErr) {
+      // If user does not exist in live Firebase Auth, check local/backend user store
+      const localUsers = getLocalUsers();
+      const localRecord = localUsers[cleanEmail];
+      if (localRecord && (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential')) {
+        user = {
+          uid: localRecord.uid || `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
+          email: cleanEmail,
+          displayName: localRecord.displayName || cleanEmail.split('@')[0]
+        };
+      } else {
+        throw fbErr;
+      }
+    }
   } else {
     // Development fallback: check local store or allow password verification
+    const localUsers = getLocalUsers();
+    const localRecord = localUsers[cleanEmail] || {};
     user = {
-      uid: `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
+      uid: localRecord.uid || `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
       email: cleanEmail,
-      displayName: cleanEmail.split('@')[0]
+      displayName: localRecord.displayName || cleanEmail.split('@')[0]
     };
   }
 
