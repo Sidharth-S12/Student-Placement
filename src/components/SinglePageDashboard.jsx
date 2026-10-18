@@ -3,6 +3,7 @@ import { useStudent } from '../context/StudentContext';
 import { useAuth } from '../context/AuthContext';
 import { generateATSResumePDF } from '../utils/generateATSResumePDF';
 import { StudentSidebar } from './navigation/StudentSidebar';
+import { StudentPortalNav } from './navigation/StudentPortalNav';
 import PersonalizedRoadmap from './PersonalizedRoadmap';
 import ResumeAnalyzer from './ResumeAnalyzer';
 import { AppearancePostureAnalyzer } from './appearance/AppearancePostureAnalyzer';
@@ -1583,10 +1584,10 @@ export const SinglePageDashboard = () => {
       <div className="flex-1 min-w-0 flex flex-col min-h-screen relative z-10">
         
         {/* Top Navbar Header */}
-        <header className="sticky top-0 z-20 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 shadow-xl flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 shadow-xl flex items-center justify-between gap-4">
           
-          {/* Mobile hamburger & Breadcrumb */}
-          <div className="flex items-center space-x-3 min-w-0">
+          {/* Left: Mobile hamburger & Clean Compact Brand / Context */}
+          <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
@@ -1596,39 +1597,44 @@ export const SinglePageDashboard = () => {
               <Menu className="w-5 h-5" />
             </button>
 
-            <div className="truncate">
-              <div className="flex items-center space-x-1.5 text-xs text-slate-400 font-medium">
-                <span>Student Portal</span>
-                <ChevronRight className="w-3 h-3 text-slate-500" />
-                <span className="text-brand-400 font-semibold capitalize">{activeTab}</span>
-              </div>
-              <h1 className="font-extrabold text-white text-sm sm:text-base leading-tight truncate font-display">
-                {getBreadcrumbTitle()}
-              </h1>
+            <div className="truncate hidden sm:flex items-center space-x-2 text-xs">
+              <span className="font-extrabold text-white text-sm tracking-tight font-display">Placement Genie</span>
+              <span className="text-slate-600">/</span>
+              <span className="text-brand-400 font-semibold capitalize">{activeTab}</span>
             </div>
           </div>
 
-          {/* Top Header Quick Actions */}
-          <div className="flex items-center space-x-2 sm:space-x-2.5 flex-shrink-0">
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={Edit3}
-              onClick={() => setIsEditModalOpen(true)}
-              className="hidden sm:inline-flex"
-            >
-              Edit Profile
-            </Button>
+          {/* Center: Dropdown Navigation Menu (Placement, Testing, Resume, Roadmap) */}
+          <div className="flex items-center justify-center min-w-0">
+            <StudentPortalNav
+              activeTab={activeTab}
+              activeSection={activeSection}
+              testCenterSubTab={testCenterSubTab}
+              resumeSubTab={resumeSubTab}
+              onNavigate={navigateTo}
+              studentData={studentData}
+              hasProfile={hasProfile}
+              readinessScore={readinessScore}
+              latestAssessment={latestAssessment}
+              latestAptitudeAssessment={latestAptitudeAssessment}
+              latestCommunicationAssessment={latestCommunicationAssessment}
+              onOpenEditProfile={() => setIsEditModalOpen(true)}
+              onOpenATSModal={() => setIsResumeModalOpen(true)}
+              onQuickDownloadATS={handleQuickDownloadPDF}
+              onStartTechnical={() => setIsAssessmentModalOpen(true)}
+              onStartAptitude={() => setIsAptitudeModalOpen(true)}
+              onStartCommunication={() => setIsCommunicationModalOpen(true)}
+            />
+          </div>
 
-            <Button
-              variant="primary"
-              size="sm"
-              icon={Download}
-              onClick={handleQuickDownloadPDF}
-              className="hidden sm:inline-flex"
-            >
-              ATS PDF
-            </Button>
+          {/* Right: Clean Status Pill, Avatar & Sign Out */}
+          <div className="flex items-center space-x-3 flex-shrink-0">
+            {/* Live Readiness Pill */}
+            <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-850 border border-slate-700/80 text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="text-slate-400 font-medium text-[11px]">Readiness</span>
+              <span className="text-emerald-400 font-bold font-mono text-xs">{currentReadiness}%</span>
+            </div>
 
             {/* User Profile Pill & Sign Out */}
             <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
@@ -1636,6 +1642,7 @@ export const SinglePageDashboard = () => {
                 src={personalInfo.profilePhoto || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><circle cx='12' cy='7' r='4'/><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/></svg>"}
                 alt={personalInfo.fullName || 'Student'}
                 className="w-8 h-8 rounded-xl object-cover ring-1 ring-slate-700"
+                title={personalInfo.fullName || 'Student'}
               />
               <button
                 type="button"

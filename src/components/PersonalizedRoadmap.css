@@ -177,7 +177,7 @@
   margin: 18px 0;
 }
 
-.roadmap-progress-track > div {
+.roadmap-progress-track>div {
   height: 100%;
   background: linear-gradient(90deg, #6366f1, #06b6d4);
   border-radius: inherit;

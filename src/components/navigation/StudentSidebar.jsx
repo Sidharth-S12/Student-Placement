@@ -156,7 +156,7 @@ export const StudentSidebar = ({
                   ? 'bg-gradient-to-r from-brand-500 to-indigo-400'
                   : 'bg-gradient-to-r from-amber-500 to-orange-400'
               }`}
-              style={{ width: `${Math.min(100, Math.max(5, currentReadiness))}%` }}
+              style={{ width: `${Math.min(100, Math.max(0, currentReadiness))}%` }}
             />
           </div>
           <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-800 text-[10px]">

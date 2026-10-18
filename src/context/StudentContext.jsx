@@ -96,9 +96,13 @@ export const StudentProvider = ({ children }) => {
     }, 3500);
   };
 
-  // Profile existence check: Must have full name and at least college or contact info
+  // Profile existence check: Must have full name, college and degree specified
   const hasProfile = useMemo(() => {
-    return Boolean(studentData?.personalInfo?.fullName && (studentData?.education?.college || studentData?.personalInfo?.email));
+    return Boolean(
+      studentData?.personalInfo?.fullName &&
+      studentData?.education?.college &&
+      studentData?.education?.degree
+    );
   }, [studentData]);
 
   // Load and sync authenticated student profile from Firestore / Backend strictly by UID
@@ -352,14 +356,23 @@ export const StudentProvider = ({ children }) => {
 
   // Placement readiness score calculation
   const readinessScore = useMemo(() => {
-    if (studentData?.placementScores?.overallReadiness) {
-      return studentData.placementScores.overallReadiness;
+    const scores = studentData?.placementScores || {};
+    const hasAnyAssessment = (scores.technicalScore > 0) || (scores.aptitudeScore > 0) || (scores.communicationScore > 0);
+    
+    if (hasAnyAssessment && scores.overallReadiness !== undefined) {
+      return scores.overallReadiness;
     }
-    let score = 0;
+
     if (!studentData) return 0;
 
-    if (studentData.personalInfo?.fullName) score += 10;
-    if (studentData.personalInfo?.summary) score += 10;
+    // A brand new account without basic profile completion (college and degree) and without tests starts at 0%
+    const hasBasicProfile = Boolean(studentData.education?.college && studentData.education?.degree);
+    if (!hasBasicProfile && !hasAnyAssessment) {
+      return 0;
+    }
+
+    let score = 0;
+    if (studentData.personalInfo?.fullName && studentData.personalInfo?.summary) score += 10;
     if (studentData.education?.cgpa) score += 15;
     if (studentData.education?.degree && studentData.education?.college) score += 15;
     if (studentData.professionalLinks?.linkedin) score += 5;
