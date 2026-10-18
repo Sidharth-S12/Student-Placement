@@ -54,7 +54,7 @@ export const MCQQuestionView = ({
             );
           }
           return (
-            <p key={idx} className="text-slate-800 text-sm sm:text-base font-medium leading-relaxed">
+            <p key={idx} className="text-slate-100 text-sm sm:text-base font-medium leading-relaxed">
               {part}
             </p>
           );
@@ -80,19 +80,19 @@ export const MCQQuestionView = ({
           const isSelected = selectedOption === idx;
           const isThisCorrect = isSubmitted && correctIdx !== undefined && idx === correctIdx;
 
-          let optionStyle = 'border-slate-200 hover:border-brand-400 bg-white text-slate-700';
+          let optionStyle = 'border-slate-800 hover:border-brand-500/60 bg-slate-850/80 text-slate-200 hover:bg-slate-800';
 
           if (isSelected && !isSubmitted) {
-            optionStyle = 'border-brand-600 bg-brand-50/70 text-brand-900 font-semibold ring-2 ring-brand-500/20';
+            optionStyle = 'border-brand-500 bg-brand-500/20 text-white font-semibold ring-2 ring-brand-500/40 shadow-sm';
           }
 
           if (isSubmitted) {
             if (isThisCorrect) {
-              optionStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-bold ring-2 ring-emerald-500/30';
+              optionStyle = 'border-emerald-500/80 bg-emerald-950/50 text-emerald-200 font-bold ring-2 ring-emerald-500/40';
             } else if (isSelected && !isThisCorrect) {
-              optionStyle = 'border-red-400 bg-red-50 text-red-950 font-medium';
+              optionStyle = 'border-rose-500/80 bg-rose-950/50 text-rose-200 font-medium';
             } else {
-              optionStyle = 'border-slate-100 bg-slate-50 text-slate-400 opacity-60';
+              optionStyle = 'border-slate-850/60 bg-slate-900/40 text-slate-500 opacity-50';
             }
           }
 
@@ -108,12 +108,12 @@ export const MCQQuestionView = ({
                 <div
                   className={`w-6 h-6 rounded-full border flex items-center justify-center font-bold text-xs flex-shrink-0 ${
                     isSubmitted && isThisCorrect
-                      ? 'bg-emerald-600 border-emerald-600 text-white'
+                      ? 'bg-emerald-600 border-emerald-500 text-white'
                       : isSubmitted && isSelected && !isThisCorrect
-                      ? 'bg-red-500 border-red-500 text-white'
+                      ? 'bg-rose-600 border-rose-500 text-white'
                       : isSelected
-                      ? 'bg-brand-600 border-brand-600 text-white'
-                      : 'border-slate-300 text-slate-500 bg-slate-50'
+                      ? 'bg-brand-600 border-brand-500 text-white'
+                      : 'border-slate-700 text-slate-400 bg-slate-800'
                   }`}
                 >
                   {String.fromCharCode(65 + idx)}
@@ -122,10 +122,10 @@ export const MCQQuestionView = ({
               </div>
 
               {isSubmitted && isThisCorrect && (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
               )}
               {isSubmitted && isSelected && !isThisCorrect && (
-                <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                <XCircle className="w-5 h-5 text-rose-400 flex-shrink-0" />
               )}
             </button>
           );
@@ -141,8 +141,8 @@ export const MCQQuestionView = ({
             disabled={selectedOption === null}
             className={`px-6 py-3 rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center space-x-2 ${
               selectedOption !== null
-                ? 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-600/30 active:scale-95'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                ? 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-brand-600/30 active:scale-95'
+                : 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none border border-slate-700'
             }`}
           >
             <span>Submit Answer</span>
@@ -150,24 +150,24 @@ export const MCQQuestionView = ({
         </div>
       ) : (
         /* Post-Submission Result Card: Explicitly displays Result, Your Answer, Correct Answer, Explanation */
-        <div className="space-y-4 pt-4 border-t border-slate-200 animate-fade-in">
+        <div className="space-y-4 pt-4 border-t border-slate-800 animate-fade-in">
           <div
-            className={`p-5 rounded-2xl border shadow-sm space-y-4 ${
+            className={`p-5 rounded-2xl border shadow-xl space-y-4 ${
               isCorrect
-                ? 'bg-emerald-50/70 border-emerald-200'
-                : 'bg-red-50/70 border-red-200'
+                ? 'bg-emerald-950/25 border-emerald-800/40'
+                : 'bg-rose-950/25 border-rose-800/40'
             }`}
           >
             {/* Header: Question Number Result + Badge */}
-            <div className="flex items-center justify-between border-b pb-3 border-slate-200/80">
-              <h4 className="font-extrabold text-sm sm:text-base text-slate-900">
+            <div className="flex items-center justify-between border-b pb-3 border-slate-800">
+              <h4 className="font-extrabold text-sm sm:text-base text-white">
                 Question {qNum} Result
               </h4>
               <div
                 className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
                   isCorrect
                     ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-red-600 text-white shadow-xs'
+                    : 'bg-rose-600 text-white shadow-xs'
                 }`}
               >
                 {isCorrect ? (
@@ -190,15 +190,15 @@ export const MCQQuestionView = ({
               <div
                 className={`p-3.5 rounded-xl border ${
                   isCorrect
-                    ? 'bg-white/90 border-emerald-200 text-emerald-950'
-                    : 'bg-white/90 border-red-200 text-red-950'
+                    ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-200'
+                    : 'bg-rose-950/40 border-rose-800/40 text-rose-200'
                 }`}
               >
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Your Answer:
                 </div>
                 <div className="font-extrabold flex items-center space-x-1.5">
-                  <span className={isCorrect ? 'text-emerald-700' : 'text-red-700'}>
+                  <span className={isCorrect ? 'text-emerald-300' : 'text-rose-300'}>
                     {submittedResult?.yourAnswer ||
                       (selectedOption !== null
                         ? `${String.fromCharCode(65 + selectedOption)}. ${question.options[selectedOption]}`
@@ -208,11 +208,11 @@ export const MCQQuestionView = ({
               </div>
 
               {/* Correct Answer */}
-              <div className="p-3.5 rounded-xl border bg-white/90 border-emerald-200 text-emerald-950">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <div className="p-3.5 rounded-xl border bg-emerald-950/40 border-emerald-800/40 text-emerald-200">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
                   Correct Answer:
                 </div>
-                <div className="font-extrabold text-emerald-700 flex items-center space-x-1.5">
+                <div className="font-extrabold text-emerald-300 flex items-center space-x-1.5">
                   <span>
                     {submittedResult?.correctAnswer ||
                       (correctIdx !== undefined
@@ -225,11 +225,11 @@ export const MCQQuestionView = ({
 
             {/* Explanation Section */}
             {submittedResult?.explanation && (
-              <div className="bg-white/95 rounded-xl p-4 border border-slate-200 space-y-1.5">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1">
+              <div className="bg-slate-850/90 rounded-xl p-4 border border-slate-800 space-y-1.5">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1">
                   <span>Explanation:</span>
                 </div>
-                <p className="text-slate-800 text-xs sm:text-sm leading-relaxed font-normal">
+                <p className="text-slate-200 text-xs sm:text-sm leading-relaxed font-normal">
                   {submittedResult.explanation}
                 </p>
               </div>
@@ -237,17 +237,17 @@ export const MCQQuestionView = ({
           </div>
 
           {/* Performance Snapshot */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-100 rounded-xl text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-850/80 rounded-xl border border-slate-800 text-xs">
             <div className="flex items-center space-x-2">
-              <span className="text-slate-500 font-medium">Technical Score:</span>
-              <span className="font-bold text-slate-900">
+              <span className="text-slate-400 font-medium">Technical Score:</span>
+              <span className="font-bold text-white">
                 {submittedResult?.score ?? submittedResult?.liveScore ?? 0}%
               </span>
             </div>
             {submittedResult?.mlInsights?.predictedDifficulty && (
               <div className="flex items-center space-x-2">
-                <span className="text-slate-500 font-medium">Adaptive Level:</span>
-                <span className="px-2 py-0.5 rounded bg-brand-100 text-brand-800 font-bold uppercase">
+                <span className="text-slate-400 font-medium">Adaptive Level:</span>
+                <span className="px-2 py-0.5 rounded bg-brand-500/15 text-brand-300 border border-brand-500/30 font-bold uppercase">
                   {submittedResult.mlInsights.predictedDifficulty}
                 </span>
               </div>
@@ -260,7 +260,7 @@ export const MCQQuestionView = ({
               <button
                 type="button"
                 onClick={onNext}
-                className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-emerald-600/30 flex items-center space-x-2 transition-all hover:scale-105 active:scale-95"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-emerald-600/30 flex items-center space-x-2 transition-all hover:scale-105 active:scale-95"
               >
                 <span>Finish & View Assessment Results</span>
                 <ArrowRight className="w-4 h-4" />
@@ -272,8 +272,8 @@ export const MCQQuestionView = ({
                 disabled={isGeneratingNext}
                 className={`px-6 py-3 rounded-xl font-bold text-xs sm:text-sm shadow-md flex items-center space-x-2 transition-all ${
                   isGeneratingNext
-                    ? 'bg-slate-300 text-slate-600 cursor-not-allowed'
-                    : 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-600/30 hover:scale-105 active:scale-95'
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
+                    : 'bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-brand-600/30 hover:scale-105 active:scale-95'
                 }`}
               >
                 {isGeneratingNext ? (

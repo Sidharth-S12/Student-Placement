@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 /**
  * Firebase Admin & Firestore Service
- * 
+ *
  * Supports:
  * 1. Live Google Firebase Cloud Firestore & Authentication when credentials are provided in .env
  * 2. Transparent local persistence fallback when Firebase project credentials are not yet configured,
@@ -58,7 +58,9 @@ const STUDENTS_FILE = path.join(LOCAL_STORE_DIR, 'students.json');
 const QUESTIONS_FILE = path.join(LOCAL_STORE_DIR, 'studentQuestions.json');
 const APTITUDE_ASSESSMENTS_FILE = path.join(LOCAL_STORE_DIR, 'aptitudeAssessments.json');
 const APTITUDE_QUESTIONS_FILE = path.join(LOCAL_STORE_DIR, 'studentAptitudeQuestions.json');
+const COMMUNICATION_ASSESSMENTS_FILE = path.join(LOCAL_STORE_DIR, 'communicationAssessments.json');
 const USERS_FILE = path.join(LOCAL_STORE_DIR, 'users.json');
+const DRIVES_FILE = path.join(LOCAL_STORE_DIR, 'placementDrives.json');
 
 function ensureLocalStore() {
   if (!fs.existsSync(LOCAL_STORE_DIR)) {
@@ -82,6 +84,9 @@ function ensureLocalStore() {
   if (!fs.existsSync(USERS_FILE)) {
     fs.writeFileSync(USERS_FILE, JSON.stringify({}), 'utf8');
   }
+  if (!fs.existsSync(DRIVES_FILE)) {
+    fs.writeFileSync(DRIVES_FILE, JSON.stringify({}), 'utf8');
+  }
 }
 
 function readLocalData(filePath) {
@@ -101,7 +106,7 @@ function writeLocalData(filePath, data) {
 
 /**
  * Saves a completed technical assessment document to Firestore (or local fallback).
- * 
+ *
  * Structure: technicalAssessments/{assessmentId}
  */
 export async function saveAssessmentToFirestore(assessmentId, data) {
@@ -220,7 +225,7 @@ export async function getStudentQuestionHistory(studentId) {
 export async function recordStudentQuestions(studentId, newQuestions = []) {
   if (!studentId || newQuestions.length === 0) return;
   const existing = await getStudentQuestionHistory(studentId);
-  
+
   const seenTexts = new Set(existing.map(q => (q.questionText || '').trim().toLowerCase()));
   const merged = [...existing];
 
@@ -506,7 +511,7 @@ export async function getStudentAptitudeQuestionHistory(studentId) {
 export async function recordStudentAptitudeQuestions(studentId, newQuestions = []) {
   if (!studentId || newQuestions.length === 0) return;
   const existing = await getStudentAptitudeQuestionHistory(studentId);
-  
+
   const seenTexts = new Set(existing.map(q => (q.questionText || '').trim().toLowerCase()));
   const merged = [...existing];
 
@@ -540,6 +545,112 @@ export async function recordStudentAptitudeQuestions(studentId, newQuestions = [
   const allHistory = readLocalData(APTITUDE_QUESTIONS_FILE);
   allHistory[studentId] = merged;
   writeLocalData(APTITUDE_QUESTIONS_FILE, allHistory);
+}
+
+/**
+ * Persists a Communication Assessment document to Firestore (or local fallback).
+ */
+export async function saveCommunicationAssessmentToFirestore(assessment) {
+  const assessmentId = assessment.id || assessment.assessmentId;
+  if (!assessmentId) throw new Error('Assessment ID is required for saving.');
+
+  const payload = {
+    ...assessment,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (isFirebaseConfigured && db) {
+    await db.collection('communicationAssessments').doc(assessmentId).set(payload, { merge: true });
+  } else {
+    const records = readLocalData(COMMUNICATION_ASSESSMENTS_FILE);
+    records[assessmentId] = payload;
+    writeLocalData(COMMUNICATION_ASSESSMENTS_FILE, records);
+  }
+
+  return payload;
+}
+
+/**
+ * Updates student document with their latest communication score & statistics.
+ */
+export async function updateStudentLatestCommunication(studentId, commData) {
+  if (!studentId) return;
+
+  const score = commData.finalScore ?? commData.score ?? 0;
+  const studentPayload = {
+    latestCommunicationAssessment: {
+      assessmentId: commData.id || commData.assessmentId,
+      score,
+      totalQuestions: commData.totalQuestions || 15,
+      correctAnswers: commData.correctAnswers || 0,
+      completedAt: commData.completedAt || new Date().toISOString(),
+      categoryBreakdown: commData.categoryBreakdown || {},
+      status: commData.status || 'Completed'
+    },
+    communicationScore: score,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (isFirebaseConfigured && db) {
+    await db.collection('students').doc(studentId).set(studentPayload, { merge: true });
+  } else {
+    const students = readLocalData(STUDENTS_FILE);
+    const existing = students[studentId] || {};
+    const placementScores = {
+      ...(existing.placementScores || {}),
+      communicationScore: score
+    };
+    students[studentId] = {
+      ...existing,
+      ...studentPayload,
+      placementScores
+    };
+    writeLocalData(STUDENTS_FILE, students);
+  }
+}
+
+/**
+ * Retrieves a communication assessment by ID.
+ */
+export async function getCommunicationAssessmentFromFirestore(assessmentId) {
+  if (isFirebaseConfigured && db) {
+    const doc = await db.collection('communicationAssessments').doc(assessmentId).get();
+    return doc.exists ? doc.data() : null;
+  } else {
+    const records = readLocalData(COMMUNICATION_ASSESSMENTS_FILE);
+    return records[assessmentId] || null;
+  }
+}
+
+/**
+ * Retrieves the latest completed communication assessment for a student.
+ */
+export async function getLatestCommunicationAssessmentForStudent(studentId) {
+  if (isFirebaseConfigured && db) {
+    try {
+      const snapshot = await db.collection('communicationAssessments')
+        .where('studentId', '==', studentId)
+        .where('status', '==', 'Completed')
+        .orderBy('completedAt', 'desc')
+        .limit(1)
+        .get();
+
+      if (!snapshot.empty) {
+        return snapshot.docs[0].data();
+      }
+    } catch (e) {
+      console.warn('[Firebase] Query latest communication failed:', e.message);
+    }
+  }
+
+  const records = readLocalData(COMMUNICATION_ASSESSMENTS_FILE);
+  const userAssessments = Object.values(records).filter(
+    a => a.studentId === studentId && a.status === 'Completed'
+  );
+  if (userAssessments.length === 0) return null;
+
+  userAssessments.sort((a, b) => new Date(b.completedAt || 0) - new Date(a.completedAt || 0));
+  return userAssessments[0];
 }
 
 /**
@@ -841,6 +952,175 @@ export async function getStudentAssessmentHistory(studentId) {
   }
 
   return history;
+}
+
+/**
+ * Retrieves all registered Placement Officers (admin users).
+ */
+export async function getAllPlacementOfficers() {
+  const localUsers = readLocalData(USERS_FILE);
+  const officers = Object.values(localUsers).filter(u => u.role === 'admin');
+  return officers.map(o => ({
+    uid: o.uid,
+    email: o.email,
+    displayName: o.displayName || o.name || 'Placement Officer',
+    designation: o.designation || 'Placement Officer',
+    department: o.department || 'Central Placement Cell',
+    phone: o.phone || '',
+    role: 'admin',
+    createdAt: o.createdAt || o.updatedAt || new Date().toISOString()
+  }));
+}
+
+/**
+ * Adds or updates a Placement Officer record.
+ */
+export async function addPlacementOfficer({ name, email, designation, department, phone, uid }) {
+  if (!email) throw new Error('Email is required for Placement Officer.');
+  const cleanEmail = email.trim().toLowerCase();
+  const effectiveUid = uid || `admin_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+  const payload = {
+    uid: effectiveUid,
+    role: 'admin',
+    email: cleanEmail,
+    displayName: name || cleanEmail.split('@')[0],
+    designation: designation || 'Placement Officer',
+    department: department || 'Central Placement Cell',
+    phone: phone || '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('users').doc(effectiveUid).set(payload, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase Admin] addPlacementOfficer Firestore write failed:', e.message);
+    }
+  }
+
+  const localUsers = readLocalData(USERS_FILE);
+  localUsers[effectiveUid] = payload;
+  writeLocalData(USERS_FILE, localUsers);
+
+  return payload;
+}
+
+/**
+ * Removes a Placement Officer.
+ * Safeguard: Prevents removing the only remaining placement officer.
+ */
+export async function removePlacementOfficer(uid) {
+  if (!uid) throw new Error('UID is required.');
+  const localUsers = readLocalData(USERS_FILE);
+
+  const adminUsers = Object.values(localUsers).filter(u => u.role === 'admin');
+  if (adminUsers.length <= 1 && localUsers[uid]?.role === 'admin') {
+    throw new Error('Cannot remove the only remaining Placement Officer. At least one administrator account must be retained.');
+  }
+
+  if (localUsers[uid]) {
+    delete localUsers[uid];
+    writeLocalData(USERS_FILE, localUsers);
+  }
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('users').doc(uid).delete();
+    } catch (e) {
+      console.warn('[Firebase Admin] removePlacementOfficer Firestore delete failed:', e.message);
+    }
+  }
+
+  return { success: true };
+}
+
+/**
+ * Retrieves all Campus Placement Drives.
+ */
+export async function getAllPlacementDrives() {
+  ensureLocalStore();
+  let drives = readLocalData(DRIVES_FILE);
+  if (!drives || Object.keys(drives).length === 0) {
+    const initialDrives = {
+      "drive_google_2026": {
+        id: "drive_google_2026",
+        companyName: "Google Cloud",
+        jobRole: "Software Engineer - Campus 2026",
+        eligibleDepartments: ["CSE", "ECE", "AI & DS"],
+        minCgpa: 8.0,
+        minReadiness: 75,
+        packageCTC: "28 LPA",
+        driveDate: "2026-10-25",
+        status: "Upcoming",
+        location: "Campus / Virtual",
+        jobDescription: "Developing scalable distributed systems, microservices, and AI cloud tools.",
+        createdAt: new Date().toISOString()
+      },
+      "drive_techcorp_2026": {
+        id: "drive_techcorp_2026",
+        companyName: "TechCorp Solutions",
+        jobRole: "Full Stack Developer",
+        eligibleDepartments: ["All"],
+        minCgpa: 7.0,
+        minReadiness: 65,
+        packageCTC: "14 LPA",
+        driveDate: "2026-10-18",
+        status: "Active",
+        location: "Main Auditorium",
+        jobDescription: "React, Node.js, and cloud application engineering.",
+        createdAt: new Date().toISOString()
+      },
+      "drive_estech_2026": {
+        id: "drive_estech_2026",
+        companyName: "ES Tech Global",
+        jobRole: "Embedded Systems & Firmware Engineer",
+        eligibleDepartments: ["ECE", "EEE", "ME"],
+        minCgpa: 7.0,
+        minReadiness: 60,
+        packageCTC: "12 LPA",
+        driveDate: "2026-11-05",
+        status: "Upcoming",
+        location: "Virtual",
+        jobDescription: "Microcontrollers, C/C++, RTOS, and IoT hardware integration.",
+        createdAt: new Date().toISOString()
+      }
+    };
+    writeLocalData(DRIVES_FILE, initialDrives);
+    drives = initialDrives;
+  }
+  return Object.values(drives).sort((a, b) => new Date(a.driveDate) - new Date(b.driveDate));
+}
+
+/**
+ * Creates or updates a Campus Placement Drive.
+ */
+export async function savePlacementDrive(driveData) {
+  ensureLocalStore();
+  const drives = readLocalData(DRIVES_FILE);
+  const id = driveData.id || `drive_${Date.now()}`;
+  const payload = {
+    ...driveData,
+    id,
+    updatedAt: new Date().toISOString()
+  };
+  drives[id] = payload;
+  writeLocalData(DRIVES_FILE, drives);
+  return payload;
+}
+
+/**
+ * Deletes a Campus Placement Drive.
+ */
+export async function deletePlacementDrive(id) {
+  ensureLocalStore();
+  const drives = readLocalData(DRIVES_FILE);
+  if (drives[id]) {
+    delete drives[id];
+    writeLocalData(DRIVES_FILE, drives);
+  }
+  return { success: true };
 }
 
 export { isFirebaseConfigured };

@@ -5,10 +5,12 @@ import { SinglePageDashboard } from './components/SinglePageDashboard';
 import { CompanyDashboard } from './components/company/CompanyDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AuthPage } from './components/auth/AuthPage';
+import { LandingPage } from './components/landing/LandingPage';
 import { EditProfileModal } from './components/profile/EditProfileModal';
 import { ATSResumeModal } from './components/resume/ATSResumeModal';
 import { TechnicalAssessmentModal } from './components/assessment/TechnicalAssessmentModal';
 import { AptitudeAssessmentModal } from './components/aptitude/AptitudeAssessmentModal';
+import { CommunicationAssessmentModal } from './components/communication/CommunicationAssessmentModal';
 import { CheckCircle, Loader2, GraduationCap } from 'lucide-react';
 
 const StudentDashboardContent = () => {
@@ -18,14 +20,18 @@ const StudentDashboardContent = () => {
     setIsAssessmentModalOpen,
     isAptitudeModalOpen,
     setIsAptitudeModalOpen,
+    isCommunicationModalOpen,
+    setIsCommunicationModalOpen,
+    communicationModalMode,
     studentData,
     handleAssessmentCompleted,
-    handleAptitudeCompleted
+    handleAptitudeCompleted,
+    handleCommunicationCompleted
   } = useStudent();
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 antialiased relative">
-      {/* Single Page Placement Profile Dashboard */}
+    <div className="min-h-screen bg-slate-900 text-slate-100 antialiased relative selection:bg-brand-500 selection:text-white">
+      {/* Single Page Placement Profile Dashboard with Left Navigation Sidebar */}
       <SinglePageDashboard />
 
       {/* Profile Edit Modal */}
@@ -48,6 +54,15 @@ const StudentDashboardContent = () => {
         onClose={() => setIsAptitudeModalOpen(false)}
         studentData={studentData}
         onAssessmentCompleted={handleAptitudeCompleted}
+      />
+
+      {/* Communication & Interview Assessment Module */}
+      <CommunicationAssessmentModal
+        isOpen={isCommunicationModalOpen}
+        onClose={() => setIsCommunicationModalOpen(false)}
+        studentData={studentData}
+        onAssessmentCompleted={handleCommunicationCompleted}
+        initialMode={communicationModalMode}
       />
 
       {/* Toast Notification */}
@@ -194,36 +209,64 @@ const MainAppContent = () => {
     }
   };
 
+  const isAdminPath = currentPath.startsWith('/admin') || currentPath.includes('#/admin');
+
+  React.useEffect(() => {
+    if (!currentUser && isAdminPath) {
+      setSelectedRole('admin');
+    }
+  }, [currentUser, isAdminPath]);
+
+  const [showAuth, setShowAuth] = React.useState(false);
+  const [authRolePref, setAuthRolePref] = React.useState(null);
+  const [authModePref, setAuthModePref] = React.useState('login');
+
   // 1. Initial Authentication Restoration Screen
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 text-slate-100">
         <div className="text-center space-y-4 max-w-sm">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-600/30 animate-pulse">
             <GraduationCap className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h2 className="font-extrabold text-base text-slate-900">Placement Genie</h2>
-            <p className="text-xs text-slate-500">Restoring authentication session...</p>
+            <h2 className="font-extrabold text-base text-white">Placement Genie</h2>
+            <p className="text-xs text-slate-400">Restoring authentication session...</p>
           </div>
           <div className="pt-2">
-            <Loader2 className="w-5 h-5 text-brand-600 animate-spin mx-auto" />
+            <Loader2 className="w-5 h-5 text-brand-400 animate-spin mx-auto" />
           </div>
         </div>
       </div>
     );
   }
 
-  // 2. Route Check for Admin URL Paths (/admin, /admin/dashboard, /admin/students, etc.)
-  const isAdminPath = currentPath.startsWith('/admin') || currentPath.includes('#/admin');
-
-  // 3. Unauthenticated -> Unified Auth Entry Page
+  // 3. Unauthenticated -> Landing Page with Seamless Auth Transition
   if (!currentUser) {
-    if (isAdminPath) {
-      // Direct unauthenticated admin link navigates straight to Admin login portal
-      setSelectedRole('admin');
+    if (!showAuth && !isAdminPath) {
+      return (
+        <LandingPage
+          onGetStarted={(role = 'student') => {
+            setAuthRolePref(role);
+            setAuthModePref('register');
+            setShowAuth(true);
+          }}
+          onSignIn={(role = 'student') => {
+            setAuthRolePref(role);
+            setAuthModePref('login');
+            setShowAuth(true);
+          }}
+        />
+      );
     }
-    return <AuthPage />;
+
+    return (
+      <AuthPage
+        onBackToHome={() => setShowAuth(false)}
+        initialRole={authRolePref}
+        initialMode={authModePref}
+      />
+    );
   }
 
   // 4. Role Resolution Error -> Render Error Screen (NEVER fallback to Student)

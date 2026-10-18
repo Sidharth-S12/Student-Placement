@@ -10,8 +10,8 @@ async function runRoleAuthorizationTests() {
   console.log('--- STARTING ROLE AUTHORIZATION & ADMIN SETUP TEST SUITE ---');
 
   // Test 1: By default, unassigned accounts return null (NEVER silently default to student)
-  const crsStudentEmail = 'student.crs@college.edu';
-  const crsStudentUid = 'uid_crs_student_123';
+  const crsStudentEmail = `student.crs_${Date.now()}@college.edu`;
+  const crsStudentUid = `uid_crs_student_${Date.now()}`;
   const initialRole = await getUserRole(crsStudentUid, crsStudentEmail);
   assert.strictEqual(initialRole, null, 'Unassigned account must return null (NEVER silently default to student)');
   console.log('✓ TEST 1 PASSED: Unassigned account returns null (never auto-promoted or silently defaulted).');

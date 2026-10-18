@@ -54,7 +54,7 @@ export const generateATSResumePDF = (studentData) => {
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
     doc.text(title.toUpperCase(), leftMargin, yPos);
-    
+
     yPos += 1.5;
     doc.setLineWidth(0.35);
     doc.setDrawColor(0, 0, 0);
@@ -109,7 +109,7 @@ export const generateATSResumePDF = (studentData) => {
     renderSectionHeader('PROFESSIONAL SUMMARY');
     doc.setFont('times', 'normal');
     doc.setFontSize(9.5);
-    
+
     const summaryLines = doc.splitTextToSize(personalInfo.summary, maxWidth);
     checkPageBreak(summaryLines.length * 4.2);
     doc.text(summaryLines, leftMargin, yPos);
@@ -145,7 +145,7 @@ export const generateATSResumePDF = (studentData) => {
     // Class XII & Class X
     doc.setFont('times', 'normal');
     doc.setFontSize(9);
-    
+
     if (education.twelfthPercentage) {
       const xiiStr = `Class XII (${education.twelfthBoard || 'CBSE'})`;
       const xiiScore = `Score: ${education.twelfthPercentage}${education.twelfthYear ? ` (${education.twelfthYear})` : ''}`;
@@ -182,13 +182,13 @@ export const generateATSResumePDF = (studentData) => {
 
       categories.forEach(cat => {
         if (!cat.items || cat.items.length === 0) return;
-        
+
         const skillNames = cat.items.map(item => typeof item === 'string' ? item : item.name).join(', ');
         const labelText = `${cat.label}: `;
-        
+
         doc.setFont('times', 'bold');
         const labelWidth = doc.getTextWidth(labelText);
-        
+
         // Wrap full line nicely
         const fullStr = labelText + skillNames;
         const wrappedLines = doc.splitTextToSize(fullStr, maxWidth);
@@ -225,13 +225,13 @@ export const generateATSResumePDF = (studentData) => {
       const descLines = proj.description ? doc.splitTextToSize(proj.description, maxWidth) : [];
       let estimatedHeight = 9 + descLines.length * 4;
       if (proj.highlights) estimatedHeight += proj.highlights.length * 4.5;
-      
+
       checkPageBreak(estimatedHeight > 50 ? 25 : estimatedHeight);
 
       // Project Name & Tech Stack
       doc.setFont('times', 'bold');
       doc.setFontSize(10);
-      doc.text(proj.name, leftMargin, yPos);
+      doc.text(proj.name || proj.title || 'Project', leftMargin, yPos);
 
       if (proj.technologies && proj.technologies.length > 0) {
         doc.setFont('times', 'italic');
@@ -287,8 +287,8 @@ export const generateATSResumePDF = (studentData) => {
 
       // Role & Duration
       doc.setFont('times', 'bold');
-      doc.setFontSize(10);
-      const roleOrgStr = `${exp.role}${exp.organization ? ` - ${exp.organization}` : ''}`;
+      const effectiveOrg = exp.organization || exp.company;
+      const roleOrgStr = `${exp.role}${effectiveOrg ? ` - ${effectiveOrg}` : ''}`;
       doc.text(roleOrgStr, leftMargin, yPos);
 
       if (exp.duration) {
@@ -343,7 +343,7 @@ export const generateATSResumePDF = (studentData) => {
     certifications.forEach(cert => {
       let certLine = `• ${cert.name}${cert.organization ? ` – ${cert.organization}` : ''}${cert.date ? ` (${cert.date})` : ''}`;
       if (cert.credentialId) certLine += ` [Credential ID: ${cert.credentialId}]`;
-      
+
       const wrappedCert = doc.splitTextToSize(certLine, maxWidth);
       checkPageBreak(wrappedCert.length * 4.2);
       doc.text(wrappedCert, leftMargin, yPos);

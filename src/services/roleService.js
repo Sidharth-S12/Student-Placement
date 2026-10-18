@@ -59,12 +59,12 @@ function saveLocalUser(cleanEmail, userData) {
 
 /**
  * Authoritative role resolver for a user.
- * 
+ *
  * Strict Priority:
  * 1. Live Firestore `users/{uid}` via client SDK
  * 2. Backend persistent API `GET /api/auth/role/${uid}`
  * 3. Local user store (offline / dev emulation)
- * 
+ *
  * CRITICAL ARCHITECTURAL RULE:
  * If no valid role is found, returns NULL.
  * Under NO CIRCUMSTANCES does this function default to 'student'.
@@ -95,7 +95,7 @@ export async function getUserRole(uid, email = '') {
   // 2. Check Backend Auth API (/api/auth/role/:uid)
   try {
     const targetId = uid || cleanEmail;
-    const res = await fetch(`http://localhost:5000/api/auth/role/${encodeURIComponent(targetId)}?email=${encodeURIComponent(cleanEmail)}`);
+    const res = await fetch(`/api/auth/role/${encodeURIComponent(targetId)}?email=${encodeURIComponent(cleanEmail)}`);
     if (res.ok) {
       const data = await res.json();
       const normalized = normalizeRole(data.role);
@@ -130,7 +130,7 @@ export async function getUserRole(uid, email = '') {
  */
 export async function persistUserRole(uid, { role, email, displayName = '', companyName = null }) {
   if (!uid) throw new Error('UID is required to persist user role.');
-  
+
   const normalizedRole = normalizeRole(role);
   if (!normalizedRole) {
     throw new Error(`Cannot persist invalid role: '${role}'. Allowed roles: ${VALID_ROLES.join(', ')}`);
@@ -162,7 +162,7 @@ export async function persistUserRole(uid, { role, email, displayName = '', comp
 
   // 2. Authoritative backend role synchronization
   try {
-    const res = await fetch('http://localhost:5000/api/auth/sync-role', {
+    const res = await fetch('/api/auth/sync-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

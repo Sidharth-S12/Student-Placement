@@ -79,7 +79,7 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans">
       <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden text-slate-800">
-        
+
         {/* Modal Top Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
           <div className="flex items-center space-x-3">
@@ -145,7 +145,7 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
 
         {/* Modal Scrollable Content */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
-          
+
           {/* Assessment Performance Metrics */}
           {visibility.scores !== false && (
             <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/40 border border-slate-200/80 space-y-3">
@@ -259,7 +259,7 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
                 {projects.map((proj, idx) => (
                   <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-900">{proj.title}</span>
+                      <span className="font-bold text-slate-900">{proj.name || proj.title || 'Untitled Project'}</span>
                       {proj.githubLink && (
                         <a href={proj.githubLink} target="_blank" rel="noreferrer" className="text-brand-600 hover:underline text-[11px] flex items-center space-x-1">
                           <span>View Code</span>
@@ -288,10 +288,17 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
                   <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-900">{exp.role}</span>
-                      <span className="text-slate-500">{exp.duration}</span>
+                      <span className="text-slate-500">{exp.duration || ''}</span>
                     </div>
-                    <div className="font-semibold text-brand-700 text-[11px]">{exp.company}</div>
-                    <p className="text-slate-600">{exp.description}</p>
+                    <div className="font-semibold text-brand-700 text-[11px]">{exp.organization || exp.company || ''}</div>
+                    {exp.description && <p className="text-slate-600">{exp.description}</p>}
+                    {exp.responsibilities && exp.responsibilities.length > 0 && (
+                      <ul className="list-disc pl-4 text-[11px] text-slate-600 space-y-0.5 pt-0.5">
+                        {exp.responsibilities.map((r, rIdx) => (
+                          <li key={rIdx}>{r}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
               </div>

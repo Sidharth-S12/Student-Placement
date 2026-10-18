@@ -335,7 +335,7 @@ export async function getLatestAptitudeAssessment(req, res) {
 
     const latest = await getLatestAptitudeAssessmentForStudent(studentId);
     if (!latest) {
-      return res.status(404).json({ message: 'No completed aptitude assessment found.' });
+      return res.status(200).json({ found: false, message: 'No completed aptitude assessment found.' });
     }
 
     return res.status(200).json(latest);

@@ -13,8 +13,11 @@ import express from 'express';
 import cors from 'cors';
 import assessmentRoutes from './routes/assessmentRoutes.js';
 import aptitudeRoutes from './routes/aptitudeRoutes.js';
+import communicationRoutes from './routes/communicationRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import appearanceRoutes from './routes/appearanceRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -47,8 +50,11 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/technical-assessment', assessmentRoutes);
 app.use('/api/aptitude', aptitudeRoutes);
+app.use('/api/communication', communicationRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/appearance', appearanceRoutes);
 
 // Global Error Handler - Clean response, never leaks credentials or raw stack
 app.use((err, req, res, next) => {
