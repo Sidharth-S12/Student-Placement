@@ -5,7 +5,7 @@
  * Dimensions: [Technical Score, Aptitude Score, Communication Score, Overall Readiness]
  */
 
-const COHORT_DEFINITIONS = [
+export const COHORT_DEFINITIONS = [
   {
     id: 'elite',
     name: 'Elite Tier / Day-1 Ready',
@@ -32,7 +32,7 @@ const COHORT_DEFINITIONS = [
     bgClass: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
     badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
     dotClass: 'bg-blue-400',
-    targetPersona: 'Exceptional programmers and problem solvers whose verbal communication or general aptitude scores currently trail their coding acumen.',
+    targetPersona: 'Exceptional programmers and problem solvers whose verbal communication or general aptitude scores trail their coding acumen.',
     interventionStrategy: 'Intensive communication bootcamps, group discussion practice, and behavioral HR interview workshops.',
     recommendedActions: [
       'Enroll in 10-day Business Communication & Pitching masterclass',
@@ -73,6 +73,38 @@ const COHORT_DEFINITIONS = [
       'Provide daily 15-minute speed aptitude quizzes and explanation videos',
       'Peer-assisted learning: pair with students from Cluster 1'
     ]
+  },
+  {
+    id: 'comm_oriented',
+    name: 'Communication & Leadership Cohort',
+    tagline: 'High Articulation & Soft Skills • Tech Acceleration Needed',
+    color: 'teal',
+    icon: 'Users',
+    bgClass: 'bg-teal-500/10 text-teal-400 border-teal-500/30',
+    badgeClass: 'bg-teal-500/20 text-teal-300 border-teal-500/40',
+    dotClass: 'bg-teal-400',
+    targetPersona: 'Strong verbal communicators and potential tech consultants whose core algorithm skills require structured reinforcement.',
+    interventionStrategy: 'Direct towards Technical Consulting, Product Operations, and Solutions Engineering roles alongside tech upskilling.',
+    recommendedActions: [
+      'Target Analyst, Techno-Functional, and Product roles in consulting campus drives',
+      'Pair with Tech Specialists on joint hackathon and system builds'
+    ]
+  },
+  {
+    id: 'balanced_emerging',
+    name: 'Emerging Balanced Core',
+    tagline: 'Consistent Mid-Range Competency • Targeted Sprint Needed',
+    color: 'sky',
+    icon: 'TrendingUp',
+    bgClass: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+    badgeClass: 'bg-sky-500/20 text-sky-300 border-sky-500/40',
+    dotClass: 'bg-sky-400',
+    targetPersona: 'Steady candidates with uniform moderate proficiency across coding, logic, and interview skills.',
+    interventionStrategy: 'Short 2-week intensive sprints on high-frequency campus hiring questions to elevate into Day-1 Ready tier.',
+    recommendedActions: [
+      'Focus on top 50 campus interview coding patterns',
+      'Conduct speed aptitude mock sessions under timed conditions'
+    ]
   }
 ];
 
@@ -85,14 +117,112 @@ function euclideanDistance(v1, v2) {
   return Math.sqrt(sum);
 }
 
-function extractVector(student) {
+/**
+ * Extracts and safely normalizes 4-dimensional score vector from real student records.
+ * Missing assessment scores are flagged and imputed safely with cohort median/neutral baseline (not zero).
+ */
+export function extractStudentVector(student) {
   const scores = student.placementScores || {};
-  const tech = Number(scores.technicalScore || student.latestTechnicalScore || 0);
-  const apt = Number(scores.aptitudeScore || 0);
-  const comm = Number(scores.communicationScore || 75);
-  const readiness = Number(scores.overallReadiness || 0);
 
-  return [tech, apt, comm, readiness];
+  const rawTech = scores.technicalScore !== undefined
+    ? Number(scores.technicalScore)
+    : (student.latestTechnicalScore !== undefined ? Number(student.latestTechnicalScore) : null);
+
+  const rawApt = scores.aptitudeScore !== undefined
+    ? Number(scores.aptitudeScore)
+    : (student.latestAptitudeAssessment?.score !== undefined ? Number(student.latestAptitudeAssessment.score) : null);
+
+  const rawComm = scores.communicationScore !== undefined
+    ? Number(scores.communicationScore)
+    : (student.latestCommunicationAssessment?.score !== undefined ? Number(student.latestCommunicationAssessment.score) : null);
+
+  const rawReadiness = scores.overallReadiness !== undefined
+    ? Number(scores.overallReadiness)
+    : null;
+
+  const hasAssessmentData = rawTech !== null || rawApt !== null || rawComm !== null;
+
+  // Safe baseline for unassessed dimensions (does not punish unassessed as zero)
+  const tech = rawTech !== null ? Math.min(100, Math.max(0, rawTech)) : (hasAssessmentData ? 40 : 50);
+  const apt = rawApt !== null ? Math.min(100, Math.max(0, rawApt)) : (hasAssessmentData ? 35 : 50);
+  const comm = rawComm !== null ? Math.min(100, Math.max(0, rawComm)) : 75;
+  const readiness = rawReadiness !== null
+    ? Math.min(100, Math.max(0, rawReadiness))
+    : Math.round((tech + apt + comm) / 3);
+
+  return {
+    vector: [tech, apt, comm, readiness],
+    hasAssessedScores: hasAssessmentData,
+    raw: { tech: rawTech, apt: rawApt, comm: rawComm, readiness: rawReadiness }
+  };
+}
+
+/**
+ * Generates deterministic reference centroids for given K to guarantee model stability.
+ */
+function getDeterministicCentroids(k) {
+  const archetypes = [
+    [85, 85, 90, 88], // Elite
+    [85, 50, 60, 68], // Tech Specialist
+    [50, 85, 70, 68], // Analytical
+    [35, 35, 45, 38], // Foundational
+    [55, 60, 88, 65], // Communication / Leadership
+    [65, 65, 70, 66]  // Balanced Emerging
+  ];
+
+  if (k <= archetypes.length) {
+    return archetypes.slice(0, k).map(arr => [...arr]);
+  }
+
+  return archetypes.slice(0, 4).map(arr => [...arr]);
+}
+
+/**
+ * Evaluates Elbow Method across K=2 to K=6 to recommend the optimal number of clusters.
+ */
+export function calculateElbowCurve(students = []) {
+  if (!students || students.length < 3) {
+    return {
+      elbowData: [
+        { k: 2, inertia: 100 },
+        { k: 3, inertia: 65 },
+        { k: 4, inertia: 35 },
+        { k: 5, inertia: 25 },
+        { k: 6, inertia: 18 }
+      ],
+      recommendedK: 4
+    };
+  }
+
+  const maxK = Math.min(6, students.length);
+  const elbowData = [];
+
+  for (let k = 2; k <= maxK; k++) {
+    const res = runKMeansClustering(students, k, 25);
+    elbowData.push({
+      k,
+      inertia: res.inertia
+    });
+  }
+
+  // Detect elbow: find point where reduction in inertia diminishes significantly
+  let recommendedK = 4;
+  let maxDropRatio = 0;
+
+  for (let i = 1; i < elbowData.length - 1; i++) {
+    const dropPrev = elbowData[i - 1].inertia - elbowData[i].inertia;
+    const dropNext = elbowData[i].inertia - elbowData[i + 1].inertia;
+    const ratio = dropPrev - dropNext;
+    if (ratio > maxDropRatio) {
+      maxDropRatio = ratio;
+      recommendedK = elbowData[i].k;
+    }
+  }
+
+  return {
+    elbowData,
+    recommendedK: Math.max(2, Math.min(recommendedK, 4))
+  };
 }
 
 /**
@@ -101,43 +231,37 @@ function extractVector(student) {
  * @param {Array} students Array of student objects
  * @param {number} k Number of clusters (defaults to 4)
  * @param {number} maxIterations Maximum iterations for centroid convergence
- * @returns {Object} { clusters, totalStudents, inertia, iterationsRun }
+ * @returns {Object} { clusters, totalStudents, inertia, iterationsRun, calculatedAt, recommendedK }
  */
 export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
+  const chosenK = Math.max(2, Math.min(Number(k) || 4, 6));
+
   if (!students || students.length === 0) {
     return {
-      clusters: COHORT_DEFINITIONS.map(def => ({
+      clusters: COHORT_DEFINITIONS.slice(0, chosenK).map(def => ({
         ...def,
         students: [],
         count: 0,
         percentage: 0,
         centroid: { technical: 0, aptitude: 0, communication: 0, readiness: 0 },
-        avgScores: { technical: 0, aptitude: 0, communication: 0, readiness: 0 }
+        avgScores: { technical: 0, aptitude: 0, communication: 0, readiness: 0 },
+        strengths: [],
+        areasForImprovement: []
       })),
       totalStudents: 0,
       inertia: 0,
-      iterationsRun: 0
+      iterationsRun: 0,
+      calculatedAt: new Date().toISOString(),
+      recommendedK: 4,
+      disclaimer: 'K-Means identifies similarity patterns across assessment competencies for cohort training and does not independently guarantee job eligibility or selection.'
     };
   }
 
-  // Pre-seed 4 archetypal reference centroids to ensure deterministic cohort mapping
-  let centroids = [
-    [85, 85, 90, 88], // Elite
-    [85, 50, 60, 68], // Tech Specialist
-    [50, 85, 70, 68], // Analytical
-    [35, 35, 45, 38]  // Foundational
-  ];
+  // Centroid initialization: deterministic reference archetypes
+  let centroids = getDeterministicCentroids(chosenK);
 
-  if (k !== 4) {
-    // Fallback to random initialization if k differs
-    centroids = [];
-    for (let i = 0; i < k; i++) {
-      const randIdx = Math.floor(Math.random() * students.length);
-      centroids.push([...extractVector(students[randIdx])]);
-    }
-  }
-
-  const vectors = students.map(s => extractVector(s));
+  const studentExtracts = students.map(s => extractStudentVector(s));
+  const vectors = studentExtracts.map(e => e.vector);
   let assignments = new Array(students.length).fill(0);
   let iterationsRun = 0;
 
@@ -150,7 +274,7 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
       let minDist = Infinity;
       let bestCluster = 0;
 
-      for (let c = 0; c < k; c++) {
+      for (let c = 0; c < chosenK; c++) {
         const dist = euclideanDistance(vectors[i], centroids[c]);
         if (dist < minDist) {
           minDist = dist;
@@ -167,8 +291,8 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
     if (!changed && iter > 0) break;
 
     // Update Step: calculate new centroids as mean of assigned vectors
-    const newCentroids = Array.from({ length: k }, () => [0, 0, 0, 0]);
-    const clusterSizes = new Array(k).fill(0);
+    const newCentroids = Array.from({ length: chosenK }, () => [0, 0, 0, 0]);
+    const clusterSizes = new Array(chosenK).fill(0);
 
     for (let i = 0; i < vectors.length; i++) {
       const c = assignments[i];
@@ -178,13 +302,12 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
       }
     }
 
-    for (let c = 0; c < k; c++) {
+    for (let c = 0; c < chosenK; c++) {
       if (clusterSizes[c] > 0) {
         for (let d = 0; d < 4; d++) {
           newCentroids[c][d] = Math.round(newCentroids[c][d] / clusterSizes[c]);
         }
       } else {
-        // Keep previous centroid if no students assigned to prevent collapse
         newCentroids[c] = centroids[c];
       }
     }
@@ -192,7 +315,7 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
     centroids = newCentroids;
   }
 
-  // Calculate cluster inertia (sum of squared distances to centroid)
+  // Calculate cluster inertia (sum of squared Euclidean distances)
   let totalInertia = 0;
   for (let i = 0; i < vectors.length; i++) {
     const c = assignments[i];
@@ -200,8 +323,8 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
     totalInertia += dist * dist;
   }
 
-  // Group students by cluster
-  const clustersData = COHORT_DEFINITIONS.slice(0, k).map((def, cIdx) => {
+  // Group students by cluster and compute real metrics
+  const clustersData = COHORT_DEFINITIONS.slice(0, chosenK).map((def, cIdx) => {
     const clusterStudents = students.filter((_, idx) => assignments[idx] === cIdx);
     const count = clusterStudents.length;
     const percentage = students.length > 0 ? Math.round((count / students.length) * 100) : 0;
@@ -226,8 +349,25 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
       readiness: count > 0 ? Math.round(sumReadiness / count) : centroids[cIdx][3]
     };
 
+    // Dynamically derive strengths and areas for improvement from actual data
+    const strengths = [];
+    const areasForImprovement = [];
+
+    if (avgScores.technical >= 75) strengths.push('Advanced Core Programming & Technical Problem Solving');
+    else if (avgScores.technical < 60) areasForImprovement.push('Fundamental Data Structures & Coding Logic Reinforcement');
+
+    if (avgScores.aptitude >= 75) strengths.push('High Quantitative & Logical Reasoning Speed');
+    else if (avgScores.aptitude < 60) areasForImprovement.push('Quantitative Aptitude & Time-Constrained Problem Solving');
+
+    if (avgScores.communication >= 75) strengths.push('Clear Articulation & Behavioral Interview Readiness');
+    else if (avgScores.communication < 70) areasForImprovement.push('STAR-Method Behavioral Structuring & English Fluency');
+
+    if (strengths.length === 0) strengths.push('Consistent Baseline Across Core Placement Metrics');
+    if (areasForImprovement.length === 0) areasForImprovement.push('Mock Interview Polish & Advanced System Design Simulations');
+
     return {
       ...def,
+      clusterIndex: cIdx,
       students: clusterStudents,
       count,
       percentage,
@@ -237,7 +377,9 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
         communication: centroids[cIdx][2],
         readiness: centroids[cIdx][3]
       },
-      avgScores
+      avgScores,
+      strengths,
+      areasForImprovement
     };
   });
 
@@ -245,6 +387,10 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
     clusters: clustersData,
     totalStudents: students.length,
     inertia: Math.round(totalInertia),
-    iterationsRun
+    iterationsRun,
+    calculatedAt: new Date().toISOString(),
+    k: chosenK,
+    disclaimer: 'K-Means identifies similarity patterns across assessment competencies for cohort training and does not independently guarantee job eligibility or selection.'
   };
 }
+

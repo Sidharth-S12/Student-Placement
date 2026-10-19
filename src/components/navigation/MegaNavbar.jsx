@@ -319,22 +319,6 @@ export const MegaNavbar = ({ onGetStarted, onSignIn, onNavigateSection }) => {
                       </li>
                       <li>
                         <button
-                          onClick={() => handleItemClick('test-center')}
-                          className="text-neutral-300 hover:text-white transition-colors text-left block w-full hover:translate-x-1 duration-150"
-                        >
-                          Webcam Posture & Eye Tracking
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={() => handleItemClick('test-center')}
-                          className="text-neutral-300 hover:text-white transition-colors text-left block w-full hover:translate-x-1 duration-150"
-                        >
-                          Attire & Formality Classifier
-                        </button>
-                      </li>
-                      <li>
-                        <button
                           onClick={() => handleItemClick('features')}
                           className="text-neutral-300 hover:text-white transition-colors text-left block w-full hover:translate-x-1 duration-150"
                         >
@@ -488,14 +472,6 @@ export const MegaNavbar = ({ onGetStarted, onSignIn, onNavigateSection }) => {
                             className="text-neutral-300 hover:text-white transition-colors text-left block w-full hover:translate-x-1 duration-150"
                           >
                             Live Speech-to-Text Analysis
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            onClick={() => handleItemClick('test-center')}
-                            className="text-neutral-300 hover:text-white transition-colors text-left block w-full hover:translate-x-1 duration-150"
-                          >
-                            Computer Vision Attire Check
                           </button>
                         </li>
                       </ul>
@@ -996,7 +972,7 @@ export const MegaNavbar = ({ onGetStarted, onSignIn, onNavigateSection }) => {
                         2026 Campus Placement Playbook
                       </h4>
                       <p className="text-xs text-neutral-400 leading-relaxed mt-1">
-                        The ultimate roadmap to master coding interviews, aptitude tests, and attire vision rounds.
+                        The ultimate roadmap to master coding interviews, aptitude tests, and mock interview rounds.
                       </p>
                     </div>
 
@@ -1063,9 +1039,6 @@ export const MegaNavbar = ({ onGetStarted, onSignIn, onNavigateSection }) => {
                 </button>
                 <button onClick={() => handleItemClick('test-center')} className="block text-left w-full py-1 hover:text-white">
                   AI Mock Interview Studio
-                </button>
-                <button onClick={() => handleItemClick('test-center')} className="block text-left w-full py-1 hover:text-white">
-                  Webcam Posture & Eye Tracking
                 </button>
                 <button onClick={() => handleItemClick('resume-studio')} className="block text-left w-full py-1 hover:text-white">
                   1-Click ATS Resume Generator

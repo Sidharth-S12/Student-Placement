@@ -38,12 +38,12 @@ const PORTAL_CONFIG = {
     buttonColor: 'bg-gradient-to-r from-emerald-600 via-teal-600 to-brand-600 hover:from-emerald-500 hover:to-brand-500 shadow-emerald-600/30',
     tagline: 'Sign in to access your placement dashboard & skill tests',
     regTagline: 'Create your student placement profile to begin skill assessments',
-    description: 'Take adaptive technical coding tests, practice AI mock interviews, verify posture, and build ATS resumes.',
+    description: 'Take adaptive technical coding tests, practice AI mock interviews, and build ATS resumes.',
     emailPlaceholder: 'student@gmail.com',
     emailLabel: 'Student Gmail Address (@gmail.com only)',
     highlights: [
       'Adaptive Coding & Aptitude Tests',
-      'AI Mock Interview Studio with Posture Vision',
+      'AI Mock Interview Studio with Speech-to-Text',
       '1-Click ATS Single-Page Resume PDF'
     ]
   },

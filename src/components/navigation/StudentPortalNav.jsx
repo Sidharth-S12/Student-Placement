@@ -7,7 +7,6 @@ import {
   Cpu,
   Brain,
   Mic,
-  Camera,
   FileText,
   Search,
   Map,
@@ -87,8 +86,8 @@ export const StudentPortalNav = ({
     }
   };
 
-  const isPlacementActive = activeTab === 'profile';
-  const isTestingActive = ['assessments', 'technical', 'aptitude', 'interview', 'appearance'].includes(activeTab);
+  const isPlacementActive = ['profile', 'jobs', 'applications', 'nominations'].includes(activeTab);
+  const isTestingActive = ['assessments', 'technical', 'aptitude', 'interview'].includes(activeTab);
   const isResumeActive = ['resume', 'resume-builder', 'resume-analyzer'].includes(activeTab);
   const isRoadmapActive = activeTab === 'roadmap' || activeTab === 'all';
 
@@ -312,6 +311,42 @@ export const StudentPortalNav = ({
                   >
                     View Complete Profile →
                   </button>
+
+                  <div className="pt-2 border-t border-slate-100 space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => handleSelect('jobs')}
+                      className="w-full text-left text-[11px] font-semibold text-slate-700 hover:text-brand-600 flex items-center justify-between p-1 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Briefcase className="w-3.5 h-3.5 text-brand-500" />
+                        <span>Browse Campus Jobs</span>
+                      </span>
+                      <span>→</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelect('applications')}
+                      className="w-full text-left text-[11px] font-semibold text-slate-700 hover:text-brand-600 flex items-center justify-between p-1 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>My Applications</span>
+                      </span>
+                      <span>→</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelect('nominations')}
+                      className="w-full text-left text-[11px] font-semibold text-slate-700 hover:text-brand-600 flex items-center justify-between p-1 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5 text-purple-500" />
+                        <span>Officer Nominations</span>
+                      </span>
+                      <span>→</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -422,29 +457,6 @@ export const StudentPortalNav = ({
                     </div>
                     <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full">
                       {latestCommunicationAssessment?.finalScore !== undefined ? `${latestCommunicationAssessment.finalScore}%` : 'Practice'}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleSelect('assessments', 'appearance')}
-                    className="w-full flex items-center justify-between p-2 rounded-xl text-left hover:bg-slate-50 transition-colors group"
-                  >
-                    <div className="flex items-center space-x-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center flex-shrink-0">
-                        <Camera className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-slate-800 group-hover:text-pink-600 transition-colors">
-                          Posture & Attire Vision
-                        </div>
-                        <div className="text-[10px] text-slate-500">
-                          Webcam Alignment & Dress Code AI
-                        </div>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-bold text-pink-700 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-full uppercase">
-                      Live AI
                     </span>
                   </button>
                 </div>

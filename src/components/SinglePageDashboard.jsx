@@ -6,7 +6,11 @@ import { StudentSidebar } from './navigation/StudentSidebar';
 import { StudentPortalNav } from './navigation/StudentPortalNav';
 import PersonalizedRoadmap from './PersonalizedRoadmap';
 import ResumeAnalyzer from './ResumeAnalyzer';
-import { AppearancePostureAnalyzer } from './appearance/AppearancePostureAnalyzer';
+import { BrowseJobsView } from './placement/BrowseJobsView';
+import { MyApplicationsView } from './placement/MyApplicationsView';
+import { MyNominationsView } from './placement/MyNominationsView';
+import { NotificationBell } from './navigation/NotificationBell';
+import { fetchMyApplications, fetchMyNominations } from '../services/applicationService';
 import { Card, Button, Badge, StatCard, PageHeader } from './ui';
 import {
   GraduationCap,
@@ -47,7 +51,7 @@ import {
 } from 'lucide-react';
 
 export const SinglePageDashboard = () => {
-  const { logout } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   const {
     studentData,
@@ -74,7 +78,30 @@ export const SinglePageDashboard = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [resumeSubTab, setResumeSubTab] = useState('builder'); // 'builder' | 'analyzer'
-  const [testCenterSubTab, setTestCenterSubTab] = useState('overview'); // 'overview' | 'technical' | 'aptitude' | 'interview' | 'appearance'
+  const [testCenterSubTab, setTestCenterSubTab] = useState('overview'); // 'overview' | 'technical' | 'aptitude' | 'interview'
+
+  // Placement Applications & Nominations state
+  const [applications, setApplications] = useState([]);
+  const [nominations, setNominations] = useState([]);
+
+  const loadApplicationsAndNominations = React.useCallback(async () => {
+    try {
+      const [apps, noms] = await Promise.all([
+        fetchMyApplications(),
+        fetchMyNominations()
+      ]);
+      setApplications(apps || []);
+      setNominations(noms || []);
+    } catch (err) {
+      console.warn('Failed to load applications/nominations:', err);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (currentUser?.uid) {
+      loadApplicationsAndNominations();
+    }
+  }, [currentUser?.uid, loadApplicationsAndNominations]);
 
   const fileInputRef = useRef(null);
 
@@ -119,7 +146,7 @@ export const SinglePageDashboard = () => {
     } else if (tab === 'tests' || tab === 'assessments') {
       setActiveTab('assessments');
       if (subOption) setTestCenterSubTab(subOption);
-    } else if (tab === 'technical' || tab === 'aptitude' || tab === 'interview' || tab === 'appearance') {
+    } else if (tab === 'technical' || tab === 'aptitude' || tab === 'interview') {
       setActiveTab('assessments');
       setTestCenterSubTab(tab);
     } else if (tab === 'resume-builder') {
@@ -130,6 +157,9 @@ export const SinglePageDashboard = () => {
       setResumeSubTab('analyzer');
     } else {
       setActiveTab(tab);
+      if (['jobs', 'applications', 'nominations'].includes(tab)) {
+        loadApplicationsAndNominations();
+      }
     }
 
     if (tab === 'profile' && subOption) {
@@ -178,90 +208,102 @@ export const SinglePageDashboard = () => {
   // =========================================================================
   // 1. REFINED PROFILE HEADER (Hero Banner)
   // =========================================================================
-  const renderProfileHeader = (compact = false) => (
-    <Card className="p-6 relative overflow-hidden animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+  const renderProfileHeader = (compact = false) => {
+    const studentName = personalInfo.fullName?.trim() || currentUser?.displayName || 'Student Candidate';
+    const degreeText = education.degree
+      ? `${education.degree}${education.branch ? ` in ${education.branch}` : ''}${education.graduationYear ? ` • Class of ${education.graduationYear}` : ''}`
+      : 'Degree & branch not specified';
+    const collegeText = education.college || 'Campus Placement Candidate';
 
-        {/* Avatar & Info */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
-          <div className="relative group flex-shrink-0">
-            <img
-              src={personalInfo.profilePhoto || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5'><circle cx='12' cy='7' r='4'/><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/></svg>"}
-              alt={personalInfo.fullName || 'Student'}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover ring-2 ring-slate-700/80 border border-slate-800 shadow-md"
-            />
+    return (
+      <Card className="p-5 sm:p-6 relative overflow-hidden animate-fade-in border-slate-800 bg-slate-900/90 shadow-xl">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-5 sm:gap-6">
 
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={onFileInputChange}
-              accept="image/*"
-              className="hidden"
-            />
+          {/* Avatar & Info */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left min-w-0">
+            <div className="relative group flex-shrink-0">
+              <img
+                src={personalInfo.profilePhoto || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5'><circle cx='12' cy='7' r='4'/><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/></svg>"}
+                alt={studentName}
+                className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl object-cover ring-2 ring-slate-700/80 border border-slate-800 shadow-md"
+              />
 
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              title="Change profile photo"
-              className="absolute -bottom-1 -right-1 bg-slate-800 hover:bg-slate-700 text-white p-1.5 rounded-xl border border-slate-700 shadow-sm transition-transform hover:scale-105"
-            >
-              <Camera className="w-3.5 h-3.5" />
-            </button>
-          </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={onFileInputChange}
+                accept="image/*"
+                className="hidden"
+              />
 
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
-                {personalInfo.fullName || 'Welcome, Student'}
-              </h1>
-              {hasProfile ? (
-                <Badge variant="emerald" dot>
-                  Placement Eligible
-                </Badge>
-              ) : (
-                <Badge variant="amber">
-                  Profile Incomplete
-                </Badge>
-              )}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                title="Change profile photo"
+                aria-label="Upload profile photo"
+                className="absolute -bottom-1 -right-1 bg-slate-800 hover:bg-slate-700 text-white p-1.5 rounded-xl border border-slate-700 shadow-sm transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+              >
+                <Camera className="w-3.5 h-3.5" />
+              </button>
             </div>
 
-            <p className="text-xs sm:text-sm font-semibold text-brand-400">
-              {education.degree || 'Degree'} {education.branch ? `in ${education.branch}` : ''} {education.graduationYear ? `• Class of ${education.graduationYear}` : ''}
-            </p>
+            <div className="space-y-1 min-w-0">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display truncate">
+                  {studentName}
+                </h1>
+                {hasProfile ? (
+                  <Badge variant="emerald" dot>
+                    Placement Eligible
+                  </Badge>
+                ) : (
+                  <Badge variant="amber" dot>
+                    Profile Incomplete
+                  </Badge>
+                )}
+              </div>
 
-            <p className="text-xs text-slate-400 font-medium">
-              {education.college || 'Campus Placement Candidate'}
-            </p>
-
-            {!compact && personalInfo.summary && (
-              <p className="text-xs text-slate-300 leading-relaxed max-w-2xl pt-1">
-                {personalInfo.summary}
+              <p className={`text-xs sm:text-sm font-semibold truncate ${education.degree ? 'text-brand-400' : 'text-slate-400 italic'}`}>
+                {degreeText}
               </p>
-            )}
+
+              <p className="text-xs text-slate-400 font-medium truncate">
+                {collegeText}
+              </p>
+
+              {!compact && personalInfo.summary && (
+                <p className="text-xs text-slate-300 leading-relaxed max-w-2xl pt-1">
+                  {personalInfo.summary}
+                </p>
+              )}
+            </div>
           </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-row sm:flex-row gap-2.5 w-full sm:w-auto justify-center sm:justify-end flex-shrink-0 pt-1 sm:pt-0">
+            <Button
+              variant="secondary"
+              size="md"
+              icon={Edit3}
+              onClick={() => setIsEditModalOpen(true)}
+            >
+              Edit Profile
+            </Button>
+
+            <Button
+              variant="primary"
+              size="md"
+              icon={Download}
+              onClick={handleQuickDownloadPDF}
+            >
+              Download ATS Resume
+            </Button>
+          </div>
+
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto flex-shrink-0">
-          <Button
-            variant="secondary"
-            icon={Edit3}
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            Edit Profile
-          </Button>
-
-          <Button
-            variant="primary"
-            icon={Download}
-            onClick={handleQuickDownloadPDF}
-          >
-            Download ATS Resume
-          </Button>
-        </div>
-
-      </div>
-    </Card>
-  );
+      </Card>
+    );
+  };
 
   // =========================================================================
   // 2. KEY READINESS METRICS ROW (4 Cards)
@@ -271,23 +313,36 @@ export const SinglePageDashboard = () => {
     const aptScore = latestAptitudeAssessment?.finalScore ?? placementScores.aptitudeScore ?? 0;
     const commScore = latestCommunicationAssessment?.finalScore ?? (placementScores.communicationScore > 0 ? placementScores.communicationScore : 0);
 
+    const hasTested = Boolean(
+      latestAssessment ||
+      latestAptitudeAssessment ||
+      latestCommunicationAssessment ||
+      (placementScores.overallReadiness !== undefined && placementScores.overallReadiness > 0)
+    );
+
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-in">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 animate-fade-in">
         {/* Metric 1: Readiness Score */}
         <StatCard
           title="Placement Readiness"
-          value={`${currentReadiness}%`}
-          subtext={currentReadiness >= 75 ? "Target met for Day-1 companies" : "Complete tests to boost score"}
+          value={profileLoading ? "..." : (hasTested ? `${currentReadiness}%` : "Pending")}
+          subtext={
+            profileLoading
+              ? "Loading scores..."
+              : hasTested
+              ? (currentReadiness >= 75 ? "Target met for Day-1 companies" : "Complete tests to boost score")
+              : "Complete tests to evaluate"
+          }
           icon={Target}
-          colorScheme={currentReadiness >= 75 ? "emerald" : currentReadiness >= 50 ? "brand" : "amber"}
+          colorScheme={hasTested ? (currentReadiness >= 75 ? "emerald" : currentReadiness >= 50 ? "brand" : "amber") : "slate"}
           onClick={() => navigateTo('tests', 'overview')}
         />
 
         {/* Metric 2: Technical Skill Score */}
         <StatCard
           title="Technical Competency"
-          value={latestAssessment ? `${techScore}%` : (techScore > 0 ? `${techScore}%` : 'Not Tested')}
-          subtext={latestAssessment ? "Adaptive AI coding assessment" : "Take technical test"}
+          value={latestAssessment?.technicalScore !== undefined ? `${latestAssessment.technicalScore}%` : (placementScores.technicalScore > 0 ? `${placementScores.technicalScore}%` : 'Not Tested')}
+          subtext={latestAssessment ? "Adaptive AI coding test completed" : "Take technical test"}
           icon={Cpu}
           colorScheme="brand"
           onClick={() => navigateTo('tests', 'technical')}
@@ -296,8 +351,8 @@ export const SinglePageDashboard = () => {
         {/* Metric 3: Aptitude & Logic */}
         <StatCard
           title="Aptitude & Logic"
-          value={latestAptitudeAssessment ? `${aptScore}%` : (aptScore > 0 ? `${aptScore}%` : 'Not Tested')}
-          subtext={latestAptitudeAssessment ? "Quant, logical & verbal" : "Take 20-min aptitude test"}
+          value={latestAptitudeAssessment?.finalScore !== undefined ? `${latestAptitudeAssessment.finalScore}%` : (placementScores.aptitudeScore > 0 ? `${placementScores.aptitudeScore}%` : 'Not Tested')}
+          subtext={latestAptitudeAssessment ? "Quant & logical reasoning" : "Take 20-min aptitude test"}
           icon={Brain}
           colorScheme="indigo"
           onClick={() => navigateTo('tests', 'aptitude')}
@@ -306,7 +361,7 @@ export const SinglePageDashboard = () => {
         {/* Metric 4: Communication & Interview */}
         <StatCard
           title="Interview & Comm"
-          value={latestCommunicationAssessment ? `${commScore}%` : (commScore > 0 ? `${commScore}%` : 'Not Tested')}
+          value={latestCommunicationAssessment?.finalScore !== undefined ? `${latestCommunicationAssessment.finalScore}%` : (placementScores.communicationScore > 0 ? `${placementScores.communicationScore}%` : 'Not Tested')}
           subtext={latestCommunicationAssessment ? "STAR response & clarity" : "Practice mock interview"}
           icon={MessageSquare}
           colorScheme="purple"
@@ -320,38 +375,20 @@ export const SinglePageDashboard = () => {
   // 3. RECOMMENDED NEXT ACTION CARD
   // =========================================================================
   const renderRecommendedAction = () => {
-    if (!hasProfile) {
-      return (
-        <Card className="p-5 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 border-slate-800 text-white card-hover-lift">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <Badge variant="primary" dot>Next Step</Badge>
-              <h3 className="font-extrabold text-white text-sm">Complete Your Placement Profile</h3>
-              <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                Add your degree details, technical skills, and software projects to generate ATS resumes and match with recruiters.
-              </p>
-            </div>
-            <Button variant="primary" icon={PlusCircle} onClick={() => navigateTo('profile')}>
-              Fill Profile Info
-            </Button>
-          </div>
-        </Card>
-      );
-    }
-
     if (!latestAssessment) {
       return (
-        <Card className="p-5 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border-slate-800 card-hover-lift">
+        <Card className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/40 text-white border-slate-800 card-hover-lift">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Recommended Milestone</span>
               <h3 className="font-extrabold text-white text-sm">Evaluate Your Technical Skills</h3>
               <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-                Take the adaptive AI technical assessment to evaluate your programming language proficiency and boost your readiness score.
+                Take the adaptive AI technical assessment to evaluate your programming language proficiency and boost your placement readiness score.
               </p>
             </div>
             <Button
               variant="gradient"
+              size="sm"
               icon={Cpu}
               onClick={() => navigateTo('tests', 'technical')}
             >
@@ -362,19 +399,44 @@ export const SinglePageDashboard = () => {
       );
     }
 
+    if (!latestAptitudeAssessment) {
+      return (
+        <Card className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/40 text-white border-slate-800 card-hover-lift">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-400">Next Recommended Assessment</span>
+              <h3 className="font-extrabold text-white text-sm">Take Aptitude & Logical Reasoning</h3>
+              <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
+                Campus placement drives filter candidates on quantitative and reasoning speed. Complete this 20-min timed assessment.
+              </p>
+            </div>
+            <Button
+              variant="gradient"
+              size="sm"
+              icon={Brain}
+              onClick={() => navigateTo('tests', 'aptitude')}
+            >
+              Start Aptitude Test
+            </Button>
+          </div>
+        </Card>
+      );
+    }
+
     return (
-      <Card className="p-5 bg-gradient-to-r from-purple-900/90 via-indigo-950 to-slate-900 text-white border-purple-500/20 card-hover-lift">
+      <Card className="p-4 sm:p-5 bg-gradient-to-r from-purple-900/60 via-slate-900 to-indigo-950 text-white border-purple-500/20 card-hover-lift">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-bold tracking-wider text-purple-300">Interview Readiness</span>
             <h3 className="font-extrabold text-white text-sm">Practice in AI Mock Interview Studio</h3>
             <p className="text-xs text-slate-300 leading-relaxed max-w-xl">
-              Hear 7 real corporate questions spoken aloud, practice with webcam posture analysis, and get instant feedback.
+              Hear 7 real corporate questions spoken aloud, practice with speech-to-text, and get instant feedback.
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="gradient"
+              size="sm"
               icon={Mic}
               onClick={() => navigateTo('tests', 'interview')}
             >
@@ -396,7 +458,7 @@ export const SinglePageDashboard = () => {
         <span className="text-xs text-slate-400">All tools integrated</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Tool 1: ATS Resume Studio */}
         <Card
           hover
@@ -484,36 +546,6 @@ export const SinglePageDashboard = () => {
             className="w-full justify-between"
           >
             View Roadmap
-          </Button>
-        </Card>
-
-        {/* Tool 4: Appearance & Posture */}
-        <Card
-          hover
-          className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-purple-500/50"
-          onClick={() => navigateTo('tests', 'appearance')}
-        >
-          <div className="space-y-2">
-            <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Camera className="w-4 h-4" />
-            </div>
-            <h4 className="font-bold text-white text-sm group-hover:text-purple-400 transition-colors">Appearance & Posture</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Inspect video posture alignment, head leveling, and interview attire using AI vision.
-            </p>
-          </div>
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={ChevronRight}
-            iconPosition="right"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigateTo('tests', 'appearance');
-            }}
-            className="w-full justify-between"
-          >
-            Launch Vision AI
           </Button>
         </Card>
       </div>
@@ -1208,7 +1240,7 @@ export const SinglePageDashboard = () => {
             <Badge variant="emerald" dot>AI Testing Center</Badge>
             <h2 className="text-xl sm:text-2xl font-black tracking-tight font-display">Placement Test Center</h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Practice and benchmark your technical, aptitude, mock interview, and video posture readiness for tier-1 campus hiring drives.
+              Practice and benchmark your technical, aptitude, and mock interview readiness for tier-1 campus hiring drives.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1229,7 +1261,6 @@ export const SinglePageDashboard = () => {
             { id: 'technical', label: 'Technical Coding Test', icon: Cpu },
             { id: 'aptitude', label: 'Aptitude & Reasoning', icon: Brain },
             { id: 'interview', label: 'AI Mock Interview', icon: Mic },
-            { id: 'appearance', label: 'Posture & Attire AI', icon: Camera },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -1250,8 +1281,8 @@ export const SinglePageDashboard = () => {
         {/* Content based on sub-tab */}
         {currentSubTab === 'overview' && (
           <div className="space-y-6">
-            {/* 4 Interactive Test Launchers */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 3 Interactive Test Launchers */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Launcher 1: Technical Coding */}
               <Card
                 hover
@@ -1356,39 +1387,6 @@ export const SinglePageDashboard = () => {
                   </Button>
                 </div>
               </Card>
-
-              {/* Launcher 4: Posture & Attire */}
-              <Card
-                hover
-                className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-pink-500/50 bg-slate-900/90 border-slate-800"
-                onClick={() => setTestCenterSubTab('appearance')}
-              >
-                <div className="space-y-2">
-                  <div className="w-9 h-9 rounded-xl bg-pink-500/15 text-pink-400 border border-pink-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Camera className="w-4 h-4" />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-white text-sm group-hover:text-pink-400 transition-colors">Posture & Attire</h4>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/15 text-pink-300 border border-pink-500/30 font-bold uppercase">Vision</span>
-                  </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">
-                    Webcam computer vision measuring head level, shoulder tilt, slouching, and dress code.
-                  </p>
-                </div>
-                <div className="pt-2 flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTestCenterSubTab('appearance');
-                    }}
-                  >
-                    Open Vision AI
-                  </Button>
-                </div>
-              </Card>
             </div>
 
             {/* Overall Score Metrics Strip */}
@@ -1404,9 +1402,6 @@ export const SinglePageDashboard = () => {
         {currentSubTab === 'technical' && renderTechnicalReport()}
         {currentSubTab === 'aptitude' && renderAptitudeReport()}
         {currentSubTab === 'interview' && renderCommunicationReport()}
-        {currentSubTab === 'appearance' && (
-          <AppearancePostureAnalyzer onOpenEditProfile={() => setIsEditModalOpen(true)} />
-        )}
       </div>
     );
   };
@@ -1479,9 +1474,6 @@ export const SinglePageDashboard = () => {
       case 'interview':
         return renderTestCenter('interview');
 
-      case 'appearance':
-        return renderTestCenter('appearance');
-
       case 'resume':
         return renderResumeStudio();
 
@@ -1496,6 +1488,41 @@ export const SinglePageDashboard = () => {
           <Card className="p-6 animate-fade-in">
             <PersonalizedRoadmap />
           </Card>
+        );
+
+      case 'jobs':
+        return (
+          <BrowseJobsView
+            studentData={studentData}
+            applications={applications}
+            nominations={nominations}
+            onApplicationCreated={() => {
+              loadApplicationsAndNominations();
+              showToast("Application submitted successfully!");
+            }}
+            onNavigateToApplications={() => navigateTo('applications')}
+          />
+        );
+
+      case 'applications':
+        return (
+          <MyApplicationsView
+            applications={applications}
+            onNavigateToJobs={() => navigateTo('jobs')}
+            onRefreshApplications={loadApplicationsAndNominations}
+            showToast={showToast}
+          />
+        );
+
+      case 'nominations':
+        return (
+          <MyNominationsView
+            nominations={nominations}
+            onNavigateToJobs={() => navigateTo('jobs')}
+            onNavigateToTests={() => navigateTo('tests')}
+            onRefreshNominations={loadApplicationsAndNominations}
+            showToast={showToast}
+          />
         );
 
       case 'all':
@@ -1526,11 +1553,13 @@ export const SinglePageDashboard = () => {
       case 'technical': return 'Technical Coding Test';
       case 'aptitude': return 'Aptitude & Reasoning Test';
       case 'interview': return 'AI Mock Interview Studio';
-      case 'appearance': return 'Posture & Attire Vision AI';
       case 'resume':
       case 'resume-builder': return 'ATS Resume Studio';
       case 'resume-analyzer': return 'AI Resume Keyword Gap Scanner';
       case 'roadmap': return 'Career Learning Roadmap';
+      case 'jobs': return 'Campus Placement Drives & Jobs';
+      case 'applications': return 'My Job Applications';
+      case 'nominations': return 'Placement Officer Nominations';
       case 'all': return 'Full Placement Profile';
       default: return 'Student Portal';
     }
@@ -1578,6 +1607,9 @@ export const SinglePageDashboard = () => {
         setIsCollapsed={setIsCollapsed}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
+        applicationsCount={applications.length}
+        nominationsCount={nominations.length}
+        pendingConsentCount={nominations.filter(n => n.nominationStatus === 'Pending Consent').length}
       />
 
       {/* 2. Main Content Area */}
@@ -1627,14 +1659,16 @@ export const SinglePageDashboard = () => {
             />
           </div>
 
-          {/* Right: Clean Status Pill, Avatar & Sign Out */}
+          {/* Right: Clean Status Pill, Notifications, Avatar & Sign Out */}
           <div className="flex items-center space-x-3 flex-shrink-0">
-            {/* Live Readiness Pill */}
-            <div className="hidden lg:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-850 border border-slate-700/80 text-xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-slate-400 font-medium text-[11px]">Readiness</span>
-              <span className="text-emerald-400 font-bold font-mono text-xs">{currentReadiness}%</span>
+            {/* Live Placement Status Pill */}
+            <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-850 border border-slate-800 text-[11px] text-slate-300 font-medium shadow-subtle">
+              <span className={`w-1.5 h-1.5 rounded-full ${hasProfile ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></span>
+              <span>{hasProfile ? 'Campus Eligible' : 'Profile Pending'}</span>
             </div>
+
+            {/* In-App Notifications Bell */}
+            <NotificationBell onNavigate={navigateTo} />
 
             {/* User Profile Pill & Sign Out */}
             <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
@@ -1654,8 +1688,9 @@ export const SinglePageDashboard = () => {
                     window.location.reload();
                   }
                 }}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:outline-none"
                 title="Sign Out"
+                aria-label="Sign Out"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -1663,22 +1698,33 @@ export const SinglePageDashboard = () => {
           </div>
         </header>
 
-        {/* Empty Profile Setup Banner (if no profile exists) */}
+        {/* Compact Profile Setup Banner (if no profile exists) */}
         {!hasProfile && (
-          <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-            <Card className="p-6 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-1.5 text-center md:text-left">
-                <Badge variant="emerald" dot>Setup Placement Profile</Badge>
-                <h2 className="text-xl font-bold tracking-tight font-display">Create Your Placement Profile</h2>
-                <p className="text-xs sm:text-sm text-slate-300 max-w-xl">
-                  Add your academics, skills, and projects to start taking assessments, unlock recruiter searches, and export your ATS resume.
-                </p>
+          <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+            <Card className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/60 text-white border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+              <div className="flex items-start md:items-center space-x-3.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0 mt-0.5 md:mt-0">
+                  <PlusCircle className="w-4 h-4" />
+                </div>
+                <div className="space-y-0.5 min-w-0">
+                  <div className="flex items-center space-x-2">
+                    <h2 className="text-sm font-bold text-white tracking-tight">
+                      Complete Your Placement Profile
+                    </h2>
+                    <Badge variant="amber" size="sm">Action Required</Badge>
+                  </div>
+                  <p className="text-xs text-slate-400 max-w-xl">
+                    Add academics, skills, and projects to start taking assessments, unlock recruiter searches, and export your ATS resume.
+                  </p>
+                </div>
               </div>
 
               <Button
                 variant="gradient"
+                size="sm"
                 icon={PlusCircle}
                 onClick={() => setIsEditModalOpen(true)}
+                className="flex-shrink-0 self-stretch md:self-auto"
               >
                 Create Profile Now
               </Button>

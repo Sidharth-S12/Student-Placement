@@ -36,6 +36,42 @@ export async function addOfficer(officerData) {
   return data.officer;
 }
 
+export async function updateOfficer(uid, updates) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`/api/admin/officers/${encodeURIComponent(uid)}`, {
+    method: 'PUT',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updates)
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to update placement officer.');
+  }
+  return data.officer;
+}
+
+export async function toggleOfficerStatus(uid, status) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`/api/admin/officers/${encodeURIComponent(uid)}/status`, {
+    method: 'PATCH',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status })
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to update officer status.');
+  }
+  return data.officer;
+}
+
 export async function removeOfficer(uid) {
   const headers = await getAuthHeaders();
   const res = await fetch(`/api/admin/officers/${encodeURIComponent(uid)}`, {
@@ -108,3 +144,36 @@ export async function fetchCampusSummary() {
   }
   return null;
 }
+
+export async function fetchAdminApplications() {
+  try {
+    const headers = await getAuthHeaders();
+    const res = await fetch('/api/admin/applications', { headers });
+    if (res.ok) {
+      const data = await res.json();
+      return data.applications || [];
+    }
+  } catch (err) {
+    console.error('[AdminService] fetchAdminApplications failed:', err);
+  }
+  return [];
+}
+
+export async function updateApplicationStatus(id, { status, note }) {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`/api/admin/applications/${encodeURIComponent(id)}/status`, {
+    method: 'PATCH',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ status, note })
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || 'Failed to update application status.');
+  }
+  return data.application;
+}
+

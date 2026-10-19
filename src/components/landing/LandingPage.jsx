@@ -6,7 +6,6 @@ import {
   Cpu,
   Brain,
   Mic,
-  Camera,
   FileText,
   Map,
   ArrowRight,
@@ -144,7 +143,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
             {/* Description */}
             <p className="text-base sm:text-lg text-slate-400 leading-relaxed font-normal">
               An all-in-one placement preparation and hiring suite. Take adaptive technical coding tests,
-              hone interview communication with webcam posture AI, generate ATS-formatted resumes, and
+              hone interview communication with speech evaluation, generate ATS-formatted resumes, and
               connect directly with campus recruiters.
             </p>
 
@@ -174,7 +173,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </div>
               <div className="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-800">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Webcam Posture & Attire AI</span>
+                <span>AI Mock Interview Studio</span>
               </div>
               <div className="flex items-center space-x-1.5 bg-slate-800/50 px-3 py-1.5 rounded-xl border border-slate-800">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -238,7 +237,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                   <Mic className="w-4 h-4 text-purple-400" />
                 </div>
                 <div className="text-2xl font-black text-white font-display">86%</div>
-                <div className="text-[11px] text-purple-400 font-semibold">STAR Method & Posture Vision</div>
+                <div className="text-[11px] text-purple-400 font-semibold">STAR Method & Voice Evaluation</div>
               </div>
             </div>
           </div>
@@ -344,19 +343,19 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 <Mic className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition-colors">
-                AI Mock Interview & Posture
+                AI Mock Interview Studio
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Spoken corporate questions, microphone speech evaluation using STAR structure, plus webcam computer vision detecting posture alignment and formal attire.
+                Spoken corporate questions, microphone speech evaluation using STAR structure, and structured communication feedback.
               </p>
               <ul className="space-y-2 pt-2 text-xs text-slate-300">
                 <li className="flex items-center space-x-2">
                   <Check className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" />
-                  <span>Live webcam posture tracking</span>
+                  <span>Real-time voice speech-to-text</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" />
-                  <span>Interview attire classification</span>
+                  <span>STAR methodology feedback</span>
                 </li>
               </ul>
             </div>
@@ -392,7 +391,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
             <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
@@ -430,19 +429,6 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </p>
               <div className="text-[11px] font-semibold text-purple-400 pt-2 border-t border-slate-800/80">
                 Voice Recording & Evaluation
-              </div>
-            </div>
-
-            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center">
-                <Camera className="w-5 h-5" />
-              </div>
-              <h4 className="font-bold text-white text-base">Posture & Attire Vision</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Camera-assisted computer vision tracking eye contact, head level, shoulder alignment, and formal dress code.
-              </p>
-              <div className="text-[11px] font-semibold text-pink-400 pt-2 border-t border-slate-800/80">
-                Live Video Analysis
               </div>
             </div>
 
@@ -709,7 +695,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 Ready to Accelerate Your Campus Placements?
               </h2>
               <p className="text-sm sm:text-base text-brand-100 font-normal">
-                Join thousands of engineering students preparing smarter with adaptive assessments, real-time posture analysis, and ATS-optimized profiles.
+                Join thousands of engineering students preparing smarter with adaptive assessments, speech evaluation, and ATS-optimized profiles.
               </p>
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button

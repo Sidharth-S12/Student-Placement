@@ -31,10 +31,25 @@ export const StatCard = ({
 
   return (
     <Card
-      className={`p-5 flex flex-col justify-between ${
-        onClick ? 'cursor-pointer card-hover-lift hover:border-slate-700 hover:shadow-xl group' : ''
+      className={`p-5 h-full min-h-[148px] flex flex-col justify-between ${
+        onClick
+          ? 'cursor-pointer card-hover-lift hover:border-slate-700 hover:shadow-xl group focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none'
+          : ''
       } ${className}`}
       onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick(e);
+              }
+            }
+          : undefined
+      }
+      aria-label={onClick ? `${title}: ${value}. ${subtext || ''}` : undefined}
     >
       <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</span>
@@ -45,13 +60,13 @@ export const StatCard = ({
         )}
       </div>
 
-      <div className="mt-3">
+      <div className="mt-2.5 flex-1 flex flex-col justify-center">
         <div className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${valueColorStyles[colorScheme] || valueColorStyles.slate}`}>
           {value}
         </div>
-        {subtext && (
-          <p className="text-xs text-slate-400 mt-1 font-medium line-clamp-1">{subtext}</p>
-        )}
+        <p className="text-xs text-slate-400 mt-1 font-medium line-clamp-1 min-h-[16px]">
+          {subtext || ''}
+        </p>
       </div>
 
       {trend ? (
@@ -62,7 +77,7 @@ export const StatCard = ({
           </span>
         </div>
       ) : onClick ? (
-        <div className="mt-2 pt-1.5 border-t border-slate-800/80 text-[10px] text-slate-500 group-hover:text-brand-400 font-semibold flex items-center justify-between transition-colors">
+        <div className="mt-2.5 pt-2 border-t border-slate-800/80 text-xs text-slate-400 group-hover:text-brand-300 font-semibold flex items-center justify-between transition-colors">
           <span>Open Module</span>
           <span className="group-hover:translate-x-0.5 transition-transform">→</span>
         </div>

@@ -1265,5 +1265,167 @@
     "aptitudeScore": 10,
     "migratedFromLegacyEmail": "crsid542@gmail.com",
     "migratedAt": "2026-09-20T18:30:56.018Z"
+  },
+  "iGRUNmk6hdeulK5TJnBJOZeKuZk1": {
+    "uid": "iGRUNmk6hdeulK5TJnBJOZeKuZk1",
+    "personalInfo": {
+      "fullName": "amis",
+      "headline": "B.Tech",
+      "profilePhoto": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>",
+      "email": "amis@gmail.com",
+      "phone": "987654321",
+      "location": "kochi",
+      "summary": "aspiring software engineer\n"
+    },
+    "placementScores": {
+      "overallReadiness": 0,
+      "technicalScore": 0,
+      "aptitudeScore": 0,
+      "communicationScore": 0
+    },
+    "education": {
+      "tenthPercentage": "89",
+      "tenthBoard": "",
+      "tenthYear": "",
+      "twelfthPercentage": "88",
+      "twelfthBoard": "",
+      "twelfthYear": "",
+      "degree": "B.Tech",
+      "branch": "Computer Science Engineering(Data Science)",
+      "college": "xyz",
+      "cgpa": "8.5",
+      "graduationYear": "2027"
+    },
+    "professionalLinks": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "technicalSkills": {
+      "programmingLanguages": [
+        {
+          "name": "python",
+          "level": "Proficient"
+        },
+        {
+          "name": "java",
+          "level": "Proficient"
+        },
+        {
+          "name": "html",
+          "level": "Proficient"
+        },
+        {
+          "name": "r",
+          "level": "Proficient"
+        },
+        {
+          "name": "c",
+          "level": "Proficient"
+        },
+        {
+          "name": "css",
+          "level": "Proficient"
+        }
+      ],
+      "frameworks": [
+        {
+          "name": "react.js",
+          "level": "Proficient"
+        }
+      ],
+      "databases": [
+        {
+          "name": "sql",
+          "level": "Proficient"
+        },
+        {
+          "name": "mysql",
+          "level": "Proficient"
+        }
+      ],
+      "toolsTechnologies": [
+        {
+          "name": "git",
+          "level": "Proficient"
+        },
+        {
+          "name": "gitub",
+          "level": "Proficient"
+        }
+      ]
+    },
+    "projects": [
+      {
+        "id": "proj-1792423547490",
+        "name": "ai based youtube video summarisation",
+        "description": "Developed an AI-based YouTube Video Summarization System using Python, HTML, CSS, and Groq API to generate concise summaries from YouTube videos. It extracts key insights from video transcripts and generates quizzes to help users understand and revise content efficiently.",
+        "technologies": [
+          "React",
+          "Node.js",
+          "python"
+        ],
+        "projectLink": "",
+        "githubLink": "",
+        "highlights": [
+          "Implemented core feature"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "id": "exp-1792423667302",
+        "role": "Software Intern",
+        "organization": "amazon",
+        "duration": "3 Months",
+        "location": "Location",
+        "description": "Role overview...",
+        "responsibilities": [
+          "Developed user dashboard features."
+        ]
+      }
+    ],
+    "certifications": [
+      {
+        "id": "cert-1792423677055",
+        "name": "python",
+        "organization": "lcc",
+        "date": "2024",
+        "certificateLink": ""
+      },
+      {
+        "id": "cert-1792423688912",
+        "name": "datascience ",
+        "organization": "nptel",
+        "date": "2024",
+        "certificateLink": ""
+      }
+    ],
+    "achievements": [],
+    "createdAt": "2026-10-19T07:22:45.575Z",
+    "updatedAt": "2026-10-19T15:28:55.220Z",
+    "studentId": "iGRUNmk6hdeulK5TJnBJOZeKuZk1"
+  },
+  "student_test_applicant_2026": {
+    "uid": "student_test_applicant_2026",
+    "studentId": "student_test_applicant_2026",
+    "personalInfo": {
+      "fullName": "Rohit Sharma",
+      "email": "rohit.sharma@college.edu"
+    },
+    "education": {
+      "degree": "B.Tech",
+      "branch": "Computer Science & Engineering",
+      "college": "Engineering College",
+      "cgpa": "8.8"
+    },
+    "department": "CSE",
+    "placementScores": {
+      "overallReadiness": 82,
+      "technicalScore": 85,
+      "aptitudeScore": 80,
+      "communicationScore": 80
+    },
+    "updatedAt": "2026-10-19T11:38:51.702Z"
   }
 }

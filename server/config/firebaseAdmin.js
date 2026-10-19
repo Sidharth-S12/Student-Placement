@@ -61,6 +61,8 @@ const APTITUDE_QUESTIONS_FILE = path.join(LOCAL_STORE_DIR, 'studentAptitudeQuest
 const COMMUNICATION_ASSESSMENTS_FILE = path.join(LOCAL_STORE_DIR, 'communicationAssessments.json');
 const USERS_FILE = path.join(LOCAL_STORE_DIR, 'users.json');
 const DRIVES_FILE = path.join(LOCAL_STORE_DIR, 'placementDrives.json');
+const APPLICATIONS_FILE = path.join(LOCAL_STORE_DIR, 'applications.json');
+const NOTIFICATIONS_FILE = path.join(LOCAL_STORE_DIR, 'notifications.json');
 
 function ensureLocalStore() {
   if (!fs.existsSync(LOCAL_STORE_DIR)) {
@@ -86,6 +88,12 @@ function ensureLocalStore() {
   }
   if (!fs.existsSync(DRIVES_FILE)) {
     fs.writeFileSync(DRIVES_FILE, JSON.stringify({}), 'utf8');
+  }
+  if (!fs.existsSync(APPLICATIONS_FILE)) {
+    fs.writeFileSync(APPLICATIONS_FILE, JSON.stringify({}), 'utf8');
+  }
+  if (!fs.existsSync(NOTIFICATIONS_FILE)) {
+    fs.writeFileSync(NOTIFICATIONS_FILE, JSON.stringify({}), 'utf8');
   }
 }
 
@@ -958,40 +966,136 @@ export async function getStudentAssessmentHistory(studentId) {
  * Retrieves all registered Placement Officers (admin users).
  */
 export async function getAllPlacementOfficers() {
-  const localUsers = readLocalData(USERS_FILE);
-  const officers = Object.values(localUsers).filter(u => u.role === 'admin');
-  return officers.map(o => ({
-    uid: o.uid,
-    email: o.email,
-    displayName: o.displayName || o.name || 'Placement Officer',
-    designation: o.designation || 'Placement Officer',
-    department: o.department || 'Central Placement Cell',
-    phone: o.phone || '',
-    role: 'admin',
-    createdAt: o.createdAt || o.updatedAt || new Date().toISOString()
-  }));
+  let officersList = [];
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('users').where('role', '==', 'admin').get();
+      if (!snap.empty) {
+        snap.forEach(doc => {
+          officersList.push({ ...doc.data(), uid: doc.id });
+        });
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getAllPlacementOfficers failed, using local store:', e.message);
+    }
+  }
+
+  if (officersList.length === 0) {
+    const localUsers = readLocalData(USERS_FILE);
+    officersList = Object.values(localUsers).filter(u => u.role === 'admin');
+  }
+
+  return officersList.map(o => {
+    const rawDept = o.department || 'Central Placement Cell';
+    const isCentral = rawDept.toLowerCase().includes('central');
+    const defaultScope = isCentral ? 'college' : 'department';
+    const accessScope = o.accessScope || defaultScope;
+    const assignedDepartment = o.assignedDepartment || (accessScope === 'department' ? rawDept : null);
+
+    return {
+      uid: o.uid,
+      email: o.email,
+      displayName: o.displayName || o.name || 'Placement Officer',
+      designation: o.designation || 'Placement Officer',
+      department: rawDept,
+      accessScope,
+      assignedDepartment,
+      status: o.status || 'active',
+      phone: o.phone || '',
+      role: 'admin',
+      createdAt: o.createdAt || o.updatedAt || new Date().toISOString(),
+      updatedAt: o.updatedAt || new Date().toISOString()
+    };
+  });
 }
 
 /**
- * Adds or updates a Placement Officer record.
+ * Adds or registers a Placement Officer.
+ * Creates an authenticated Firebase user via Admin SDK without affecting the admin session.
  */
-export async function addPlacementOfficer({ name, email, designation, department, phone, uid }) {
-  if (!email) throw new Error('Email is required for Placement Officer.');
+export async function addPlacementOfficer({
+  name,
+  email,
+  designation,
+  department,
+  phone,
+  accessScope,
+  assignedDepartment,
+  status,
+  initialPassword,
+  uid
+}) {
+  if (!email || !email.trim()) throw new Error('Official email is required for Placement Officer.');
   const cleanEmail = email.trim().toLowerCase();
-  const effectiveUid = uid || `admin_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+  // Safeguard: Check duplicate email in existing officers
+  const existingOfficers = await getAllPlacementOfficers();
+  const duplicate = existingOfficers.find(o => (o.email || '').toLowerCase() === cleanEmail && (!uid || o.uid !== uid));
+  if (duplicate) {
+    throw new Error(`An account with email '${cleanEmail}' is already registered as a Placement Officer.`);
+  }
+
+  let effectiveUid = uid;
+
+  // 1. If live Firebase Admin is configured, create the authenticated user securely
+  if (isFirebaseConfigured && admin.apps.length > 0) {
+    try {
+      let authUser = null;
+      try {
+        authUser = await admin.auth().getUserByEmail(cleanEmail);
+      } catch (authErr) {
+        if (authErr.code === 'auth/user-not-found') {
+          // Create Firebase Authentication user with initial password
+          authUser = await admin.auth().createUser({
+            email: cleanEmail,
+            password: initialPassword || 'Officer@123',
+            displayName: (name || cleanEmail.split('@')[0]).trim()
+          });
+          console.log(`[Firebase Admin] Created new Firebase Auth user for officer: ${cleanEmail} (UID: ${authUser.uid})`);
+        } else {
+          throw authErr;
+        }
+      }
+
+      if (authUser && !effectiveUid) {
+        effectiveUid = authUser.uid;
+      }
+    } catch (err) {
+      console.warn('[Firebase Admin] Firebase Auth user creation note:', err.message);
+    }
+  }
+
+  if (!effectiveUid) {
+    effectiveUid = `admin_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`;
+  }
+
+  const rawDept = department?.trim() || 'Central Placement Cell';
+  const isCentral = rawDept.toLowerCase().includes('central');
+  const scope = accessScope || (isCentral ? 'college' : 'department');
+  const assignedDept = scope === 'department' ? (assignedDepartment?.trim() || rawDept) : null;
+  const officerStatus = status === 'inactive' ? 'inactive' : 'active';
 
   const payload = {
     uid: effectiveUid,
     role: 'admin',
     email: cleanEmail,
-    displayName: name || cleanEmail.split('@')[0],
-    designation: designation || 'Placement Officer',
-    department: department || 'Central Placement Cell',
-    phone: phone || '',
+    displayName: (name || cleanEmail.split('@')[0]).trim(),
+    designation: designation?.trim() || 'Placement Officer',
+    department: rawDept,
+    accessScope: scope,
+    assignedDepartment: assignedDept,
+    status: officerStatus,
+    phone: phone?.trim() || '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
+  if (initialPassword) {
+    payload.initialPassword = initialPassword;
+  }
+
+  // 2. Persist to Firestore if available
   if (isFirebaseConfigured && db) {
     try {
       await db.collection('users').doc(effectiveUid).set(payload, { merge: true });
@@ -1000,11 +1104,88 @@ export async function addPlacementOfficer({ name, email, designation, department
     }
   }
 
+  // 3. Persist to local JSON store
   const localUsers = readLocalData(USERS_FILE);
   localUsers[effectiveUid] = payload;
   writeLocalData(USERS_FILE, localUsers);
 
   return payload;
+}
+
+/**
+ * Updates an existing Placement Officer record (scope, department, status, details).
+ */
+export async function updatePlacementOfficer(uid, updates = {}) {
+  if (!uid) throw new Error('Officer UID is required for update.');
+
+  const localUsers = readLocalData(USERS_FILE);
+  const existing = localUsers[uid] || (await getUserRecord(uid));
+
+  if (!existing || existing.role !== 'admin') {
+    throw new Error('Placement Officer account not found.');
+  }
+
+  const scope = updates.accessScope || existing.accessScope || 'college';
+  const assignedDept = scope === 'department'
+    ? (updates.assignedDepartment || updates.department || existing.assignedDepartment || existing.department)
+    : null;
+
+  const payload = {
+    ...existing,
+    ...updates,
+    uid,
+    role: 'admin',
+    accessScope: scope,
+    assignedDepartment: assignedDept,
+    status: updates.status || existing.status || 'active',
+    updatedAt: new Date().toISOString()
+  };
+
+  // Sync with Firebase Auth display name if changed and live
+  if (isFirebaseConfigured && admin.apps.length > 0 && updates.name && !uid.startsWith('admin_')) {
+    try {
+      await admin.auth().updateUser(uid, { displayName: updates.name });
+    } catch (authUpErr) {
+      console.warn('[Firebase Admin] updateUser display name failed:', authUpErr.message);
+    }
+  }
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('users').doc(uid).set(payload, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase Admin] updatePlacementOfficer Firestore write failed:', e.message);
+    }
+  }
+
+  localUsers[uid] = payload;
+  writeLocalData(USERS_FILE, localUsers);
+
+  return payload;
+}
+
+/**
+ * Toggles an officer account status between 'active' and 'inactive'.
+ * Enforces safeguard: At least one administrator account must remain active.
+ */
+export async function toggleOfficerStatus(uid, status) {
+  if (!uid) throw new Error('Officer UID is required.');
+  const newStatus = status === 'inactive' ? 'inactive' : 'active';
+
+  const officers = await getAllPlacementOfficers();
+  const target = officers.find(o => o.uid === uid);
+  if (!target) {
+    throw new Error('Placement Officer not found.');
+  }
+
+  if (newStatus === 'inactive') {
+    const activeOfficers = officers.filter(o => o.status !== 'inactive' && o.uid !== uid);
+    if (activeOfficers.length === 0) {
+      throw new Error('Cannot deactivate the only active Placement Administrator. At least one administrator account must remain active.');
+    }
+  }
+
+  return await updatePlacementOfficer(uid, { status: newStatus });
 }
 
 /**
@@ -1028,12 +1209,42 @@ export async function removePlacementOfficer(uid) {
   if (isFirebaseConfigured && db) {
     try {
       await db.collection('users').doc(uid).delete();
+      if (admin.apps.length > 0) {
+        try {
+          await admin.auth().deleteUser(uid);
+        } catch (authDelErr) {
+          console.warn('[Firebase Auth] deleteUser notice:', authDelErr.message);
+        }
+      }
     } catch (e) {
       console.warn('[Firebase Admin] removePlacementOfficer Firestore delete failed:', e.message);
     }
   }
 
   return { success: true };
+}
+
+/**
+ * Retrieves all registered Company / Recruiter accounts.
+ */
+export async function getAllCompanies() {
+  const localUsers = readLocalData(USERS_FILE);
+  let companyUsers = Object.values(localUsers).filter(u => u.role === 'company');
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('users').where('role', '==', 'company').get();
+      if (!snap.empty) {
+        const firestoreCompanies = [];
+        snap.forEach(doc => firestoreCompanies.push({ ...doc.data(), uid: doc.id }));
+        return firestoreCompanies;
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getAllCompanies Firestore query failed:', e.message);
+    }
+  }
+
+  return companyUsers;
 }
 
 /**
@@ -1120,6 +1331,257 @@ export async function deletePlacementDrive(id) {
     delete drives[id];
     writeLocalData(DRIVES_FILE, drives);
   }
+  return { success: true };
+}
+
+/**
+ * =========================================================================
+ * Job Applications & Placement Officer Nominations
+ * =========================================================================
+ */
+
+/**
+ * Saves or updates a Job Application / Nomination document.
+ * Enforces unified document ID: app_${studentId}_${jobId}
+ */
+export async function saveApplication(appData) {
+  ensureLocalStore();
+  const studentId = appData.studentId;
+  const jobId = appData.jobId;
+  if (!studentId || !jobId) {
+    throw new Error('Both studentId and jobId are required for an application.');
+  }
+
+  const id = appData.id || `app_${studentId}_${jobId}`;
+  const existingRecords = readLocalData(APPLICATIONS_FILE);
+  const existing = existingRecords[id] || {};
+
+  const payload = {
+    ...existing,
+    ...appData,
+    id,
+    updatedAt: new Date().toISOString(),
+    createdAt: existing.createdAt || appData.createdAt || new Date().toISOString()
+  };
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('applications').doc(id).set(payload, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase Admin] saveApplication failed:', e.message);
+    }
+  }
+
+  existingRecords[id] = payload;
+  writeLocalData(APPLICATIONS_FILE, existingRecords);
+  return payload;
+}
+
+/**
+ * Retrieves a single application by its unified ID.
+ */
+export async function getApplicationById(id) {
+  ensureLocalStore();
+  if (isFirebaseConfigured && db) {
+    try {
+      const doc = await db.collection('applications').doc(id).get();
+      if (doc.exists) return doc.data();
+    } catch (e) {
+      console.warn('[Firebase Admin] getApplicationById failed:', e.message);
+    }
+  }
+  const records = readLocalData(APPLICATIONS_FILE);
+  return records[id] || null;
+}
+
+/**
+ * Retrieves all applications/nominations for a specific student.
+ */
+export async function getApplicationsForStudent(studentId) {
+  ensureLocalStore();
+  if (!studentId) return [];
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('applications')
+        .where('studentId', '==', studentId)
+        .get();
+      if (!snap.empty) {
+        const list = [];
+        snap.forEach(doc => list.push(doc.data()));
+        return list.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getApplicationsForStudent failed:', e.message);
+    }
+  }
+
+  const records = readLocalData(APPLICATIONS_FILE);
+  return Object.values(records)
+    .filter(a => a.studentId === studentId)
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+}
+
+/**
+ * Retrieves all applications/nominations for a specific recruitment drive / job.
+ */
+export async function getApplicationsForJob(jobId) {
+  ensureLocalStore();
+  if (!jobId) return [];
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('applications')
+        .where('jobId', '==', jobId)
+        .get();
+      if (!snap.empty) {
+        const list = [];
+        snap.forEach(doc => list.push(doc.data()));
+        return list.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getApplicationsForJob failed:', e.message);
+    }
+  }
+
+  const records = readLocalData(APPLICATIONS_FILE);
+  return Object.values(records)
+    .filter(a => a.jobId === jobId)
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+}
+
+/**
+ * Retrieves all applications across all jobs (for placement officers).
+ */
+export async function getAllApplications() {
+  ensureLocalStore();
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('applications').get();
+      if (!snap.empty) {
+        const list = [];
+        snap.forEach(doc => list.push(doc.data()));
+        return list.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getAllApplications failed:', e.message);
+    }
+  }
+
+  const records = readLocalData(APPLICATIONS_FILE);
+  return Object.values(records)
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+}
+
+/**
+ * =========================================================================
+ * In-App Notifications
+ * =========================================================================
+ */
+
+/**
+ * Creates and persists an in-app notification.
+ */
+export async function createNotification(notifData) {
+  ensureLocalStore();
+  const id = notifData.id || `notif_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const payload = {
+    ...notifData,
+    id,
+    read: false,
+    createdAt: notifData.createdAt || new Date().toISOString()
+  };
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('notifications').doc(id).set(payload);
+    } catch (e) {
+      console.warn('[Firebase Admin] createNotification failed:', e.message);
+    }
+  }
+
+  const records = readLocalData(NOTIFICATIONS_FILE);
+  records[id] = payload;
+  writeLocalData(NOTIFICATIONS_FILE, records);
+  return payload;
+}
+
+/**
+ * Retrieves notifications for a specific recipient user.
+ */
+export async function getNotificationsForUser(userId) {
+  ensureLocalStore();
+  if (!userId) return [];
+
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('notifications')
+        .where('recipientId', '==', userId)
+        .orderBy('createdAt', 'desc')
+        .limit(30)
+        .get();
+      if (!snap.empty) {
+        const list = [];
+        snap.forEach(doc => list.push(doc.data()));
+        return list;
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getNotificationsForUser failed:', e.message);
+    }
+  }
+
+  const records = readLocalData(NOTIFICATIONS_FILE);
+  return Object.values(records)
+    .filter(n => n.recipientId === userId)
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+}
+
+/**
+ * Marks a single notification as read.
+ */
+export async function markNotificationRead(notifId, userId) {
+  ensureLocalStore();
+  const records = readLocalData(NOTIFICATIONS_FILE);
+  if (records[notifId] && (!userId || records[notifId].recipientId === userId)) {
+    records[notifId].read = true;
+    records[notifId].readAt = new Date().toISOString();
+    writeLocalData(NOTIFICATIONS_FILE, records);
+  }
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('notifications').doc(notifId).update({
+        read: true,
+        readAt: new Date().toISOString()
+      });
+    } catch (e) {
+      console.warn('[Firebase Admin] markNotificationRead failed:', e.message);
+    }
+  }
+
+  return { success: true };
+}
+
+/**
+ * Marks all notifications for a user as read.
+ */
+export async function markAllNotificationsRead(userId) {
+  ensureLocalStore();
+  if (!userId) return { success: false };
+
+  const records = readLocalData(NOTIFICATIONS_FILE);
+  let updated = false;
+  Object.values(records).forEach(n => {
+    if (n.recipientId === userId && !n.read) {
+      n.read = true;
+      n.readAt = new Date().toISOString();
+      updated = true;
+    }
+  });
+  if (updated) {
+    writeLocalData(NOTIFICATIONS_FILE, records);
+  }
+
   return { success: true };
 }
 

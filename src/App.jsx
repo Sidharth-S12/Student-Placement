@@ -81,7 +81,7 @@ const DevRoleBadge = ({ user, role }) => {
   if (!import.meta.env.DEV || !user) return null;
 
   return (
-    <div className="fixed bottom-3 left-3 z-50 text-xs font-mono">
+    <div className="fixed bottom-3 right-3 z-50 text-xs font-mono">
       {isExpanded ? (
         <div className="bg-slate-900/95 text-slate-100 border border-slate-700 p-3 rounded-2xl shadow-2xl space-y-1.5 backdrop-blur max-w-xs animate-fade-in">
           <div className="flex items-center justify-between pb-1 border-b border-slate-800">

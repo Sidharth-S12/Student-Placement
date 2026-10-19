@@ -276,5 +276,23 @@
       "questionText": "In a React component, what will be rendered by the following JSX?\n\nfunction Greeting() {\n  const name = 'Alice';\n  return <h1>Hello, {name}!</h1>;\n}",
       "recordedAt": "2026-09-20T16:48:25.166Z"
     }
+  ],
+  "iGRUNmk6hdeulK5TJnBJOZeKuZk1": [
+    {
+      "id": "tech-q-1792408394409-ajxmp",
+      "skill": "python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-19T11:13:14.419Z"
+    },
+    {
+      "id": "tech-q-1792408409104-bb6di",
+      "skill": "python",
+      "topic": "Data Types & Mutability",
+      "difficulty": "EASY",
+      "questionText": "Which of the following built-in data types in Python is immutable?",
+      "recordedAt": "2026-10-19T11:13:29.119Z"
+    }
   ]
 }

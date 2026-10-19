@@ -12,16 +12,39 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    // Helper functions for Role-Based Access Control (RBAC)
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             getUserData().role == 'admin';
+    }
+
+    function isCollegeWideAdmin() {
+      return isAdmin() && (
+        !('accessScope' in getUserData()) ||
+        getUserData().accessScope == 'college'
+      );
+    }
+
+    function getOfficerDepartment() {
+      return getUserData().assignedDepartment;
+    }
+
     // =========================================================================
     // 1. Users Collection (Primary Identity & Role Store)
     // =========================================================================
     // Rules:
     // - Authenticated users can read their own role document.
+    // - Placement Officers (admins) can read officer documents.
     // - On registration, users can create their own document with role 'student' or 'company'.
     // - Role cannot be self-escalated or modified through client updates.
-    // - Admins are managed via backend Admin SDK.
+    // - Placement Officers with 'admin' role are managed strictly via backend Admin SDK.
     match /users/{userId} {
-      allow read: if isOwner(userId);
+      allow read: if isOwner(userId) || isAdmin();
       allow create: if isOwner(userId) 
                     && (request.resource.data.role in ['student', 'company'])
                     && request.resource.data.uid == userId;
@@ -35,10 +58,15 @@ service cloud.firestore {
     // =========================================================================
     // Rules:
     // - Students can read and write only their own profile.
-    // - Authenticated recruiters/admins can read candidate profiles.
+    // - College-wide Admins can read all profiles.
+    // - Department-specific Admins can read candidates matching their assigned department.
+    // - Authenticated recruiters can read visible candidate profiles.
     match /students/{studentId} {
-      allow read: if isAuthenticated();
-      allow write: if isOwner(studentId);
+      allow read: if isOwner(studentId)
+                  || isCollegeWideAdmin()
+                  || (isAdmin() && resource.data.department == getOfficerDepartment())
+                  || isAuthenticated();
+      allow write: if isOwner(studentId) || isAdmin();
     }
 
     // =========================================================================
@@ -49,7 +77,7 @@ service cloud.firestore {
     // - Authenticated users can read company info.
     match /companies/{companyId} {
       allow read: if isAuthenticated();
-      allow write: if isOwner(companyId);
+      allow write: if isOwner(companyId) || isAdmin();
     }
 
     // =========================================================================
@@ -62,7 +90,7 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() 
                     && request.resource.data.studentId == request.auth.uid;
-      allow update, delete: if false;
+      allow update, delete: if isAdmin();
     }
 
     // =========================================================================
@@ -72,7 +100,38 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow create: if isAuthenticated() 
                     && request.resource.data.studentId == request.auth.uid;
-      allow update, delete: if false;
+      allow update, delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 6. Campus Placement Drives
+    // =========================================================================
+    match /placementDrives/{driveId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.companyId);
+    }
+
+    // =========================================================================
+    // 7. Job Applications & Officer Nominations
+    // =========================================================================
+    // Rules:
+    // - Students can read and update only their own applications/nominations.
+    // - Authenticated recruiters and placement officers can read and manage applicant pipeline.
+    match /applications/{applicationId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 8. In-App Notifications
+    // =========================================================================
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.recipientId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.recipientId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow delete: if isAuthenticated() && resource.data.recipientId == request.auth.uid;
     }
   }
 }

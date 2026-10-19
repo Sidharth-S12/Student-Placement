@@ -18,11 +18,21 @@ import {
   EyeOff,
   CheckCircle2,
   Loader2,
-  Building2
+  Building2,
+  Bookmark,
+  BookmarkCheck,
+  Sparkles
 } from 'lucide-react';
 import { generateATSResumePDF } from '../../utils/generateATSResumePDF';
+import { Button, Badge } from '../ui';
 
-export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
+export const CompanyStudentDetailModal = ({
+  student,
+  isOpen,
+  onClose,
+  isShortlisted = false,
+  onToggleShortlist
+}) => {
   const [downloadingResume, setDownloadingResume] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState(null);
 
@@ -36,6 +46,12 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
   const experience = student.experience || [];
   const certifications = student.certifications || [];
   const achievements = student.achievements || [];
+  const links = student.professionalLinks || {};
+
+  const readiness = scores.overallReadiness || 0;
+  const techScore = scores.technicalScore || student.latestTechnicalScore || 0;
+  const aptScore = scores.aptitudeScore || 0;
+  const commScore = scores.communicationScore || 75;
 
   // Privacy rules configured by student in placementVisibility
   const visibility = student.placementVisibility || {
@@ -54,7 +70,7 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
   const handleDownloadResume = () => {
     try {
       setDownloadingResume(true);
-      if (!visibility.resume) {
+      if (visibility.resume === false) {
         setFeedbackMsg('Student has restricted resume downloads for this profile.');
         setTimeout(() => setFeedbackMsg(null), 3500);
         return;
@@ -65,11 +81,11 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
         return;
       }
       generateATSResumePDF(student);
-      setFeedbackMsg('ATS Resume downloaded successfully.');
+      setFeedbackMsg(`ATS Resume for ${personal.fullName || 'student'} downloaded.`);
       setTimeout(() => setFeedbackMsg(null), 3000);
     } catch (err) {
       console.error('Failed to generate resume for company:', err);
-      setFeedbackMsg('Resume not available.');
+      setFeedbackMsg('Resume generation failed.');
       setTimeout(() => setFeedbackMsg(null), 3500);
     } finally {
       setDownloadingResume(false);
@@ -77,200 +93,326 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans">
-      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden text-slate-800">
-
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fade-in font-sans">
+      <div className="bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden text-slate-100">
         {/* Modal Top Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
-          <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs">
+        <div className="px-5 sm:px-6 py-4 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
+          <div className="flex items-center space-x-3.5 min-w-0">
+            <div className="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700/80 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
               {personal.profilePhoto ? (
-                <img src={personal.profilePhoto} alt={personal.fullName} className="w-full h-full object-cover" />
+                <img
+                  src={personal.profilePhoto}
+                  alt={personal.fullName}
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <User className="w-5 h-5 text-slate-400" />
+                <span className="font-extrabold text-base text-brand-400">
+                  {(personal.fullName || 'C').charAt(0)}
+                </span>
               )}
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-extrabold text-base text-slate-900 leading-none">
+
+            <div className="min-w-0">
+              <div className="flex items-center space-x-2 flex-wrap gap-y-1">
+                <h3 className="font-extrabold text-base sm:text-lg text-white leading-tight truncate">
                   {personal.fullName || 'Candidate Profile'}
                 </h3>
-                <span className="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold">
-                  {student.department || education.branch || 'Candidate'}
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold flex items-center space-x-1">
-                  <Shield className="w-2.5 h-2.5" />
-                  <span>Verified Placement Profile</span>
-                </span>
+                <Badge variant="indigo" size="sm">
+                  {student.department || education.branch || 'Engineering'}
+                </Badge>
+                <Badge variant="emerald" size="sm">
+                  <Shield className="w-3 h-3 mr-1" />
+                  Verified
+                </Badge>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {education.degree || 'B.Tech'} • {education.college || 'Campus Candidate'} • Class of {education.graduationYear || '2025'}
+
+              <p className="text-xs text-slate-400 mt-1 truncate">
+                {education.degree || 'Degree'}{' '}
+                {education.college ? `• ${education.college}` : ''}{' '}
+                {education.graduationYear ? `• Class of ${education.graduationYear}` : ''}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            {visibility.resume !== false && (
+          <div className="flex items-center space-x-2 flex-shrink-0 ml-3">
+            {onToggleShortlist && (
               <button
                 type="button"
-                onClick={handleDownloadResume}
-                disabled={downloadingResume}
-                className="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+                onClick={() => onToggleShortlist(student)}
+                className={`p-2 rounded-xl border text-xs font-semibold flex items-center space-x-1.5 transition-all ${
+                  isShortlisted
+                    ? 'bg-amber-500/15 border-amber-500/30 text-amber-300 hover:bg-amber-500/25'
+                    : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-750'
+                }`}
+                title={isShortlisted ? 'Remove from shortlist' : 'Shortlist candidate'}
               >
-                {downloadingResume ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                {isShortlisted ? (
+                  <BookmarkCheck className="w-4 h-4 text-amber-400 fill-amber-400/20" />
                 ) : (
-                  <Download className="w-3.5 h-3.5" />
+                  <Bookmark className="w-4 h-4 text-slate-400" />
                 )}
-                <span>Download Resume</span>
+                <span className="hidden sm:inline">
+                  {isShortlisted ? 'Shortlisted' : 'Shortlist'}
+                </span>
               </button>
             )}
+
+            {visibility.resume !== false && (
+              <Button
+                variant="primary"
+                size="sm"
+                icon={Download}
+                loading={downloadingResume}
+                onClick={handleDownloadResume}
+                className="hidden sm:inline-flex"
+              >
+                Resume
+              </Button>
+            )}
+
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
-        {/* Feedback Banner */}
+        {/* Feedback Alert */}
         {feedbackMsg && (
-          <div className="px-6 py-2 bg-indigo-50 border-b border-indigo-100 text-indigo-900 text-xs flex items-center justify-between">
+          <div className="px-6 py-2 bg-indigo-950/80 border-b border-indigo-800/60 text-indigo-200 text-xs flex items-center justify-between animate-fade-in">
             <span>{feedbackMsg}</span>
-            <button type="button" onClick={() => setFeedbackMsg(null)}><X className="w-3 h-3" /></button>
+            <button
+              type="button"
+              onClick={() => setFeedbackMsg(null)}
+              className="text-indigo-400 hover:text-white"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           </div>
         )}
 
         {/* Modal Scrollable Content */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-slate-800">
-
-          {/* Assessment Performance Metrics */}
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1 text-slate-200">
+          {/* 1. Evaluation Scores Strip */}
           {visibility.scores !== false && (
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-indigo-50/40 border border-slate-200/80 space-y-3">
+            <div className="p-4 rounded-xl bg-slate-850/90 border border-slate-800 space-y-3 shadow-subtle">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500">Placement Assessment Performance</span>
-                <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  AI Evaluated & Adaptive
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+                  Placement Assessment Performance
+                </span>
+                <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                  Adaptive AI Evaluated
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                <div className="p-3 bg-white rounded-xl border border-slate-200/60 shadow-xs">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Placement Readiness</div>
-                  <div className="text-lg font-black text-emerald-600 mt-0.5">{scores.overallReadiness || 0}%</div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Readiness</div>
+                  <div className="text-xl font-extrabold text-emerald-400 mt-0.5">
+                    {readiness}%
+                  </div>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200/60 shadow-xs">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Technical Score</div>
-                  <div className="text-lg font-black text-brand-600 mt-0.5">{scores.technicalScore || 0}%</div>
+
+                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Technical</div>
+                  <div className="text-xl font-extrabold text-blue-400 mt-0.5">
+                    {techScore}%
+                  </div>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200/60 shadow-xs">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Aptitude Score</div>
-                  <div className="text-lg font-black text-indigo-600 mt-0.5">{scores.aptitudeScore || 0}%</div>
+
+                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Aptitude</div>
+                  <div className="text-xl font-extrabold text-indigo-400 mt-0.5">
+                    {aptScore}%
+                  </div>
                 </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200/60 shadow-xs">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase">Communication</div>
-                  <div className="text-lg font-black text-purple-600 mt-0.5">{scores.communicationScore || 75}%</div>
+
+                <div className="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-center">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase">Interview</div>
+                  <div className="text-xl font-extrabold text-purple-400 mt-0.5">
+                    {commScore}%
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Privacy Notice & Contact Details */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+          {/* 2. Recruiter Contact & Links */}
+          <div className="p-4 rounded-xl bg-slate-850/60 border border-slate-800 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Recruiter Contact Info</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Contact & Profiles
+              </span>
               {visibility.contact ? (
-                <span className="text-[10px] text-emerald-700 font-semibold flex items-center space-x-1">
+                <span className="text-[10px] text-emerald-400 font-medium flex items-center space-x-1">
                   <Eye className="w-3 h-3" />
-                  <span>Contact Visible</span>
+                  <span>Public Contact</span>
                 </span>
               ) : (
                 <span className="text-[10px] text-slate-500 font-medium flex items-center space-x-1">
                   <EyeOff className="w-3 h-3" />
-                  <span>Contact Protected</span>
+                  <span>Privacy Protected</span>
                 </span>
               )}
             </div>
 
             {visibility.contact ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
-                <div className="flex items-center space-x-2 text-slate-700">
-                  <Mail className="w-3.5 h-3.5 text-slate-400" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <Mail className="w-3.5 h-3.5 text-slate-500" />
                   <span>{personal.email || '—'}</span>
                 </div>
-                <div className="flex items-center space-x-2 text-slate-700">
-                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <Phone className="w-3.5 h-3.5 text-slate-500" />
                   <span>{personal.phone || '—'}</span>
                 </div>
               </div>
             ) : (
-              <div className="p-2.5 bg-white rounded-xl border border-slate-200 text-xs text-slate-500 flex items-center space-x-2">
-                <Shield className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                <span>Direct phone & personal contact details are reserved for formal interview invites. Official placement office contact: <span className="font-semibold text-slate-800">{personal.email || 'Available via Campus Drive'}</span></span>
+              <div className="p-2.5 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center space-x-2">
+                <Shield className="w-4 h-4 text-brand-400 flex-shrink-0" />
+                <span>
+                  Direct contact details are held for invited recruitment drives. Placement Cell official
+                  contact: <span className="font-semibold text-slate-200">{personal.email || 'Campus Candidate'}</span>
+                </span>
+              </div>
+            )}
+
+            {(links.linkedin || links.github || links.portfolio) && (
+              <div className="flex items-center space-x-3 pt-2 text-xs text-brand-400">
+                {links.linkedin && (
+                  <a
+                    href={links.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline flex items-center space-x-1"
+                  >
+                    <span>LinkedIn</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+                {links.github && (
+                  <a
+                    href={links.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline flex items-center space-x-1"
+                  >
+                    <span>GitHub</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+                {links.portfolio && (
+                  <a
+                    href={links.portfolio}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline flex items-center space-x-1"
+                  >
+                    <span>Portfolio</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
               </div>
             )}
           </div>
 
-          {/* Technical Skills */}
+          {/* 3. Technical Skills */}
           {visibility.skills !== false && (
-            <div className="space-y-3">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Candidate Technical Skills</h4>
+            <div className="space-y-2">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <Code2 className="w-3.5 h-3.5 text-brand-400" />
+                Verified Technical Skills
+              </h4>
               <div className="flex flex-wrap gap-1.5">
                 {(student.normalizedSkills || []).length > 0 ? (
                   student.normalizedSkills.map((sk, idx) => (
-                    <span key={idx} className="px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-700">
+                    <span
+                      key={idx}
+                      className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700/80 text-xs font-medium text-slate-200"
+                    >
                       {sk}
                     </span>
                   ))
                 ) : (
-                  <span className="text-xs text-slate-400 italic">No skills listed</span>
+                  <span className="text-xs text-slate-500 italic">No technical skills listed</span>
                 )}
               </div>
             </div>
           )}
 
-          {/* Academic Background */}
+          {/* 4. Academic Background */}
           {visibility.education !== false && (
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Education Details</h4>
+            <div className="p-4 rounded-xl bg-slate-850/60 border border-slate-800 space-y-2.5">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+                Academic Background
+              </h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div>
-                  <div className="text-[11px] text-slate-400">Degree & Branch</div>
-                  <div className="font-bold text-slate-900">{education.degree || 'B.Tech'} ({education.branch || student.department || 'General'})</div>
+                  <div className="text-[10px] text-slate-400">Degree & Branch</div>
+                  <div className="font-bold text-white mt-0.5">
+                    {education.degree || 'B.Tech'} ({education.branch || student.department || 'General'})
+                  </div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-slate-400">College</div>
-                  <div className="font-bold text-slate-900">{education.college || 'Engineering College'}</div>
+                  <div className="text-[10px] text-slate-400">Institution</div>
+                  <div className="font-bold text-white mt-0.5">
+                    {education.college || 'Engineering College'}
+                  </div>
                 </div>
                 <div>
-                  <div className="text-[11px] text-slate-400">Cumulative GPA</div>
-                  <div className="font-bold text-emerald-700">{education.cgpa ? `${education.cgpa} / 10` : '—'}</div>
+                  <div className="text-[10px] text-slate-400">Cumulative GPA</div>
+                  <div className="font-bold text-emerald-400 mt-0.5">
+                    {education.cgpa ? `${education.cgpa} / 10` : '—'}
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Projects */}
+          {/* 5. Projects */}
           {visibility.projects !== false && projects.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Highlighted Projects</h4>
-              <div className="space-y-2.5">
+            <div className="space-y-2.5">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <FolderGit2 className="w-3.5 h-3.5 text-blue-400" />
+                Key Projects ({projects.length})
+              </h4>
+              <div className="space-y-2">
                 {projects.map((proj, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-slate-850/70 border border-slate-800 space-y-1.5"
+                  >
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-900">{proj.name || proj.title || 'Untitled Project'}</span>
+                      <span className="font-bold text-white">
+                        {proj.name || proj.title || 'Untitled Project'}
+                      </span>
                       {proj.githubLink && (
-                        <a href={proj.githubLink} target="_blank" rel="noreferrer" className="text-brand-600 hover:underline text-[11px] flex items-center space-x-1">
-                          <span>View Code</span>
+                        <a
+                          href={proj.githubLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-brand-400 hover:text-brand-300 text-[11px] flex items-center space-x-1"
+                        >
+                          <span>Repository</span>
                           <ExternalLink className="w-3 h-3" />
                         </a>
                       )}
                     </div>
-                    <p className="text-xs text-slate-600">{proj.description}</p>
+                    {proj.description && (
+                      <p className="text-xs text-slate-300 leading-relaxed">{proj.description}</p>
+                    )}
                     {proj.technologies && (
-                      <div className="text-[11px] text-slate-500">
-                        <span className="font-semibold text-slate-700">Technologies:</span> {Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}
+                      <div className="text-[11px] text-slate-400">
+                        <span className="font-semibold text-slate-300">Stack:</span>{' '}
+                        {Array.isArray(proj.technologies)
+                          ? proj.technologies.join(', ')
+                          : proj.technologies}
                       </div>
                     )}
                   </div>
@@ -279,25 +421,28 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Work Experience */}
+          {/* 6. Work Experience */}
           {visibility.experience !== false && experience.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Experience & Internships</h4>
-              <div className="space-y-2.5">
+            <div className="space-y-2.5">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <Briefcase className="w-3.5 h-3.5 text-emerald-400" />
+                Experience & Internships
+              </h4>
+              <div className="space-y-2">
                 {experience.map((exp, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 text-xs">
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-xl bg-slate-850/70 border border-slate-800 space-y-1 text-xs"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-900">{exp.role}</span>
-                      <span className="text-slate-500">{exp.duration || ''}</span>
+                      <span className="font-bold text-white">{exp.role}</span>
+                      <span className="text-slate-400 text-[11px]">{exp.duration || ''}</span>
                     </div>
-                    <div className="font-semibold text-brand-700 text-[11px]">{exp.organization || exp.company || ''}</div>
-                    {exp.description && <p className="text-slate-600">{exp.description}</p>}
-                    {exp.responsibilities && exp.responsibilities.length > 0 && (
-                      <ul className="list-disc pl-4 text-[11px] text-slate-600 space-y-0.5 pt-0.5">
-                        {exp.responsibilities.map((r, rIdx) => (
-                          <li key={rIdx}>{r}</li>
-                        ))}
-                      </ul>
+                    <div className="font-semibold text-brand-400 text-[11px]">
+                      {exp.organization || exp.company || ''}
+                    </div>
+                    {exp.description && (
+                      <p className="text-xs text-slate-300 leading-relaxed">{exp.description}</p>
                     )}
                   </div>
                 ))}
@@ -305,21 +450,54 @@ export const CompanyStudentDetailModal = ({ student, isOpen, onClose }) => {
             </div>
           )}
 
+          {/* 7. Certifications */}
+          {visibility.certifications !== false && certifications.length > 0 && (
+            <div className="space-y-2.5">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <Award className="w-3.5 h-3.5 text-amber-400" />
+                Certifications
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {certifications.map((cert, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-xl bg-slate-850/70 border border-slate-800 space-y-0.5"
+                  >
+                    <div className="font-bold text-white">{cert.name}</div>
+                    <div className="text-[11px] text-slate-400">
+                      {cert.organization} {cert.date ? `• ${cert.date}` : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Modal Bottom Footer */}
-        <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
-          <span className="flex items-center space-x-1">
-            <Building2 className="w-3.5 h-3.5 text-slate-400" />
-            <span>Recruiter Candidate Preview</span>
+        <div className="px-5 sm:px-6 py-3.5 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-xs text-slate-400">
+          <span className="flex items-center space-x-1.5">
+            <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Recruiter Candidate Verification View</span>
           </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 font-semibold text-slate-700 transition-colors"
-          >
-            Close
-          </button>
+
+          <div className="flex items-center space-x-2">
+            {visibility.resume !== false && (
+              <Button
+                variant="primary"
+                size="sm"
+                icon={Download}
+                loading={downloadingResume}
+                onClick={handleDownloadResume}
+                className="sm:hidden"
+              >
+                Resume
+              </Button>
+            )}
+            <Button variant="secondary" size="sm" onClick={onClose}>
+              Close
+            </Button>
+          </div>
         </div>
       </div>
     </div>

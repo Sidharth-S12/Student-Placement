@@ -17,10 +17,10 @@ import communicationRoutes from './routes/communicationRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import appearanceRoutes from './routes/appearanceRoutes.js';
+import applicationRoutes from './routes/applicationRoutes.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.TEST_PORT || process.env.PORT || 5000;
 
 // Enable CORS for React frontend (Vite default is 3000 or 5173)
 app.use(cors({
@@ -54,7 +54,8 @@ app.use('/api/communication', communicationRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/appearance', appearanceRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api', applicationRoutes);
 
 // Global Error Handler - Clean response, never leaks credentials or raw stack
 app.use((err, req, res, next) => {

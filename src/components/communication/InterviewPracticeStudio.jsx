@@ -240,7 +240,7 @@ export const InterviewPracticeStudio = ({ onSwitchToAssessment }) => {
             How Top Companies Conduct Interviews
           </h2>
           <p className="text-xs text-purple-100/80 max-w-xl">
-            Practice answering the 7 most common interview questions. Hear the interviewer speak, inspect your webcam posture, practice with speech-to-text, and master the STAR methodology.
+            Practice answering the 7 most common interview questions. Hear the interviewer speak, practice with speech-to-text, and master the STAR methodology.
           </p>
         </div>
 
@@ -408,7 +408,7 @@ export const InterviewPracticeStudio = ({ onSwitchToAssessment }) => {
                     <VideoOff className="w-6 h-6" />
                   </div>
                   <p className="text-xs max-w-xs mx-auto">
-                    Camera is currently off. Turn it on to practice looking at the camera, eye contact, and professional virtual posture.
+                    Camera is currently off. Turn it on to practice looking at the camera and maintaining eye contact.
                   </p>
                 </div>
               )}

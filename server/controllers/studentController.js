@@ -4,6 +4,7 @@ import {
   migrateLegacyStudentAccount,
   getAllStudentsFromFirestore,
   getStudentAssessmentHistory,
+  getUserRecord,
   verifyAuthToken
 } from '../config/firebaseAdmin.js';
 
@@ -11,17 +12,39 @@ import {
  * GET /api/students
  * Lists students registered in the system with search and dynamic department filtering.
  * Used by Admin and Company portals.
+ * Enforces department-specific access scope restrictions for department officers.
  */
 export async function listStudents(req, res) {
   try {
-    const user = await verifyAuthToken(req);
+    const user = req.user || await verifyAuthToken(req);
 
     // Authorization check: Students cannot access the candidate directory
     if (user.role === 'student' && !user.isDevMock) {
       return res.status(403).json({ error: 'Access denied: Students are not authorized to access candidate directory.' });
     }
 
+    // Check officer access scope (college-wide vs department-specific)
+    let officerScope = user.accessScope || 'college';
+    let officerAssignedDept = user.assignedDepartment || null;
+
+    if (user.role === 'admin' && user.uid && (!user.accessScope || user.accessScope === 'college')) {
+      const officerRecord = await getUserRecord(user.uid, user.email);
+      if (officerRecord && officerRecord.accessScope === 'department' && officerRecord.assignedDepartment) {
+        officerScope = 'department';
+        officerAssignedDept = officerRecord.assignedDepartment;
+      }
+    }
+
     const { department, search, skill } = req.query;
+
+    // Backend scope enforcement: If officer is department-specific, deny attempts to query other departments
+    if (officerScope === 'department' && officerAssignedDept) {
+      if (department && department.toLowerCase() !== 'all' && department.toLowerCase() !== officerAssignedDept.toLowerCase()) {
+        return res.status(403).json({
+          error: `Access denied: As a department-specific officer for ${officerAssignedDept}, you are not authorized to view students in ${department}.`
+        });
+      }
+    }
 
     const allStudents = await getAllStudentsFromFirestore();
 
@@ -32,8 +55,12 @@ export async function listStudents(req, res) {
 
     let filtered = [...allStudents];
 
-    // Filter by department if specified
-    if (department && department.toLowerCase() !== 'all') {
+    // Restrict strictly to assigned department if officer is department-specific
+    if (officerScope === 'department' && officerAssignedDept) {
+      filtered = filtered.filter(s =>
+        (s.department || '').toLowerCase() === officerAssignedDept.toLowerCase()
+      );
+    } else if (department && department.toLowerCase() !== 'all') {
       const targetDept = department.trim().toLowerCase();
       filtered = filtered.filter(s => (s.department || '').toLowerCase() === targetDept);
     }
@@ -54,7 +81,6 @@ export async function listStudents(req, res) {
       const skillTokens = skill.trim().toLowerCase().split(/\s+/).filter(Boolean);
       filtered = filtered.filter(s => {
         const studentSkills = (s.normalizedSkills || []).map(sk => sk.toLowerCase());
-        // Match if student has ANY or ALL tokens
         return skillTokens.some(token => 
           studentSkills.some(sk => sk.includes(token))
         );
@@ -63,8 +89,10 @@ export async function listStudents(req, res) {
 
     return res.status(200).json({
       students: filtered,
-      departments: discoveredDepartments,
-      totalCount: filtered.length
+      departments: officerScope === 'department' && officerAssignedDept ? [officerAssignedDept] : discoveredDepartments,
+      totalCount: filtered.length,
+      accessScope: officerScope,
+      assignedDepartment: officerAssignedDept
     });
   } catch (err) {
     console.error('[Student Controller:listStudents] Error:', err);
@@ -97,10 +125,11 @@ export async function getStudentHistory(req, res) {
  * GET /api/students/:studentId
  * Fetches a student's placement profile.
  * Security: Validates that the authenticated user matches the requested studentId or is admin.
+ * If admin is department-specific, validates student department matches.
  */
 export async function getProfile(req, res) {
   try {
-    const user = await verifyAuthToken(req);
+    const user = req.user || await verifyAuthToken(req);
     const requestedStudentId = req.params.studentId;
 
     // Admin / Company can view profiles; student can only view their own
@@ -109,6 +138,28 @@ export async function getProfile(req, res) {
 
     if (!profile) {
       return res.status(200).json({ found: false, profile: null });
+    }
+
+    // Check officer access scope (college-wide vs department-specific)
+    let officerScope = user.accessScope || 'college';
+    let officerAssignedDept = user.assignedDepartment || null;
+
+    if (user.role === 'admin' && user.uid && (!user.accessScope || user.accessScope === 'college')) {
+      const officerRecord = await getUserRecord(user.uid, user.email);
+      if (officerRecord && officerRecord.accessScope === 'department' && officerRecord.assignedDepartment) {
+        officerScope = 'department';
+        officerAssignedDept = officerRecord.assignedDepartment;
+      }
+    }
+
+    // If requester is a department-specific officer, ensure requested student belongs to officer's department
+    if (user.role === 'admin' && officerScope === 'department' && officerAssignedDept && requestedStudentId && requestedStudentId !== user.uid) {
+      const studentDept = profile.department || profile.education?.branch || '';
+      if (studentDept && studentDept.toLowerCase() !== officerAssignedDept.toLowerCase()) {
+        return res.status(403).json({
+          error: `Access denied: As a department-specific officer for ${officerAssignedDept}, you are not authorized to view student records in ${studentDept}.`
+        });
+      }
     }
 
     return res.status(200).json({

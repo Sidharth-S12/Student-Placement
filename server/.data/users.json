@@ -5,7 +5,10 @@
     "email": "placement.director@college.edu",
     "displayName": "Placement Director",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:30:28.532Z"
+    "updatedAt": "2026-10-19T17:53:46.268Z",
+    "status": "inactive",
+    "accessScope": "college",
+    "assignedDepartment": null
   },
   "uid_recruiter_globaltech": {
     "uid": "uid_recruiter_globaltech",
@@ -13,7 +16,7 @@
     "email": "hr@globaltech.com",
     "displayName": "GlobalTech HR",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:30:28.542Z"
+    "updatedAt": "2026-10-19T17:51:54.445Z"
   },
   "admin_placementadmin_gmail_com": {
     "uid": "admin_placementadmin_gmail_com",
@@ -21,7 +24,10 @@
     "email": "placementadmin@gmail.com",
     "displayName": "Placement Administrator",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:02:40.901Z"
+    "updatedAt": "2026-10-19T17:53:46.273Z",
+    "status": "inactive",
+    "accessScope": "college",
+    "assignedDepartment": null
   },
   "test_student_uid_1789928997055": {
     "uid": "test_student_uid_1789928997055",
@@ -45,7 +51,10 @@
     "email": "admin_1789928997115@placement.edu",
     "displayName": "Placement Admin",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:29:57.115Z"
+    "updatedAt": "2026-10-19T17:12:52.560Z",
+    "status": "inactive",
+    "accessScope": "college",
+    "assignedDepartment": null
   },
   "uid_crs_student_123": {
     "uid": "uid_crs_student_123",
@@ -109,7 +118,10 @@
     "email": "admin_1789929174977@placement.edu",
     "displayName": "Placement Admin",
     "companyName": null,
-    "updatedAt": "2026-09-20T18:32:54.977Z"
+    "updatedAt": "2026-10-19T17:12:52.569Z",
+    "status": "inactive",
+    "accessScope": "college",
+    "assignedDepartment": null
   },
   "admin_sidharths4669_gmail_com": {
     "uid": "admin_sidharths4669_gmail_com",
@@ -120,7 +132,10 @@
     "department": "Central Placement & Training Cell",
     "phone": "",
     "createdAt": "2026-10-19T03:57:10.800Z",
-    "updatedAt": "2026-10-19T03:57:10.800Z"
+    "updatedAt": "2026-10-19T17:53:46.278Z",
+    "status": "inactive",
+    "accessScope": "college",
+    "assignedDepartment": null
   },
   "Dtfh6PzRBbapgHBM0lQE2Oi6Arh2": {
     "uid": "Dtfh6PzRBbapgHBM0lQE2Oi6Arh2",
@@ -129,5 +144,45 @@
     "displayName": "Sid",
     "companyName": null,
     "updatedAt": "2026-10-19T04:43:57.964Z"
+  },
+  "iGRUNmk6hdeulK5TJnBJOZeKuZk1": {
+    "uid": "iGRUNmk6hdeulK5TJnBJOZeKuZk1",
+    "role": "student",
+    "email": "amis@gmail.com",
+    "displayName": "amis",
+    "companyName": null,
+    "updatedAt": "2026-10-19T07:22:19.547Z"
+  },
+  "CHcl05jdCcaEXjb5XmaVdThzh1x1": {
+    "uid": "CHcl05jdCcaEXjb5XmaVdThzh1x1",
+    "role": "company",
+    "email": "es2@gmail.com",
+    "displayName": "es",
+    "companyName": "es",
+    "updatedAt": "2026-10-19T10:30:18.266Z"
+  },
+  "uid_crs_student_1792429038091": {
+    "uid": "uid_crs_student_1792429038091",
+    "role": "student",
+    "email": "student.crs_1792429038091@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-19T16:57:18.105Z"
+  },
+  "uid_crs_student_1792429932457": {
+    "uid": "uid_crs_student_1792429932457",
+    "role": "student",
+    "email": "student.crs_1792429932457@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-19T17:12:12.472Z"
+  },
+  "uid_crs_student_1792432314435": {
+    "uid": "uid_crs_student_1792432314435",
+    "role": "student",
+    "email": "student.crs_1792432314435@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-19T17:51:54.450Z"
   }
 }
