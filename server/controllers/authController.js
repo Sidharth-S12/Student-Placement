@@ -1,4 +1,9 @@
 import { getUserRole, getUserRecord, setUserRole } from '../config/firebaseAdmin.js';
+import {
+  validateEmail,
+  sendVerificationCode as sendCodeService,
+  verifyCode as verifyCodeService
+} from '../services/emailVerificationService.js';
 
 /**
  * GET /api/auth/role/:uid
@@ -50,6 +55,11 @@ export async function syncRole(req, res) {
     }
 
     const cleanEmail = (email || '').trim().toLowerCase();
+    if (role === 'student' && !cleanEmail.endsWith('@gmail.com')) {
+      return res.status(400).json({
+        error: 'Student accounts must register with a valid @gmail.com email address.'
+      });
+    }
     const updated = await setUserRole(uid, {
       role,
       email: cleanEmail,
@@ -105,3 +115,75 @@ export async function setRole(req, res) {
     return res.status(500).json({ error: err.message || 'Failed to update role.' });
   }
 }
+
+/**
+ * POST /api/auth/send-verification-code
+ * Validates the email and dispatches a 6-digit OTP code.
+ */
+export async function sendVerificationCode(req, res) {
+  try {
+    const { email, name, role } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email address is required.' });
+    }
+
+    const result = await sendCodeService({ email, name, role });
+    return res.status(200).json({
+      success: true,
+      message: result.message
+    });
+  } catch (err) {
+    console.warn('[AuthController:sendVerificationCode] Error:', err.message);
+    return res.status(400).json({ error: err.message || 'Failed to send verification code.' });
+  }
+}
+
+/**
+ * POST /api/auth/verify-code
+ * Verifies the 6-digit OTP code for registration.
+ */
+export async function verifyCode(req, res) {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({ error: 'Both email and verification code are required.' });
+    }
+
+    const result = verifyCodeService({ email, code });
+    if (!result.valid) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      email: result.cleanEmail
+    });
+  } catch (err) {
+    console.error('[AuthController:verifyCode] Error:', err);
+    return res.status(500).json({ error: err.message || 'Failed to verify code.' });
+  }
+}
+
+/**
+ * POST /api/auth/validate-email
+ * Live strict validation check endpoint for frontend pre-checks.
+ */
+export async function validateEmailEndpoint(req, res) {
+  try {
+    const { email, role } = req.body;
+    const result = validateEmail(email, role);
+
+    if (!result.valid) {
+      return res.status(400).json({ valid: false, error: result.error });
+    }
+
+    return res.status(200).json({ valid: true, email: result.cleanEmail });
+  } catch (err) {
+    return res.status(500).json({ valid: false, error: 'Validation check failed.' });
+  }
+}
+
+

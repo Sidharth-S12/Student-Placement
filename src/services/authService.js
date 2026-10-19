@@ -102,6 +102,7 @@ export function formatAuthError(err) {
 }
 
 import { getUserRole, persistUserRole, normalizeRole } from './roleService.js';
+import { validateEmailClient } from './emailVerificationService.js';
 
 /**
  * Registers a new user with Firebase Authentication and records their verified role.
@@ -110,6 +111,7 @@ import { getUserRole, persistUserRole, normalizeRole } from './roleService.js';
  * - Student registers with Name, Email, Password.
  * - Company registers with Company Name, Official Email, Password.
  * - Admin CANNOT self-register through this function.
+ * - Email MUST be strictly validated before creating any user.
  * - Persists authoritatively to both Firestore and Backend.
  */
 export async function registerUser({ role, name, companyName, email, password }) {
@@ -122,8 +124,17 @@ export async function registerUser({ role, name, companyName, email, password })
     throw new Error('Invalid account role. Allowed roles for registration: student, company.');
   }
 
-  const cleanEmail = (email || '').trim().toLowerCase();
+  const emailValidation = validateEmailClient(email, normalizedRole);
+  if (!emailValidation.valid) {
+    throw new Error(emailValidation.error);
+  }
+
+  const cleanEmail = (emailValidation.cleanEmail || email).trim().toLowerCase().replace(/\s+/g, '');
+  if (normalizedRole === 'student' && !cleanEmail.endsWith('@gmail.com')) {
+    throw new Error('Student registration requires a valid email ending strictly with @gmail.com.');
+  }
   const displayName = normalizedRole === 'company' ? (companyName || '').trim() : (name || '').trim();
+
 
   let user = null;
 

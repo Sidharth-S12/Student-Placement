@@ -110,5 +110,24 @@
     "displayName": "Placement Admin",
     "companyName": null,
     "updatedAt": "2026-09-20T18:32:54.977Z"
+  },
+  "admin_sidharths4669_gmail_com": {
+    "uid": "admin_sidharths4669_gmail_com",
+    "role": "admin",
+    "email": "sidharths4669@gmail.com",
+    "displayName": "Sidharth s",
+    "designation": "Head Placement Officer",
+    "department": "Central Placement & Training Cell",
+    "phone": "",
+    "createdAt": "2026-10-19T03:57:10.800Z",
+    "updatedAt": "2026-10-19T03:57:10.800Z"
+  },
+  "Dtfh6PzRBbapgHBM0lQE2Oi6Arh2": {
+    "uid": "Dtfh6PzRBbapgHBM0lQE2Oi6Arh2",
+    "role": "student",
+    "email": "sid@gmail.com",
+    "displayName": "Sid",
+    "companyName": null,
+    "updatedAt": "2026-10-19T04:43:57.964Z"
   }
 }

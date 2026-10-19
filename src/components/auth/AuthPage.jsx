@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { formatAuthError } from '../../services/authService';
+import { validateEmailClient } from '../../services/emailVerificationService';
 import {
   GraduationCap,
   Building2,
@@ -22,6 +23,8 @@ import {
   Shield
 } from 'lucide-react';
 
+
+
 const PORTAL_CONFIG = {
   student: {
     id: 'student',
@@ -36,8 +39,8 @@ const PORTAL_CONFIG = {
     tagline: 'Sign in to access your placement dashboard & skill tests',
     regTagline: 'Create your student placement profile to begin skill assessments',
     description: 'Take adaptive technical coding tests, practice AI mock interviews, verify posture, and build ATS resumes.',
-    emailPlaceholder: 'student@placement.edu',
-    emailLabel: 'Student Email Address',
+    emailPlaceholder: 'student@gmail.com',
+    emailLabel: 'Student Gmail Address (@gmail.com only)',
     highlights: [
       'Adaptive Coding & Aptitude Tests',
       'AI Mock Interview Studio with Posture Vision',
@@ -161,16 +164,17 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
   };
 
   const validateForm = (activeRole) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!formData.email.trim()) {
       setErrorMessage('Please enter your email address.');
       return false;
     }
-    if (!emailRegex.test(formData.email.trim())) {
-      setErrorMessage('Please enter a valid email address.');
+
+    const emailCheck = validateEmailClient(formData.email.trim(), activeRole);
+    if (!emailCheck.valid) {
+      setErrorMessage(emailCheck.error);
       return false;
     }
+
     if (!formData.password) {
       setErrorMessage('Please enter your password.');
       return false;
@@ -264,6 +268,7 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
           return;
         }
       } else {
+        // Direct, secure registration with strictly validated email
         await register({
           role: activeRoleKey,
           name: formData.name.trim(),
@@ -282,9 +287,9 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
 
   const handlePasswordResetSubmit = async (e) => {
     e.preventDefault();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!forgotEmail.trim() || !emailRegex.test(forgotEmail.trim())) {
-      setResetError('Please enter a valid email address.');
+    const emailCheck = validateEmailClient(forgotEmail.trim());
+    if (!emailCheck.valid) {
+      setResetError(emailCheck.error);
       return;
     }
 
@@ -711,7 +716,11 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin text-white" />
-                        <span>{mode === 'login' ? 'Authenticating...' : 'Creating Account...'}</span>
+                        <span>
+                          {mode === 'login'
+                            ? 'Authenticating...'
+                            : 'Creating Account...'}
+                        </span>
                       </>
                     ) : (
                       <>
