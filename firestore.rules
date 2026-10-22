@@ -69,15 +69,28 @@ service cloud.firestore {
       allow write: if isOwner(studentId) || isAdmin();
     }
 
+    // Helper function to check if a company is approved
+    function isCompanyApproved(companyId) {
+      return exists(/databases/$(database)/documents/companies/$(companyId)) &&
+             get(/databases/$(database)/documents/companies/$(companyId)).data.approvalStatus == 'approved';
+    }
+
     // =========================================================================
     // 3. Company Profiles
     // =========================================================================
     // Rules:
-    // - Companies can read and write only their own company profile.
     // - Authenticated users can read company info.
+    // - On registration, company can create its profile with 'pending' approval status only.
+    // - Company cannot self-approve or escalate approvalStatus.
+    // - Placement Officers (admins) can review and update company approval status.
     match /companies/{companyId} {
       allow read: if isAuthenticated();
-      allow write: if isOwner(companyId) || isAdmin();
+      allow create: if isOwner(companyId) 
+                    && (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == 'pending')
+                    && request.resource.data.uid == companyId;
+      allow update: if isAdmin() 
+                    || (isOwner(companyId) && (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == resource.data.approvalStatus));
+      allow delete: if isAdmin();
     }
 
     // =========================================================================
@@ -106,9 +119,26 @@ service cloud.firestore {
     // =========================================================================
     // 6. Campus Placement Drives
     // =========================================================================
+    // Rules:
+    // - Admins can read all drives; students can read only approved drives.
+    // - Only approved companies can create drives, and submitted drives start as 'pending'.
+    // - Companies cannot self-approve job roles.
+    // - Placement officers can approve or reject drives.
     match /placementDrives/{driveId} {
-      allow read: if isAuthenticated();
-      allow create, update, delete: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.companyId);
+      allow read: if isAdmin() || (isAuthenticated() && (resource.data.approvalStatus == 'approved' || request.auth.uid == resource.data.companyId));
+      allow create: if isAdmin() || (
+        isAuthenticated() && 
+        isCompanyApproved(request.auth.uid) &&
+        request.resource.data.companyId == request.auth.uid &&
+        (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == 'pending')
+      );
+      allow update: if isAdmin() || (
+        isAuthenticated() && 
+        request.auth.uid == resource.data.companyId &&
+        request.resource.data.companyId == resource.data.companyId &&
+        (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == resource.data.approvalStatus)
+      );
+      allow delete: if isAdmin();
     }
 
     // =========================================================================
@@ -116,11 +146,12 @@ service cloud.firestore {
     // =========================================================================
     // Rules:
     // - Students can read and update only their own applications/nominations.
-    // - Authenticated recruiters and placement officers can read and manage applicant pipeline.
+    // - Companies can read and update only applications submitted to their own jobs (companyId).
+    // - Admins/Placement Officers can read, update, and manage all applications.
     match /applications/{applicationId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated();
+      allow read: if isAdmin() || (isAuthenticated() && (resource.data.studentId == request.auth.uid || resource.data.companyId == request.auth.uid));
+      allow create: if isAuthenticated() && (isAdmin() || request.resource.data.studentId == request.auth.uid || request.resource.data.companyId == request.auth.uid);
+      allow update: if isAdmin() || (isAuthenticated() && (resource.data.studentId == request.auth.uid || resource.data.companyId == request.auth.uid));
       allow delete: if isAdmin();
     }
 

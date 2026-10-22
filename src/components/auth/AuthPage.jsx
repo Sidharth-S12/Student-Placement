@@ -20,7 +20,10 @@ import {
   EyeOff,
   Check,
   KeyRound,
-  Shield
+  Shield,
+  Globe,
+  Phone,
+  Briefcase
 } from 'lucide-react';
 
 
@@ -131,7 +134,11 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
     companyName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    website: '',
+    industry: '',
+    phone: '',
+    description: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -274,7 +281,11 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
           name: formData.name.trim(),
           companyName: formData.companyName.trim(),
           email: formData.email.trim(),
-          password: formData.password
+          password: formData.password,
+          website: formData.website.trim(),
+          industry: formData.industry.trim(),
+          phone: formData.phone.trim(),
+          description: formData.description.trim()
         });
       }
     } catch (err) {
@@ -565,26 +576,104 @@ export const AuthPage = ({ onBackToHome, initialRole, initialMode }) => {
                   </div>
                 )}
 
-                {/* Company Name */}
+                {/* Company Registration Extended Fields */}
                 {mode === 'register' && activeRoleKey === 'company' && (
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Company / Organization Name
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                        <Building2 className="w-4 h-4" />
+                  <>
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-slate-300">
+                        Company / Organization Name *
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                          <Building2 className="w-4 h-4" />
+                        </div>
+                        <input
+                          type="text"
+                          value={formData.companyName}
+                          onChange={(e) => handleInputChange('companyName', e.target.value)}
+                          placeholder="e.g. TechCorp Solutions"
+                          required
+                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-750 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        value={formData.companyName}
-                        onChange={(e) => handleInputChange('companyName', e.target.value)}
-                        placeholder="e.g. TechCorp Solutions"
-                        required
-                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-750 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-slate-300">
+                          Industry / Domain
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                            <Briefcase className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="text"
+                            value={formData.industry}
+                            onChange={(e) => handleInputChange('industry', e.target.value)}
+                            placeholder="e.g. Cloud, FinTech, AI/ML"
+                            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-750 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-slate-300">
+                          Careers Website
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                            <Globe className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="url"
+                            value={formData.website}
+                            onChange={(e) => handleInputChange('website', e.target.value)}
+                            placeholder="https://careers.company.com"
+                            className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-750 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-slate-300">
+                        Recruiter Contact Phone
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                          <Phone className="w-4 h-4" />
+                        </div>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => handleInputChange('phone', e.target.value)}
+                          placeholder="+91 98765 43210"
+                          className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-750 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-bold text-slate-300">
+                        Company Description
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={formData.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        placeholder="Brief overview of your organization and campus hiring vision..."
+                        className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-750 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all resize-none"
                       />
                     </div>
-                  </div>
+
+                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-300 flex items-start space-x-2">
+                      <ShieldCheck className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                      <span>
+                        Placement Cell Verification: New company registrations are assigned <strong className="text-white">Pending Approval</strong> status. Candidate discovery and drive posting unlock upon officer review.
+                      </span>
+                    </div>
+                  </>
                 )}
 
                 {/* Placement Officer Fast-Fill Demo Button */}

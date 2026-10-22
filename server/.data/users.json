@@ -1,11 +1,22 @@
 {
+  "local_admin_placement_edu": {
+    "uid": "local_admin_placement_edu",
+    "role": "admin",
+    "email": "admin@placement.edu",
+    "displayName": "Placement Administrator",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:50:00.000Z",
+    "status": "active",
+    "accessScope": "college",
+    "assignedDepartment": null
+  },
   "uid_admin_placement_director": {
     "uid": "uid_admin_placement_director",
     "role": "admin",
     "email": "placement.director@college.edu",
     "displayName": "Placement Director",
     "companyName": null,
-    "updatedAt": "2026-10-19T17:53:46.268Z",
+    "updatedAt": "2026-10-20T17:55:36.077Z",
     "status": "inactive",
     "accessScope": "college",
     "assignedDepartment": null
@@ -16,7 +27,7 @@
     "email": "hr@globaltech.com",
     "displayName": "GlobalTech HR",
     "companyName": null,
-    "updatedAt": "2026-10-19T17:51:54.445Z"
+    "updatedAt": "2026-10-20T17:55:36.084Z"
   },
   "admin_placementadmin_gmail_com": {
     "uid": "admin_placementadmin_gmail_com",
@@ -184,5 +195,895 @@
     "displayName": "CRS Student",
     "companyName": null,
     "updatedAt": "2026-10-19T17:51:54.450Z"
+  },
+  "uid_crs_student_1792510512160": {
+    "uid": "uid_crs_student_1792510512160",
+    "role": "student",
+    "email": "student.crs_1792510512160@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T15:35:12.174Z"
+  },
+  "officer_admin_1792513990256": {
+    "uid": "officer_admin_1792513990256",
+    "role": "admin",
+    "email": "placement.officer_1792513990256@university.edu",
+    "displayName": "Chief Placement Officer",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:33:10.257Z"
+  },
+  "student_tester_1792513990256": {
+    "uid": "student_tester_1792513990256",
+    "role": "student",
+    "email": "student_1792513990256@university.edu",
+    "displayName": "Final Year Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:33:10.272Z"
+  },
+  "company_corp_a_1792513990256": {
+    "uid": "company_corp_a_1792513990256",
+    "role": "company",
+    "email": "careers@corpa_1792513990256.com",
+    "displayName": "Corp A Global",
+    "companyName": "Corp A Global",
+    "updatedAt": "2026-10-20T16:33:10.314Z",
+    "approvalStatus": "approved"
+  },
+  "officer_admin_1792514061085": {
+    "uid": "officer_admin_1792514061085",
+    "role": "admin",
+    "email": "placement.officer_1792514061085@university.edu",
+    "displayName": "Chief Placement Officer",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:34:21.085Z"
+  },
+  "student_tester_1792514061085": {
+    "uid": "student_tester_1792514061085",
+    "role": "student",
+    "email": "student_1792514061085@university.edu",
+    "displayName": "Final Year Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:34:21.092Z"
+  },
+  "company_corp_a_1792514061085": {
+    "uid": "company_corp_a_1792514061085",
+    "role": "company",
+    "email": "careers@corpa_1792514061085.com",
+    "displayName": "Corp A Global",
+    "companyName": "Hacked Corp",
+    "updatedAt": "2026-10-20T16:34:21.212Z",
+    "approvalStatus": "approved"
+  },
+  "company_sneaky_1792514061085": {
+    "uid": "company_sneaky_1792514061085",
+    "role": "company",
+    "email": "recruiter@sneakycorp_1792514061085.com",
+    "displayName": "Sneaky Corp",
+    "companyName": "Sneaky Corp",
+    "updatedAt": "2026-10-20T16:34:21.157Z",
+    "approvalStatus": "pending"
+  },
+  "officer_admin_1792514116328": {
+    "uid": "officer_admin_1792514116328",
+    "role": "admin",
+    "email": "placement.officer_1792514116328@university.edu",
+    "displayName": "Chief Placement Officer",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:35:16.328Z"
+  },
+  "student_tester_1792514116328": {
+    "uid": "student_tester_1792514116328",
+    "role": "student",
+    "email": "student_1792514116328@university.edu",
+    "displayName": "Final Year Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:35:16.336Z"
+  },
+  "company_corp_a_1792514116328": {
+    "uid": "company_corp_a_1792514116328",
+    "role": "company",
+    "email": "careers@corpa_1792514116328.com",
+    "displayName": "Corp A Global",
+    "companyName": "Corp A Global",
+    "updatedAt": "2026-10-20T16:35:16.376Z",
+    "approvalStatus": "approved"
+  },
+  "company_sneaky_1792514116328": {
+    "uid": "company_sneaky_1792514116328",
+    "role": "company",
+    "email": "recruiter@sneakycorp_1792514116328.com",
+    "displayName": "Sneaky Corp",
+    "companyName": "Sneaky Corp",
+    "updatedAt": "2026-10-20T16:35:16.408Z",
+    "approvalStatus": "pending"
+  },
+  "uid_crs_student_1792514144519": {
+    "uid": "uid_crs_student_1792514144519",
+    "role": "student",
+    "email": "student.crs_1792514144519@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T16:35:44.536Z"
+  },
+  "officer_admin_1792515620776": {
+    "uid": "officer_admin_1792515620776",
+    "role": "admin",
+    "email": "placement.officer_1792515620776@university.edu",
+    "displayName": "Chief Placement Officer",
+    "companyName": null,
+    "updatedAt": "2026-10-20T17:00:20.776Z"
+  },
+  "student_tester_1792515620776": {
+    "uid": "student_tester_1792515620776",
+    "role": "student",
+    "email": "student_1792515620776@university.edu",
+    "displayName": "Final Year Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T17:00:20.780Z"
+  },
+  "company_corp_a_1792515620776": {
+    "uid": "company_corp_a_1792515620776",
+    "role": "company",
+    "email": "careers@corpa_1792515620776.com",
+    "displayName": "Corp A Global",
+    "companyName": "Corp A Global",
+    "updatedAt": "2026-10-20T17:00:20.813Z",
+    "approvalStatus": "approved"
+  },
+  "company_sneaky_1792515620776": {
+    "uid": "company_sneaky_1792515620776",
+    "role": "company",
+    "email": "recruiter@sneakycorp_1792515620776.com",
+    "displayName": "Sneaky Corp",
+    "companyName": "Sneaky Corp",
+    "updatedAt": "2026-10-20T17:00:20.847Z",
+    "approvalStatus": "pending"
+  },
+  "uid_crs_student_1792515630036": {
+    "uid": "uid_crs_student_1792515630036",
+    "role": "student",
+    "email": "student.crs_1792515630036@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T17:00:30.055Z"
+  },
+  "company_test_1792518909034": {
+    "uid": "company_test_1792518909034",
+    "role": "company",
+    "email": "recruiter_1792518909034@innovatetech.com",
+    "displayName": "InnovateTech HR Lead",
+    "companyName": "InnovateTech Solutions 1792518909034",
+    "updatedAt": "2026-10-20T17:55:09.328Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T17:55:09.321Z"
+  },
+  "officer_admin_1792518917464": {
+    "uid": "officer_admin_1792518917464",
+    "role": "admin",
+    "email": "placement.officer_1792518917464@university.edu",
+    "displayName": "Chief Placement Officer",
+    "companyName": null,
+    "updatedAt": "2026-10-20T17:55:17.464Z"
+  },
+  "student_tester_1792518917464": {
+    "uid": "student_tester_1792518917464",
+    "role": "student",
+    "email": "student_1792518917464@university.edu",
+    "displayName": "Final Year Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T17:55:17.469Z"
+  },
+  "company_corp_a_1792518917464": {
+    "uid": "company_corp_a_1792518917464",
+    "role": "company",
+    "email": "careers@corpa_1792518917464.com",
+    "displayName": "Corp A Global",
+    "companyName": "Corp A Global",
+    "updatedAt": "2026-10-20T17:55:17.500Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "officer_admin_1792518917464",
+    "reviewerName": "placement.officer_1792518917464@university.edu",
+    "reviewedAt": "2026-10-20T17:55:17.493Z"
+  },
+  "company_sneaky_1792518917464": {
+    "uid": "company_sneaky_1792518917464",
+    "role": "company",
+    "email": "recruiter@sneakycorp_1792518917464.com",
+    "displayName": "Sneaky Corp",
+    "companyName": "Sneaky Corp",
+    "updatedAt": "2026-10-20T17:58:19.836Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T17:58:19.814Z"
+  },
+  "uid_crs_student_1792518936074": {
+    "uid": "uid_crs_student_1792518936074",
+    "role": "student",
+    "email": "student.crs_1792518936074@college.edu",
+    "displayName": "CRS Student",
+    "companyName": null,
+    "updatedAt": "2026-10-20T17:55:36.093Z"
+  },
+  "xhUKiZYwuBfsaM7j20mr3wgQd0C3": {
+    "uid": "xhUKiZYwuBfsaM7j20mr3wgQd0C3",
+    "role": "company",
+    "email": "lg2@gmail.com",
+    "displayName": "lg",
+    "companyName": "lg",
+    "updatedAt": "2026-10-22T11:57:14.909Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-22T11:57:14.876Z"
+  },
+  "test_comp_A_1792521237110": {
+    "uid": "test_comp_A_1792521237110",
+    "role": "company",
+    "email": "recruiter_1792521237110@alphatech.com",
+    "displayName": "recruiter_1792521237110",
+    "companyName": "AlphaTech Corp",
+    "updatedAt": "2026-10-20T18:33:57.184Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_B_1792521237110": {
+    "uid": "test_comp_B_1792521237110",
+    "role": "company",
+    "email": "recruiter_1792521237110@betasoft.com",
+    "displayName": "recruiter_1792521237110",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T18:33:57.213Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_pending_1792521237110": {
+    "uid": "test_comp_pending_1792521237110",
+    "role": "company",
+    "email": "pending_1792521237110@gammapending.com",
+    "displayName": "pending_1792521237110",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T18:33:57.233Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792521237110": {
+    "uid": "test_comp_rejected_1792521237110",
+    "role": "company",
+    "email": "rejected_1792521237110@deltarejected.com",
+    "displayName": "rejected_1792521237110",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T18:33:57.255Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_A_1792521428234": {
+    "uid": "test_comp_A_1792521428234",
+    "role": "company",
+    "email": "recruiter_1792521428234@alphatech.com",
+    "displayName": "recruiter_1792521428234",
+    "companyName": "AlphaTech Corp",
+    "updatedAt": "2026-10-20T18:37:08.370Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:37:08.363Z"
+  },
+  "test_comp_B_1792521428234": {
+    "uid": "test_comp_B_1792521428234",
+    "role": "company",
+    "email": "recruiter_1792521428234@betasoft.com",
+    "displayName": "recruiter_1792521428234",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T18:37:08.393Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:37:08.387Z"
+  },
+  "test_comp_pending_1792521428234": {
+    "uid": "test_comp_pending_1792521428234",
+    "role": "company",
+    "email": "pending_1792521428234@gammapending.com",
+    "displayName": "pending_1792521428234",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T18:37:08.333Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792521428234": {
+    "uid": "test_comp_rejected_1792521428234",
+    "role": "company",
+    "email": "rejected_1792521428234@deltarejected.com",
+    "displayName": "rejected_1792521428234",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T18:37:08.355Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_A_1792521563613": {
+    "uid": "test_comp_A_1792521563613",
+    "role": "company",
+    "email": "recruiter_1792521563613@alphatech.com",
+    "displayName": "recruiter_1792521563613",
+    "companyName": "AlphaTech Corp",
+    "updatedAt": "2026-10-20T18:39:23.737Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:39:23.730Z"
+  },
+  "test_comp_B_1792521563613": {
+    "uid": "test_comp_B_1792521563613",
+    "role": "company",
+    "email": "recruiter_1792521563613@betasoft.com",
+    "displayName": "recruiter_1792521563613",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T18:39:23.760Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:39:23.753Z"
+  },
+  "test_comp_pending_1792521563613": {
+    "uid": "test_comp_pending_1792521563613",
+    "role": "company",
+    "email": "pending_1792521563613@gammapending.com",
+    "displayName": "pending_1792521563613",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T18:39:23.704Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792521563613": {
+    "uid": "test_comp_rejected_1792521563613",
+    "role": "company",
+    "email": "rejected_1792521563613@deltarejected.com",
+    "displayName": "rejected_1792521563613",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T18:39:23.724Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "student_1_1792521563613": {
+    "uid": "student_1_1792521563613",
+    "role": "student",
+    "email": "student1_1792521563613@gmail.com",
+    "displayName": "Alice Walker",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:39:23.785Z"
+  },
+  "student_2_1792521563613": {
+    "uid": "student_2_1792521563613",
+    "role": "student",
+    "email": "student2_1792521563613@gmail.com",
+    "displayName": "Bob Martinez",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:39:23.800Z"
+  },
+  "student_3_1792521563613": {
+    "uid": "student_3_1792521563613",
+    "role": "student",
+    "email": "student3_1792521563613@gmail.com",
+    "displayName": "Charlie Davis",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:39:23.814Z"
+  },
+  "student_4_1792521563613": {
+    "uid": "student_4_1792521563613",
+    "role": "student",
+    "email": "student4_1792521563613@gmail.com",
+    "displayName": "Daisy Incomplete",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:39:23.829Z"
+  },
+  "test_comp_A_1792521657797": {
+    "uid": "test_comp_A_1792521657797",
+    "role": "company",
+    "email": "recruiter_1792521657797@alphatech.com",
+    "displayName": "recruiter_1792521657797",
+    "companyName": "AlphaTech Corp",
+    "updatedAt": "2026-10-20T18:40:57.929Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:40:57.922Z"
+  },
+  "test_comp_B_1792521657797": {
+    "uid": "test_comp_B_1792521657797",
+    "role": "company",
+    "email": "recruiter_1792521657797@betasoft.com",
+    "displayName": "recruiter_1792521657797",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T18:40:57.953Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:40:57.946Z"
+  },
+  "test_comp_pending_1792521657797": {
+    "uid": "test_comp_pending_1792521657797",
+    "role": "company",
+    "email": "pending_1792521657797@gammapending.com",
+    "displayName": "pending_1792521657797",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T18:40:57.894Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792521657797": {
+    "uid": "test_comp_rejected_1792521657797",
+    "role": "company",
+    "email": "rejected_1792521657797@deltarejected.com",
+    "displayName": "rejected_1792521657797",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T18:40:57.916Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "student_1_1792521657797": {
+    "uid": "student_1_1792521657797",
+    "role": "student",
+    "email": "student1_1792521657797@gmail.com",
+    "displayName": "Alice Walker",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:40:57.979Z"
+  },
+  "student_2_1792521657797": {
+    "uid": "student_2_1792521657797",
+    "role": "student",
+    "email": "student2_1792521657797@gmail.com",
+    "displayName": "Bob Martinez",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:40:57.995Z"
+  },
+  "student_3_1792521657797": {
+    "uid": "student_3_1792521657797",
+    "role": "student",
+    "email": "student3_1792521657797@gmail.com",
+    "displayName": "Charlie Davis",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:40:58.010Z"
+  },
+  "student_4_1792521657797": {
+    "uid": "student_4_1792521657797",
+    "role": "student",
+    "email": "student4_1792521657797@gmail.com",
+    "displayName": "Daisy Incomplete",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:40:58.025Z"
+  },
+  "test_comp_A_1792521751457": {
+    "uid": "test_comp_A_1792521751457",
+    "role": "company",
+    "email": "recruiter_1792521751457@alphatech.com",
+    "displayName": "recruiter_1792521751457",
+    "companyName": "AlphaTech International",
+    "updatedAt": "2026-10-20T18:42:32.068Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:42:31.611Z"
+  },
+  "test_comp_B_1792521751457": {
+    "uid": "test_comp_B_1792521751457",
+    "role": "company",
+    "email": "recruiter_1792521751457@betasoft.com",
+    "displayName": "recruiter_1792521751457",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T18:42:31.642Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:42:31.635Z"
+  },
+  "test_comp_pending_1792521751457": {
+    "uid": "test_comp_pending_1792521751457",
+    "role": "company",
+    "email": "pending_1792521751457@gammapending.com",
+    "displayName": "pending_1792521751457",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T18:42:31.576Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792521751457": {
+    "uid": "test_comp_rejected_1792521751457",
+    "role": "company",
+    "email": "rejected_1792521751457@deltarejected.com",
+    "displayName": "rejected_1792521751457",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T18:42:31.602Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "student_1_1792521751457": {
+    "uid": "student_1_1792521751457",
+    "role": "student",
+    "email": "student1_1792521751457@gmail.com",
+    "displayName": "Alice Walker",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:42:31.668Z"
+  },
+  "student_2_1792521751457": {
+    "uid": "student_2_1792521751457",
+    "role": "student",
+    "email": "student2_1792521751457@gmail.com",
+    "displayName": "Bob Martinez",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:42:31.687Z"
+  },
+  "student_3_1792521751457": {
+    "uid": "student_3_1792521751457",
+    "role": "student",
+    "email": "student3_1792521751457@gmail.com",
+    "displayName": "Charlie Davis",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:42:31.702Z"
+  },
+  "student_4_1792521751457": {
+    "uid": "student_4_1792521751457",
+    "role": "student",
+    "email": "student4_1792521751457@gmail.com",
+    "displayName": "Daisy Incomplete",
+    "companyName": null,
+    "updatedAt": "2026-10-20T18:42:31.717Z"
+  },
+  "company_test_1792521788684": {
+    "uid": "company_test_1792521788684",
+    "role": "company",
+    "email": "recruiter_1792521788684@innovatetech.com",
+    "displayName": "InnovateTech HR Lead",
+    "companyName": "InnovateTech Solutions 1792521788684",
+    "updatedAt": "2026-10-20T18:43:08.929Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T18:43:08.921Z"
+  },
+  "test_comp_A_1792524192657": {
+    "uid": "test_comp_A_1792524192657",
+    "role": "company",
+    "email": "recruiter_1792524192657@alphatech.com",
+    "displayName": "recruiter_1792524192657",
+    "companyName": "AlphaTech International",
+    "updatedAt": "2026-10-20T19:23:13.299Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T19:23:12.796Z"
+  },
+  "test_comp_B_1792524192657": {
+    "uid": "test_comp_B_1792524192657",
+    "role": "company",
+    "email": "recruiter_1792524192657@betasoft.com",
+    "displayName": "recruiter_1792524192657",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T19:23:12.830Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T19:23:12.823Z"
+  },
+  "test_comp_pending_1792524192657": {
+    "uid": "test_comp_pending_1792524192657",
+    "role": "company",
+    "email": "pending_1792524192657@gammapending.com",
+    "displayName": "pending_1792524192657",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T19:23:12.761Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792524192657": {
+    "uid": "test_comp_rejected_1792524192657",
+    "role": "company",
+    "email": "rejected_1792524192657@deltarejected.com",
+    "displayName": "rejected_1792524192657",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T19:23:12.787Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "student_1_1792524192657": {
+    "uid": "student_1_1792524192657",
+    "role": "student",
+    "email": "student1_1792524192657@gmail.com",
+    "displayName": "Alice Walker",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:23:12.861Z"
+  },
+  "student_2_1792524192657": {
+    "uid": "student_2_1792524192657",
+    "role": "student",
+    "email": "student2_1792524192657@gmail.com",
+    "displayName": "Bob Martinez",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:23:12.879Z"
+  },
+  "student_3_1792524192657": {
+    "uid": "student_3_1792524192657",
+    "role": "student",
+    "email": "student3_1792524192657@gmail.com",
+    "displayName": "Charlie Davis",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:23:12.895Z"
+  },
+  "student_4_1792524192657": {
+    "uid": "student_4_1792524192657",
+    "role": "student",
+    "email": "student4_1792524192657@gmail.com",
+    "displayName": "Daisy Incomplete",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:23:12.912Z"
+  },
+  "test_comp_A_1792524459807": {
+    "uid": "test_comp_A_1792524459807",
+    "role": "company",
+    "email": "recruiter_1792524459807@alphatech.com",
+    "displayName": "recruiter_1792524459807",
+    "companyName": "AlphaTech International",
+    "updatedAt": "2026-10-20T19:27:40.417Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T19:27:39.939Z"
+  },
+  "test_comp_B_1792524459807": {
+    "uid": "test_comp_B_1792524459807",
+    "role": "company",
+    "email": "recruiter_1792524459807@betasoft.com",
+    "displayName": "recruiter_1792524459807",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-20T19:27:39.971Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-20T19:27:39.963Z"
+  },
+  "test_comp_pending_1792524459807": {
+    "uid": "test_comp_pending_1792524459807",
+    "role": "company",
+    "email": "pending_1792524459807@gammapending.com",
+    "displayName": "pending_1792524459807",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-20T19:27:39.906Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792524459807": {
+    "uid": "test_comp_rejected_1792524459807",
+    "role": "company",
+    "email": "rejected_1792524459807@deltarejected.com",
+    "displayName": "rejected_1792524459807",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-20T19:27:39.931Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "student_1_1792524459807": {
+    "uid": "student_1_1792524459807",
+    "role": "student",
+    "email": "student1_1792524459807@gmail.com",
+    "displayName": "Alice Walker",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:27:39.998Z"
+  },
+  "student_2_1792524459807": {
+    "uid": "student_2_1792524459807",
+    "role": "student",
+    "email": "student2_1792524459807@gmail.com",
+    "displayName": "Bob Martinez",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:27:40.014Z"
+  },
+  "student_3_1792524459807": {
+    "uid": "student_3_1792524459807",
+    "role": "student",
+    "email": "student3_1792524459807@gmail.com",
+    "displayName": "Charlie Davis",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:27:40.030Z"
+  },
+  "student_4_1792524459807": {
+    "uid": "student_4_1792524459807",
+    "role": "student",
+    "email": "student4_1792524459807@gmail.com",
+    "displayName": "Daisy Incomplete",
+    "companyName": null,
+    "updatedAt": "2026-10-20T19:27:40.046Z"
+  },
+  "officer_admin_1792658264985": {
+    "uid": "officer_admin_1792658264985",
+    "role": "admin",
+    "email": "placement.officer_1792658264985@university.edu",
+    "displayName": "Chief Placement Officer",
+    "companyName": null,
+    "updatedAt": "2026-10-22T08:37:44.986Z"
+  },
+  "student_tester_1792658264985": {
+    "uid": "student_tester_1792658264985",
+    "role": "student",
+    "email": "student_1792658264985@university.edu",
+    "displayName": "Final Year Student",
+    "companyName": null,
+    "updatedAt": "2026-10-22T08:37:44.996Z"
+  },
+  "company_corp_a_1792658264985": {
+    "uid": "company_corp_a_1792658264985",
+    "role": "company",
+    "email": "careers@corpa_1792658264985.com",
+    "displayName": "Corp A Global",
+    "companyName": "Corp A Global",
+    "updatedAt": "2026-10-22T08:37:45.027Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "officer_admin_1792658264985",
+    "reviewerName": "placement.officer_1792658264985@university.edu",
+    "reviewedAt": "2026-10-22T08:37:45.021Z"
+  },
+  "company_sneaky_1792658264985": {
+    "uid": "company_sneaky_1792658264985",
+    "role": "company",
+    "email": "recruiter@sneakycorp_1792658264985.com",
+    "displayName": "Sneaky Corp",
+    "companyName": "Sneaky Corp",
+    "updatedAt": "2026-10-22T08:37:45.060Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_A_1792658304484": {
+    "uid": "test_comp_A_1792658304484",
+    "role": "company",
+    "email": "recruiter_1792658304484@alphatech.com",
+    "displayName": "recruiter_1792658304484",
+    "companyName": "AlphaTech International",
+    "updatedAt": "2026-10-22T08:38:25.542Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-22T08:38:25.017Z"
+  },
+  "test_comp_B_1792658304484": {
+    "uid": "test_comp_B_1792658304484",
+    "role": "company",
+    "email": "recruiter_1792658304484@betasoft.com",
+    "displayName": "recruiter_1792658304484",
+    "companyName": "BetaSoft Labs",
+    "updatedAt": "2026-10-22T08:38:25.045Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-22T08:38:25.039Z"
+  },
+  "test_comp_pending_1792658304484": {
+    "uid": "test_comp_pending_1792658304484",
+    "role": "company",
+    "email": "pending_1792658304484@gammapending.com",
+    "displayName": "pending_1792658304484",
+    "companyName": "GammaPending Inc",
+    "updatedAt": "2026-10-22T08:38:24.983Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "test_comp_rejected_1792658304484": {
+    "uid": "test_comp_rejected_1792658304484",
+    "role": "company",
+    "email": "rejected_1792658304484@deltarejected.com",
+    "displayName": "rejected_1792658304484",
+    "companyName": "DeltaRejected Ltd",
+    "updatedAt": "2026-10-22T08:38:25.008Z",
+    "approvalStatus": "pending",
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewerName": null,
+    "reviewedAt": null
+  },
+  "student_1_1792658304484": {
+    "uid": "student_1_1792658304484",
+    "role": "student",
+    "email": "student1_1792658304484@gmail.com",
+    "displayName": "Alice Walker",
+    "companyName": null,
+    "updatedAt": "2026-10-22T08:38:25.073Z"
+  },
+  "student_2_1792658304484": {
+    "uid": "student_2_1792658304484",
+    "role": "student",
+    "email": "student2_1792658304484@gmail.com",
+    "displayName": "Bob Martinez",
+    "companyName": null,
+    "updatedAt": "2026-10-22T08:38:25.091Z"
+  },
+  "student_3_1792658304484": {
+    "uid": "student_3_1792658304484",
+    "role": "student",
+    "email": "student3_1792658304484@gmail.com",
+    "displayName": "Charlie Davis",
+    "companyName": null,
+    "updatedAt": "2026-10-22T08:38:25.108Z"
+  },
+  "student_4_1792658304484": {
+    "uid": "student_4_1792658304484",
+    "role": "student",
+    "email": "student4_1792658304484@gmail.com",
+    "displayName": "Daisy Incomplete",
+    "companyName": null,
+    "updatedAt": "2026-10-22T08:38:25.124Z"
   }
 }

@@ -169,7 +169,7 @@ export const CompanySidebar = ({
             type="button"
             onClick={() => handleNavClick('candidates')}
             className={navItemClass(activeTab === 'candidates')}
-            title={isCollapsed ? 'Talent Discovery' : undefined}
+            title={isCollapsed ? 'Job Candidates & Talent' : undefined}
           >
             <div className="flex items-center space-x-2.5">
               <Users
@@ -179,7 +179,7 @@ export const CompanySidebar = ({
                     : 'text-slate-400 group-hover:text-slate-200'
                 }`}
               />
-              {!isCollapsed && <span>Talent Discovery</span>}
+              {!isCollapsed && <span>Job Candidates</span>}
             </div>
             {!isCollapsed && candidatesCount > 0 && (
               <span

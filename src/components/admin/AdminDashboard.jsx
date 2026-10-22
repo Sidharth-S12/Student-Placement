@@ -9,15 +9,20 @@ import {
   deleteDrive,
   fetchCampusSummary,
   fetchAdminApplications,
-  updateApplicationStatus
+  updateApplicationStatus,
+  fetchAdminCompanies,
+  reviewCompany,
+  fetchAdminJobs,
+  reviewJob
 } from '../../services/adminService';
 import { exportStudentsToCSV } from '../../utils/exportCsv';
-import { runKMeansClustering, calculateElbowCurve } from '../../utils/kmeansClustering';
+import { runKMeansClustering } from '../../utils/kmeansClustering';
 import { AdminStudentDetailModal } from './AdminStudentDetailModal';
 import { AdminAddOfficerModal } from './AdminAddOfficerModal';
 import { AdminEditOfficerModal } from './AdminEditOfficerModal';
 import { AdminAddDriveModal } from './AdminAddDriveModal';
-import { PlacementAnalyticsView } from './PlacementAnalyticsView';
+import { AdminCompanyReviewModal } from './AdminCompanyReviewModal';
+import { AdminJobRoleReviewModal } from './AdminJobRoleReviewModal';
 import { Card, Button, Badge, StatCard, PageHeader } from '../ui';
 import {
   ShieldCheck,
@@ -60,14 +65,18 @@ import {
   Edit,
   Power,
   PieChart,
-  Database
+  Database,
+  LayoutGrid,
+  Table,
+  ArrowUpDown,
+  GraduationCap
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
   const { currentUser, logout } = useAuth();
 
-  // Navigation tab state: 10 dedicated sections
-  // 'overview' | 'officers' | 'students' | 'departments' | 'kmeans' | 'analytics' | 'drives' | 'applications' | 'activity' | 'settings'
+  // Navigation tab state: 8 dedicated sections
+  // 'overview' | 'officers' | 'students' | 'departments' | 'kmeans' | 'drives' | 'applications' | 'settings'
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -115,15 +124,44 @@ export const AdminDashboard = () => {
   const [driveStatusFilter, setDriveStatusFilter] = useState('all');
   const [isAddDriveModalOpen, setIsAddDriveModalOpen] = useState(false);
 
+  // Jobs & Companies Sub-navigation and Approvals
+  const [jobsCompaniesSubTab, setJobsCompaniesSubTab] = useState('drives'); // 'drives' | 'company_approvals' | 'job_approvals'
+
+  // Company Approvals Management States
+  const [adminCompanies, setAdminCompanies] = useState([]);
+  const [companyCounts, setCompanyCounts] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
+  const [loadingCompanies, setLoadingCompanies] = useState(false);
+  const [companySearch, setCompanySearch] = useState('');
+  const [companyStatusFilter, setCompanyStatusFilter] = useState('all');
+  const [selectedCompanyForReview, setSelectedCompanyForReview] = useState(null);
+  const [isCompanyReviewModalOpen, setIsCompanyReviewModalOpen] = useState(false);
+
+  // Job Role Approvals Management States
+  const [adminJobs, setAdminJobs] = useState([]);
+  const [jobCounts, setJobCounts] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
+  const [loadingJobs, setLoadingJobs] = useState(false);
+  const [jobReviewSearch, setJobReviewSearch] = useState('');
+  const [jobReviewStatusFilter, setJobReviewStatusFilter] = useState('all');
+  const [selectedJobForReview, setSelectedJobForReview] = useState(null);
+  const [isJobReviewModalOpen, setIsJobReviewModalOpen] = useState(false);
+
   // Applications Tracker Filter States
   const [appSearch, setAppSearch] = useState('');
   const [appStatusFilter, setAppStatusFilter] = useState('all');
   const [appTypeFilter, setAppTypeFilter] = useState('all');
 
-  // K-Means Configuration States
-  const [kmeansK, setKmeansK] = useState(4);
+  // Student Readiness Groups Configuration States
   const [kmeansDeptFilter, setKmeansDeptFilter] = useState('all');
+  const [kmeansGroupFilter, setKmeansGroupFilter] = useState('all');
+  const [currentKmeansPage, setCurrentKmeansPage] = useState(1);
+  const [isRefreshingKmeans, setIsRefreshingKmeans] = useState(false);
+  const [kmeansError, setKmeansError] = useState(null);
   const [kmeansRecalcTrigger, setKmeansRecalcTrigger] = useState(0);
+
+  // Department Analytics View States
+  const [deptSearchQuery, setDeptSearchQuery] = useState('');
+  const [deptViewMode, setDeptViewMode] = useState('cards'); // 'cards' | 'table'
+  const [deptSortBy, setDeptSortBy] = useState('placement'); // 'placement' | 'students' | 'readiness' | 'name'
 
   // Modals & Active Profiles
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -220,6 +258,40 @@ export const AdminDashboard = () => {
     }
   };
 
+  // 6. Fetch Admin Companies
+  const loadAdminCompanies = async () => {
+    setLoadingCompanies(true);
+    try {
+      const res = await fetchAdminCompanies({
+        status: companyStatusFilter,
+        search: companySearch
+      });
+      setAdminCompanies(res.companies || []);
+      setCompanyCounts(res.counts || {});
+    } catch (err) {
+      console.error('Failed to load companies for review:', err);
+    } finally {
+      setLoadingCompanies(false);
+    }
+  };
+
+  // 7. Fetch Admin Jobs for Review
+  const loadAdminJobs = async () => {
+    setLoadingJobs(true);
+    try {
+      const res = await fetchAdminJobs({
+        status: jobReviewStatusFilter,
+        search: jobReviewSearch
+      });
+      setAdminJobs(res.jobs || []);
+      setJobCounts(res.counts || {});
+    } catch (err) {
+      console.error('Failed to load jobs for review:', err);
+    } finally {
+      setLoadingJobs(false);
+    }
+  };
+
   // Initial load
   useEffect(() => {
     loadStudents();
@@ -227,7 +299,37 @@ export const AdminDashboard = () => {
     loadDrives();
     loadApplications();
     loadCampusSummary();
+    loadAdminCompanies();
+    loadAdminJobs();
   }, []);
+
+  // Reload companies on filter change
+  useEffect(() => {
+    loadAdminCompanies();
+  }, [companyStatusFilter, companySearch]);
+
+  // Reload jobs on filter change
+  useEffect(() => {
+    loadAdminJobs();
+  }, [jobReviewStatusFilter, jobReviewSearch]);
+
+  // Handle Company Review Submission
+  const handleReviewCompanySubmit = async (companyId, { status, reason }) => {
+    await reviewCompany(companyId, { status, reason });
+    await loadAdminCompanies();
+    await loadCampusSummary();
+    showToast(status === 'approved' ? 'Company registration approved successfully!' : 'Company registration rejected.');
+  };
+
+  // Handle Job Role Review Submission
+  const handleReviewJobSubmit = async (jobId, { status, reason }) => {
+    await reviewJob(jobId, { status, reason });
+    await loadAdminJobs();
+    await loadDrives();
+    await loadAdminCompanies();
+    await loadCampusSummary();
+    showToast(status === 'approved' ? 'Job role approved and published to students!' : 'Job role rejected with officer notes.');
+  };
 
   // Reload students on query changes
   useEffect(() => {
@@ -265,19 +367,12 @@ export const AdminDashboard = () => {
 
   // Dynamic K-Means Clustering on active student dataset
   const kmeansResult = useMemo(() => {
-    // When department filter is applied for cluster view, students can be viewed within that department
-    // while preserving college-wide model integrity
     const studentsToCluster = kmeansDeptFilter === 'all'
       ? students
       : students.filter(s => (s.department || '').toLowerCase() === kmeansDeptFilter.toLowerCase());
 
-    return runKMeansClustering(studentsToCluster, kmeansK);
-  }, [students, kmeansK, kmeansDeptFilter, kmeansRecalcTrigger]);
-
-  // Dynamic Elbow Evaluation for optimal K recommendation
-  const elbowCurveInfo = useMemo(() => {
-    return calculateElbowCurve(students);
-  }, [students]);
+    return runKMeansClustering(studentsToCluster, 4);
+  }, [students, kmeansDeptFilter, kmeansRecalcTrigger]);
 
   // Map student UID to cluster for filtering and badges
   const studentClusterMap = useMemo(() => {
@@ -297,6 +392,63 @@ export const AdminDashboard = () => {
     }
     return map;
   }, [kmeansResult]);
+
+  // Filtered students for the Readiness Groups table
+  const filteredGroupStudents = useMemo(() => {
+    return students.filter(st => {
+      if (kmeansDeptFilter !== 'all' && (st.department || '').toLowerCase() !== kmeansDeptFilter.toLowerCase()) {
+        return false;
+      }
+      if (kmeansGroupFilter !== 'all') {
+        const studentCluster = studentClusterMap[st.uid];
+        if (!studentCluster || (studentCluster.id !== kmeansGroupFilter && studentCluster.name !== kmeansGroupFilter)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [students, kmeansDeptFilter, kmeansGroupFilter, studentClusterMap]);
+
+  const kmeansPageSize = 10;
+  const totalKmeansPages = Math.max(1, Math.ceil(filteredGroupStudents.length / kmeansPageSize));
+  const paginatedKmeansStudents = useMemo(() => {
+    const start = (currentKmeansPage - 1) * kmeansPageSize;
+    return filteredGroupStudents.slice(start, start + kmeansPageSize);
+  }, [filteredGroupStudents, currentKmeansPage]);
+
+  const handleRefreshGroups = async () => {
+    setIsRefreshingKmeans(true);
+    setKmeansError(null);
+    try {
+      const data = await fetchAllStudents({
+        department: 'all',
+        search: '',
+        skill: ''
+      });
+      if (data && Array.isArray(data.students)) {
+        setStudents(data.students);
+        if (data.departments && data.departments.length > 0) {
+          setDiscoveredDepts(data.departments);
+        }
+      }
+      setKmeansRecalcTrigger(prev => prev + 1);
+      showToast('Student Readiness Groups refreshed with latest assessment scores.');
+    } catch (err) {
+      console.error('[AdminDashboard:handleRefreshGroups] Error:', err);
+      setKmeansError('Failed to refresh student readiness groups. Please check network connection and try again.');
+    } finally {
+      setIsRefreshingKmeans(false);
+    }
+  };
+
+  const handleSelectGroupFilter = (groupId) => {
+    setKmeansGroupFilter(groupId);
+    setCurrentKmeansPage(1);
+    const tableEl = document.getElementById('student-readiness-table');
+    if (tableEl) {
+      tableEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   // Discovered Academic Years
   const discoveredAcademicYears = useMemo(() => {
@@ -380,90 +532,230 @@ export const AdminDashboard = () => {
     };
   }, [students, officers, drives, applications, campusSummary, discoveredDepts]);
 
-  // Department-wise Breakdown
+  // Department-wise Breakdown with accurate calculations
   const departmentBreakdown = useMemo(() => {
-    if (campusSummary?.departmentBreakdown && campusSummary.departmentBreakdown.length > 0) {
-      return campusSummary.departmentBreakdown;
-    }
+    // Identify uniquely placed candidates across applications and profiles
+    const selectedStudentUids = new Set();
+    const selectedStudentEmails = new Set();
+    const selectedStudentNames = new Set();
 
-    const map = {};
-    discoveredDepts.forEach(d => {
-      map[d] = {
+    applications.forEach(app => {
+      const st = (app.status || '').toLowerCase();
+      if (st === 'selected' || st === 'hired' || st === 'offer accepted') {
+        if (app.studentId) selectedStudentUids.add(app.studentId);
+        if (app.studentEmail) selectedStudentEmails.add(app.studentEmail.toLowerCase().trim());
+        if (app.studentName) selectedStudentNames.add(app.studentName.toLowerCase().trim());
+      }
+    });
+
+    const isStudentPlaced = (s) => {
+      const email = (s.personalInfo?.email || s.email || '').toLowerCase().trim();
+      const name = (s.personalInfo?.fullName || s.displayName || '').toLowerCase().trim();
+      const pStatus = (s.placementStatus || '').toLowerCase();
+      return pStatus === 'placed' ||
+             selectedStudentUids.has(s.uid) ||
+             selectedStudentUids.has(s.studentId) ||
+             (email && selectedStudentEmails.has(email)) ||
+             (name && selectedStudentNames.has(name));
+    };
+
+    // Discover departments from students and discoveredDepts
+    const deptsSet = new Set(discoveredDepts);
+    students.forEach(s => {
+      const d = s.department || s.education?.branch || 'Other';
+      if (d) deptsSet.add(d);
+    });
+
+    const deptMap = {};
+    Array.from(deptsSet).forEach(d => {
+      deptMap[d] = {
         dept: d,
         totalStudents: 0,
-        assessmentCompletedCount: 0,
-        totalReadiness: 0,
+        placedCount: 0,
+        assessedStudentsCount: 0,
         totalTech: 0,
+        techCount: 0,
         totalApt: 0,
+        aptCount: 0,
         totalComm: 0,
+        commCount: 0,
+        totalReadiness: 0,
+        readinessCount: 0,
+        totalCgpa: 0,
+        cgpaCount: 0,
         applicationsCount: 0,
         shortlistedCount: 0,
-        selectedCount: 0,
-        uniquePlacedIds: new Set()
+        selectedOffersCount: 0,
+        cohortCounts: {}
       };
     });
 
     students.forEach(s => {
-      const d = s.department || 'Other';
-      if (!map[d]) {
-        map[d] = {
+      const d = s.department || s.education?.branch || 'Other';
+      if (!deptMap[d]) {
+        deptMap[d] = {
           dept: d,
           totalStudents: 0,
-          assessmentCompletedCount: 0,
-          totalReadiness: 0,
+          placedCount: 0,
+          assessedStudentsCount: 0,
           totalTech: 0,
+          techCount: 0,
           totalApt: 0,
+          aptCount: 0,
           totalComm: 0,
+          commCount: 0,
+          totalReadiness: 0,
+          readinessCount: 0,
+          totalCgpa: 0,
+          cgpaCount: 0,
           applicationsCount: 0,
           shortlistedCount: 0,
-          selectedCount: 0,
-          uniquePlacedIds: new Set()
+          selectedOffersCount: 0,
+          cohortCounts: {}
         };
       }
-      map[d].totalStudents++;
-      if (s.latestAssessmentId || s.placementScores?.technicalScore !== undefined) {
-        map[d].assessmentCompletedCount++;
+
+      deptMap[d].totalStudents++;
+
+      const rawTech = s.placementScores?.technicalScore ?? s.latestTechnicalScore ?? s.technicalScore ?? null;
+      const rawApt = s.placementScores?.aptitudeScore ?? s.latestAptitudeAssessment?.score ?? s.aptitudeScore ?? null;
+      const rawComm = s.placementScores?.communicationScore ?? s.latestCommunicationAssessment?.score ?? s.communicationScore ?? null;
+      const rawReadiness = s.placementScores?.overallReadiness ?? s.overallReadiness ?? null;
+      const rawCgpa = (s.education?.cgpa !== undefined && s.education?.cgpa !== null && !isNaN(Number(s.education.cgpa)))
+        ? Number(s.education.cgpa)
+        : (s.cgpa !== undefined && s.cgpa !== null && !isNaN(Number(s.cgpa)) ? Number(s.cgpa) : null);
+
+      let hasAssessed = false;
+      if (rawTech !== null) {
+        deptMap[d].totalTech += Number(rawTech);
+        deptMap[d].techCount++;
+        hasAssessed = true;
       }
-      map[d].totalReadiness += (s.placementScores?.overallReadiness || 0);
-      map[d].totalTech += (s.placementScores?.technicalScore || s.latestTechnicalScore || 0);
-      map[d].totalApt += (s.placementScores?.aptitudeScore || 0);
-      map[d].totalComm += (s.placementScores?.communicationScore || 75);
+      if (rawApt !== null) {
+        deptMap[d].totalApt += Number(rawApt);
+        deptMap[d].aptCount++;
+        hasAssessed = true;
+      }
+      if (rawComm !== null) {
+        deptMap[d].totalComm += Number(rawComm);
+        deptMap[d].commCount++;
+        hasAssessed = true;
+      }
+      if (rawReadiness !== null) {
+        deptMap[d].totalReadiness += Number(rawReadiness);
+        deptMap[d].readinessCount++;
+      }
+      if (rawCgpa !== null) {
+        deptMap[d].totalCgpa += Number(rawCgpa);
+        deptMap[d].cgpaCount++;
+      }
+      if (hasAssessed || s.latestAssessmentId) {
+        deptMap[d].assessedStudentsCount++;
+      }
+
+      if (isStudentPlaced(s)) {
+        deptMap[d].placedCount++;
+      }
+
+      // Check student's cluster in studentClusterMap
+      const cluster = studentClusterMap[s.uid];
+      if (cluster && cluster.name) {
+        deptMap[d].cohortCounts[cluster.name] = (deptMap[d].cohortCounts[cluster.name] || 0) + 1;
+      }
     });
 
     applications.forEach(app => {
-      const candidate = students.find(s => s.uid === app.studentId);
-      const d = candidate?.department || app.studentDepartment || 'Other';
-      if (map[d]) {
-        map[d].applicationsCount++;
-        if (app.status === 'Shortlisted') map[d].shortlistedCount++;
-        if (app.status === 'Selected') {
-          map[d].selectedCount++;
-          map[d].uniquePlacedIds.add(app.studentId);
+      const candidate = students.find(s => s.uid === app.studentId || (s.personalInfo?.email && app.studentEmail && s.personalInfo.email.toLowerCase() === app.studentEmail.toLowerCase()));
+      const d = candidate?.department || candidate?.education?.branch || app.studentDepartment || 'Other';
+      if (deptMap[d]) {
+        deptMap[d].applicationsCount++;
+        const st = (app.status || '').toLowerCase();
+        if (st === 'shortlisted' || st === 'interview scheduled' || st === 'under review') {
+          deptMap[d].shortlistedCount++;
+        }
+        if (st === 'selected' || st === 'hired' || st === 'offer accepted') {
+          deptMap[d].selectedOffersCount++;
         }
       }
     });
 
-    return Object.values(map).map(item => {
-      const uniquePlaced = item.uniquePlacedIds.size;
+    return Object.values(deptMap).map(d => {
+      const placed = Math.min(d.totalStudents, d.placedCount);
+      const rate = d.totalStudents > 0 ? Math.min(100, Math.round((placed / d.totalStudents) * 100)) : 0;
+      const unplaced = Math.max(0, d.totalStudents - placed);
+      const coverage = d.totalStudents > 0 ? Math.min(100, Math.round((d.assessedStudentsCount / d.totalStudents) * 100)) : 0;
+      const inProcess = Math.min(unplaced, d.shortlistedCount > 0 ? Math.min(unplaced, d.shortlistedCount) : (d.applicationsCount > 0 ? Math.min(unplaced, 1) : 0));
+
       return {
-        dept: item.dept,
-        totalStudents: item.totalStudents,
-        assessmentCompletedCount: item.assessmentCompletedCount,
-        assessmentCompletionRate: item.totalStudents > 0
-          ? Math.round((item.assessmentCompletedCount / item.totalStudents) * 100)
-          : 0,
-        avgReadiness: item.totalStudents > 0 ? Math.round(item.totalReadiness / item.totalStudents) : 0,
-        avgTechnical: item.totalStudents > 0 ? Math.round(item.totalTech / item.totalStudents) : 0,
-        avgAptitude: item.totalStudents > 0 ? Math.round(item.totalApt / item.totalStudents) : 0,
-        avgCommunication: item.totalStudents > 0 ? Math.round(item.totalComm / item.totalStudents) : 0,
-        applicationsCount: item.applicationsCount,
-        shortlistedCount: item.shortlistedCount,
-        selectedCount: item.selectedCount,
-        uniquelyPlacedCount: uniquePlaced,
-        placementPercentage: item.totalStudents > 0 ? Math.round((uniquePlaced / item.totalStudents) * 100) : 0
+        dept: d.dept,
+        totalStudents: d.totalStudents,
+        uniquelyPlacedCount: placed,
+        placementPercentage: rate,
+        unplacedCount: unplaced,
+        inProcessCount: inProcess,
+        assessmentCompletedCount: d.assessedStudentsCount,
+        assessmentCompletionRate: coverage,
+        avgTechnical: d.techCount > 0 ? Math.round(d.totalTech / d.techCount) : null,
+        techAssessedCount: d.techCount,
+        avgAptitude: d.aptCount > 0 ? Math.round(d.totalApt / d.aptCount) : null,
+        aptAssessedCount: d.aptCount,
+        avgCommunication: d.commCount > 0 ? Math.round(d.totalComm / d.commCount) : null,
+        commAssessedCount: d.commCount,
+        avgReadiness: d.readinessCount > 0 ? Math.round(d.totalReadiness / d.readinessCount) : null,
+        readinessCount: d.readinessCount,
+        avgCGPA: d.cgpaCount > 0 ? Number((d.totalCgpa / d.cgpaCount).toFixed(2)) : null,
+        applicationsCount: d.applicationsCount,
+        shortlistedCount: d.shortlistedCount,
+        selectedOffersCount: d.selectedOffersCount,
+        cohortCounts: d.cohortCounts
       };
-    }).sort((a, b) => b.totalStudents - a.totalStudents);
-  }, [students, applications, campusSummary, discoveredDepts]);
+    }).filter(d => d.totalStudents > 0 || discoveredDepts.includes(d.dept))
+      .sort((a, b) => b.totalStudents - a.totalStudents);
+  }, [students, applications, discoveredDepts, studentClusterMap]);
+
+  // Filtered & Sorted Departments
+  const filteredDepartments = useMemo(() => {
+    let list = [...departmentBreakdown];
+    if (deptSearchQuery.trim()) {
+      const q = deptSearchQuery.trim().toLowerCase();
+      list = list.filter(d => d.dept.toLowerCase().includes(q));
+    }
+
+    if (deptSortBy === 'placement') {
+      list.sort((a, b) => b.placementPercentage - a.placementPercentage || b.totalStudents - a.totalStudents);
+    } else if (deptSortBy === 'students') {
+      list.sort((a, b) => b.totalStudents - a.totalStudents || b.placementPercentage - a.placementPercentage);
+    } else if (deptSortBy === 'readiness') {
+      list.sort((a, b) => (b.avgReadiness || 0) - (a.avgReadiness || 0));
+    } else if (deptSortBy === 'name') {
+      list.sort((a, b) => a.dept.localeCompare(b.dept));
+    }
+    return list;
+  }, [departmentBreakdown, deptSearchQuery, deptSortBy]);
+
+  // College-Wide Academic Diagnostics
+  const departmentDiagnostics = useMemo(() => {
+    const totalDepts = departmentBreakdown.length;
+    const totalEnrolled = departmentBreakdown.reduce((acc, d) => acc + d.totalStudents, 0);
+    const totalPlaced = departmentBreakdown.reduce((acc, d) => acc + d.uniquelyPlacedCount, 0);
+    const collegePlacementRate = totalEnrolled > 0 ? Math.min(100, Math.round((totalPlaced / totalEnrolled) * 100)) : 0;
+    const totalAssessed = departmentBreakdown.reduce((acc, d) => acc + d.assessmentCompletedCount, 0);
+    const collegeAssessmentCoverage = totalEnrolled > 0 ? Math.min(100, Math.round((totalAssessed / totalEnrolled) * 100)) : 0;
+
+    const activeDepts = departmentBreakdown.filter(d => d.totalStudents > 0);
+    const topPlacedDept = [...activeDepts].sort((a, b) => b.placementPercentage - a.placementPercentage)[0];
+    const topReadinessDept = [...activeDepts].sort((a, b) => (b.avgReadiness || 0) - (a.avgReadiness || 0))[0];
+
+    return {
+      totalDepts,
+      totalEnrolled,
+      totalPlaced,
+      collegePlacementRate,
+      collegeAssessmentCoverage,
+      topPlacedDept,
+      topReadinessDept
+    };
+  }, [departmentBreakdown]);
 
   // Filtered & Sorted Students Roster
   const filteredAndSortedStudents = useMemo(() => {
@@ -824,11 +1116,16 @@ export const AdminDashboard = () => {
               { id: 'officers', label: 'User & Officers', icon: ShieldCheck, badge: officers.length },
               { id: 'students', label: 'Students Directory', icon: Users, badge: students.length },
               { id: 'departments', label: 'Departments', icon: Building2, badge: discoveredDepts.length },
-              { id: 'kmeans', label: 'K-Means Clusters', icon: Brain, badgeText: `K=${kmeansK}` },
-              { id: 'analytics', label: 'Placement Analytics', icon: TrendingUp, badgeText: 'Charts' },
-              { id: 'drives', label: 'Jobs & Drives', icon: Briefcase, badge: drives.length },
+              { id: 'kmeans', label: 'Readiness Groups', icon: Brain, badgeText: `${kmeansResult?.clusters?.length || 4} Groups` },
+              {
+                id: 'drives',
+                label: 'Jobs & Companies',
+                icon: Briefcase,
+                badge: ((companyCounts?.pending || 0) + (jobCounts?.pending || 0)) > 0
+                  ? `${(companyCounts?.pending || 0) + (jobCounts?.pending || 0)} pending`
+                  : drives.length
+              },
               { id: 'applications', label: 'Applications Pipeline', icon: FileText, badge: applications.length },
-              { id: 'activity', label: 'Activity Log', icon: Activity, badge: recentActivities.length },
               { id: 'settings', label: 'System Settings', icon: Settings },
             ].map((nav) => {
               const isActive = activeTab === nav.id;
@@ -1020,7 +1317,7 @@ export const AdminDashboard = () => {
                   subtext={`${dynamicKPIs.metricDetails.numerator} of ${dynamicKPIs.metricDetails.denominator} students`}
                   icon={TrendingUp}
                   colorScheme={dynamicKPIs.overallPlacementPercentage >= 60 ? 'emerald' : 'amber'}
-                  onClick={() => setActiveTab('analytics')}
+                  onClick={() => setActiveTab('students')}
                 />
               </div>
 
@@ -1118,15 +1415,9 @@ export const AdminDashboard = () => {
                       <h3 className="font-extrabold text-sm text-white">Recent Institutional Activity</h3>
                       <p className="text-xs text-slate-400">Live event stream from actual student applications and drives</p>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      icon={ChevronRight}
-                      iconPosition="right"
-                      onClick={() => setActiveTab('activity')}
-                    >
-                      Full Log
-                    </Button>
+                    <Badge variant="neutral" size="sm" className="bg-slate-800 text-slate-300 border-slate-700">
+                      Live Feed
+                    </Badge>
                   </div>
 
                   <div className="space-y-2.5">
@@ -1599,447 +1890,540 @@ export const AdminDashboard = () => {
           )}
 
           {/* =========================================================================
-              TAB 4: DEPARTMENTS BREAKDOWN
+              TAB 4: ACADEMIC DEPARTMENTS PERFORMANCE & BENCHMARKS
              ========================================================================= */}
           {activeTab === 'departments' && (
-            <div className="space-y-5 animate-fade-in">
+            <div className="space-y-6 animate-fade-in">
+              {/* Header with Title and Interactive View / Filter Controls */}
               <PageHeader
                 breadcrumb={['Admin Portal', 'Departments']}
-                title="Department-Wise Placement Analytics"
-                subtitle="Comparative academic branch readiness discovered dynamically from registered student profiles."
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {departmentBreakdown.map((deptItem, idx) => (
-                  <Card key={idx} className="p-5 space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div>
-                        <h4 className="font-extrabold text-sm text-white">{deptItem.dept}</h4>
-                        <span className="text-xs text-slate-400">
-                          {deptItem.totalStudents} Candidates • {deptItem.uniquelyPlacedCount || 0} Placed
-                        </span>
-                      </div>
-                      <Badge variant="emerald">{deptItem.placementPercentage}% Placed</Badge>
-                    </div>
-
-                    <div className="space-y-2.5 text-xs">
-                      <div>
-                        <div className="flex justify-between font-medium text-slate-300 mb-1">
-                          <span>Assessment Completion</span>
-                          <span className="font-bold text-slate-200">{deptItem.assessmentCompletionRate}%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
-                          <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${deptItem.assessmentCompletionRate}%` }} />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between font-medium text-slate-300 mb-1">
-                          <span>Average Technical Competency</span>
-                          <span className="font-bold text-blue-400">{deptItem.avgTechnical}%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
-                          <div className="h-full bg-blue-500 rounded-full" style={{ width: `${deptItem.avgTechnical}%` }} />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between font-medium text-slate-300 mb-1">
-                          <span>Average Aptitude & Reasoning</span>
-                          <span className="font-bold text-indigo-400">{deptItem.avgAptitude}%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
-                          <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${deptItem.avgAptitude}%` }} />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
-                      <span className="text-[11px] text-slate-400">
-                        {deptItem.applicationsCount} Applications submitted
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        icon={ChevronRight}
-                        iconPosition="right"
-                        onClick={() => {
-                          setSelectedDept(deptItem.dept);
-                          setActiveTab('students');
-                        }}
-                      >
-                        Inspect Candidates
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* =========================================================================
-              TAB 5: K-MEANS MACHINE LEARNING STUDENT CLUSTERS
-             ========================================================================= */}
-          {activeTab === 'kmeans' && (
-            <div className="space-y-5 animate-fade-in">
-              <PageHeader
-                breadcrumb={['Admin Portal', 'Machine Learning Clusters']}
-                title="Global K-Means Student Clustering Engine"
-                subtitle="Unsupervised multi-dimensional performance clustering across Technical, Aptitude, Communication, and Placement Readiness."
-                badge={<Badge variant="primary">Unsupervised ML</Badge>}
+                title="Academic Department Performance"
+                subtitle="Live comparative placement outcomes, assessed competencies, and cohort distributions across academic branches."
                 actions={
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    icon={RefreshCw}
-                    onClick={() => {
-                      setKmeansRecalcTrigger(prev => prev + 1);
-                      showToast('K-Means clustering model recalculated with fresh assessment vectors.');
-                    }}
-                  >
-                    Recalculate Model
-                  </Button>
-                }
-              />
-
-              {/* Elbow Method Recommendation Card */}
-              <Card className="p-5 space-y-4 bg-slate-850/70 border border-slate-800">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <Sparkles className="w-4 h-4 text-brand-400" />
-                      <h4 className="font-extrabold text-sm text-white">Optimal Cluster Evaluation (Elbow Method)</h4>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Recommended K: <span className="font-black text-brand-400">{elbowCurveInfo.recommendedK} Cohorts</span> based on diminishing inertia reduction.
-                    </p>
-                  </div>
-
-                  {/* Manual K Selector */}
-                  <div className="flex items-center space-x-1.5 bg-slate-900 p-1 rounded-xl border border-slate-700/80">
-                    <span className="text-[10px] font-bold text-slate-400 px-2 uppercase">Select K:</span>
-                    {[2, 3, 4, 5, 6].map((kVal) => (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* View Mode Toggle */}
+                    <div className="flex items-center p-1 bg-slate-850 rounded-xl border border-slate-750">
                       <button
-                        key={kVal}
                         type="button"
-                        onClick={() => setKmeansK(kVal)}
-                        className={`w-7 h-7 rounded-lg text-xs font-black transition-colors ${
-                          kmeansK === kVal
-                            ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-sm'
-                            : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        onClick={() => setDeptViewMode('cards')}
+                        className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          deptViewMode === 'cards'
+                            ? 'bg-brand-600 text-white shadow-xs'
+                            : 'text-slate-400 hover:text-white'
                         }`}
+                        title="Card Grid View"
                       >
-                        {kVal}
+                        <LayoutGrid className="w-3.5 h-3.5" />
+                        <span>Cards</span>
                       </button>
-                    ))}
+                      <button
+                        type="button"
+                        onClick={() => setDeptViewMode('table')}
+                        className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          deptViewMode === 'table'
+                            ? 'bg-brand-600 text-white shadow-xs'
+                            : 'text-slate-400 hover:text-white'
+                        }`}
+                        title="Comparative Table View"
+                      >
+                        <Table className="w-3.5 h-3.5" />
+                        <span>Matrix</span>
+                      </button>
+                    </div>
+
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center space-x-1 bg-slate-850 px-2.5 py-1.5 rounded-xl border border-slate-750 text-xs">
+                      <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+                      <select
+                        value={deptSortBy}
+                        onChange={(e) => setDeptSortBy(e.target.value)}
+                        className="bg-transparent text-slate-200 text-xs font-semibold focus:outline-none cursor-pointer pr-1"
+                      >
+                        <option value="placement">Sort: Placement Rate</option>
+                        <option value="students">Sort: Most Students</option>
+                        <option value="readiness">Sort: Highest Readiness</option>
+                        <option value="name">Sort: Branch (A-Z)</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-
-                {/* Elbow Inertia Curve Visualization */}
-                <div className="grid grid-cols-5 gap-2 pt-2 border-t border-slate-800 text-center text-xs">
-                  {elbowCurveInfo.elbowData?.map((item) => (
-                    <div
-                      key={item.k}
-                      onClick={() => setKmeansK(item.k)}
-                      className={`p-2.5 rounded-xl border cursor-pointer transition-all ${
-                        kmeansK === item.k
-                          ? 'border-brand-500 bg-brand-500/10'
-                          : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
-                      }`}
-                    >
-                      <div className="font-bold text-white text-xs">K = {item.k}</div>
-                      <div className="text-[11px] font-mono text-slate-400 mt-0.5">Inertia: {item.inertia}</div>
-                      {item.k === elbowCurveInfo.recommendedK && (
-                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-300 font-extrabold uppercase mt-1 inline-block">
-                          Optimal
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Department View Filter & Disclaimer */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <div className="flex items-center space-x-2">
-                  <span className="text-slate-400 font-bold">Filter View by Department:</span>
-                  <select
-                    value={kmeansDeptFilter}
-                    onChange={(e) => setKmeansDeptFilter(e.target.value)}
-                    className="px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850"
-                  >
-                    <option value="all">College-Wide (All Departments)</option>
-                    {discoveredDepts.map(d => (
-                      <option key={d} value={d}>{d}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="text-slate-400 text-[11px] flex items-center space-x-1.5">
-                  <Clock className="w-3.5 h-3.5 text-slate-500" />
-                  <span>Calculated at {new Date(kmeansResult.calculatedAt).toLocaleTimeString()} ({kmeansResult.iterationsRun} iterations)</span>
-                </div>
-              </div>
-
-              {/* Educational Disclaimer Box */}
-              <div className="p-3.5 rounded-xl bg-slate-850/60 border border-slate-800 text-[11px] text-slate-400 flex items-start space-x-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                <p>
-                  <strong className="text-slate-200">K-Means Model Transparency: </strong>
-                  {kmeansResult.disclaimer} Missing assessment scores are evaluated using multi-dimensional imputation and baseline indicators rather than silent zeroing.
-                </p>
-              </div>
-
-              {/* Cluster Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {kmeansResult.clusters.map((cluster) => (
-                  <Card key={cluster.id} className="p-5 space-y-4 flex flex-col justify-between">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className={`w-2.5 h-2.5 rounded-full ${cluster.dotClass}`} />
-                            <h4 className="font-extrabold text-sm text-white">{cluster.name}</h4>
-                          </div>
-                          <p className="text-[11px] text-slate-400 mt-0.5">{cluster.tagline}</p>
-                        </div>
-                        <Badge variant="neutral" size="sm">
-                          {cluster.count} Students ({cluster.percentage}%)
-                        </Badge>
-                      </div>
-
-                      {/* Centroid Dimensions */}
-                      <div className="grid grid-cols-4 gap-2 bg-slate-850/80 p-2.5 rounded-xl border border-slate-800 text-center text-xs">
-                        <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Tech</span>
-                          <span className="font-extrabold text-blue-400">{cluster.centroid.technical}%</span>
-                        </div>
-                        <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Aptitude</span>
-                          <span className="font-extrabold text-indigo-400">{cluster.centroid.aptitude}%</span>
-                        </div>
-                        <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Comm</span>
-                          <span className="font-extrabold text-purple-400">{cluster.centroid.communication}%</span>
-                        </div>
-                        <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Readiness</span>
-                          <span className="font-extrabold text-emerald-400">{cluster.centroid.readiness}%</span>
-                        </div>
-                      </div>
-
-                      {/* Strengths & Areas for Improvement */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                        <div className="p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/20 text-emerald-300">
-                          <span className="font-bold block text-[10px] uppercase text-emerald-400">Strengths</span>
-                          <ul className="list-disc pl-3 mt-1 space-y-0.5 text-[10px]">
-                            {cluster.strengths?.map((st, i) => (
-                              <li key={i}>{st}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="p-2 rounded-lg bg-amber-500/5 border border-amber-500/20 text-amber-300">
-                          <span className="font-bold block text-[10px] uppercase text-amber-400">Focus Areas</span>
-                          <ul className="list-disc pl-3 mt-1 space-y-0.5 text-[10px]">
-                            {cluster.areasForImprovement?.map((af, i) => (
-                              <li key={i}>{af}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Intervention Strategy */}
-                      <div className="space-y-1 text-xs">
-                        <span className="font-bold text-slate-400 uppercase text-[10px] tracking-wider block">
-                          Intervention Strategy:
-                        </span>
-                        <p className="text-slate-300 text-[11px] leading-relaxed">
-                          {cluster.interventionStrategy}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Candidate Chips */}
-                    {cluster.students.length > 0 && (
-                      <div className="pt-2.5 border-t border-slate-800">
-                        <div className="flex flex-wrap gap-1.5">
-                          {cluster.students.slice(0, 6).map((st) => (
-                            <button
-                              key={st.uid}
-                              type="button"
-                              onClick={() => handleOpenStudent(st)}
-                              className="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-750 text-slate-200 text-[11px] font-medium transition-colors border border-slate-700/60"
-                            >
-                              {st.personalInfo?.fullName || 'Student'}
-                            </button>
-                          ))}
-                          {cluster.students.length > 6 && (
-                            <span className="text-[10px] text-slate-400 font-bold self-center">
-                              +{cluster.students.length - 6} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* =========================================================================
-              TAB 6: PLACEMENT ANALYTICS (Charts & Visualizations)
-             ========================================================================= */}
-          {activeTab === 'analytics' && (
-            <div className="animate-fade-in">
-              <PlacementAnalyticsView
-                students={students}
-                departments={discoveredDepts}
-                summary={campusSummary}
-                applications={applications}
-                kmeansResult={kmeansResult}
-                officerScope={officerScope}
-                officerAssignedDept={officerAssignedDept}
-              />
-            </div>
-          )}
-
-          {/* =========================================================================
-              TAB 7: JOBS & RECRUITMENT DRIVES
-             ========================================================================= */}
-          {activeTab === 'drives' && (
-            <div className="space-y-5 animate-fade-in">
-              <PageHeader
-                breadcrumb={['Admin Portal', 'Jobs & Recruitment Drives']}
-                title="Campus Recruitment Drives & Jobs"
-                subtitle="Schedule and publish corporate campus drives, establish cutoffs, and evaluate matched candidate populations."
-                actions={
-                  <Button variant="primary" size="sm" icon={Plus} onClick={() => setIsAddDriveModalOpen(true)}>
-                    Schedule New Drive
-                  </Button>
                 }
               />
 
-              {/* Filters */}
-              <Card className="p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                  <div className="relative flex-1">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      value={driveSearch}
-                      onChange={(e) => setDriveSearch(e.target.value)}
-                      placeholder="Search recruitment drives by company or job role..."
-                      className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-850"
-                    />
-                  </div>
-                  <div className="w-full sm:w-48">
-                    <select
-                      value={driveStatusFilter}
-                      onChange={(e) => setDriveStatusFilter(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850"
+              {/* College-Wide Academic Diagnostics (Top 4 Summary Cards) */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                  title="Academic Branches"
+                  value={departmentDiagnostics.totalDepts}
+                  subtext={`${departmentDiagnostics.totalEnrolled} total registered candidates`}
+                  icon={Building2}
+                  colorScheme="brand"
+                />
+                <StatCard
+                  title="College Placement Rate"
+                  value={`${departmentDiagnostics.collegePlacementRate}%`}
+                  subtext={`${departmentDiagnostics.totalPlaced} of ${departmentDiagnostics.totalEnrolled} placed uniquely`}
+                  icon={TrendingUp}
+                  colorScheme={departmentDiagnostics.collegePlacementRate >= 60 ? 'emerald' : 'amber'}
+                />
+                <StatCard
+                  title="Top Performing Branch"
+                  value={departmentDiagnostics.topPlacedDept ? departmentDiagnostics.topPlacedDept.dept : '—'}
+                  subtext={
+                    departmentDiagnostics.topPlacedDept
+                      ? `${departmentDiagnostics.topPlacedDept.placementPercentage}% placed (${departmentDiagnostics.topPlacedDept.uniquelyPlacedCount}/${departmentDiagnostics.topPlacedDept.totalStudents})`
+                      : 'Awaiting placement records'
+                  }
+                  icon={Award}
+                  colorScheme="emerald"
+                />
+                <StatCard
+                  title="Assessment Coverage"
+                  value={`${departmentDiagnostics.collegeAssessmentCoverage}%`}
+                  subtext="Candidates with completed assessments"
+                  icon={Brain}
+                  colorScheme="purple"
+                />
+              </div>
+
+              {/* Search & Active Department Filter Bar */}
+              <Card className="p-4 bg-slate-850/80 border border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    placeholder="Search by branch name or code (e.g., CSE, AI & DS)..."
+                    value={deptSearchQuery}
+                    onChange={(e) => setDeptSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+                  />
+                  {deptSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setDeptSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs font-bold"
                     >
-                      <option value="all">All Drive Statuses</option>
-                      <option value="Active">Active Drives</option>
-                      <option value="Upcoming">Upcoming Drives</option>
-                      <option value="Completed">Completed Drives</option>
-                    </select>
-                  </div>
+                      ×
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-2 text-xs text-slate-400 justify-end">
+                  <span>
+                    Showing <strong className="text-white">{filteredDepartments.length}</strong> of{' '}
+                    <strong className="text-white">{departmentBreakdown.length}</strong> branches
+                  </span>
+                  {deptSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setDeptSearchQuery('')}
+                      className="text-brand-400 hover:text-brand-300 font-bold ml-2 underline"
+                    >
+                      Clear
+                    </button>
+                  )}
                 </div>
               </Card>
 
-              {loadingDrives ? (
-                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl">
-                  <Loader2 className="w-4 h-4 animate-spin text-brand-400" />
-                  <span>Loading recruitment drives...</span>
-                </div>
-              ) : filteredDrives.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredDrives.map((drive) => {
-                    const matchedStudents = students.filter(s => {
-                      const cgpa = parseFloat(s.education?.cgpa || 0) || 0;
-                      const readiness = s.placementScores?.overallReadiness || 0;
-                      const dept = s.department || 'Other';
-                      const okCgpa = drive.minCgpa ? cgpa >= drive.minCgpa : true;
-                      const okR = drive.minReadiness ? readiness >= drive.minReadiness : true;
-                      const okDept = (!drive.eligibleDepartments || drive.eligibleDepartments.includes('All'))
-                        ? true
-                        : drive.eligibleDepartments.some(d => d.toLowerCase() === dept.toLowerCase());
-                      return okCgpa && okR && okDept;
-                    });
-
+              {/* View Mode 1: CARDS (Grid View) */}
+              {deptViewMode === 'cards' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {filteredDepartments.map((deptItem) => {
+                    const cohorts = Object.entries(deptItem.cohortCounts || {});
                     return (
-                      <Card key={drive.id} className="p-5 space-y-4 flex flex-col justify-between">
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between">
+                      <Card
+                        key={deptItem.dept}
+                        className="p-5 flex flex-col justify-between border border-slate-800 bg-slate-900/95 hover:border-slate-700 transition-all space-y-4"
+                      >
+                        <div className="space-y-4">
+                          {/* Branch Header */}
+                          <div className="flex items-start justify-between gap-3 border-b border-slate-800/80 pb-3">
                             <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-extrabold text-sm">
-                                <Building2 className="w-5 h-5" />
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-indigo-500/20 border border-brand-500/40 flex items-center justify-center text-brand-300 font-extrabold text-xs">
+                                {deptItem.dept.slice(0, 4)}
                               </div>
                               <div>
-                                <h4 className="font-extrabold text-sm text-white leading-tight">{drive.companyName}</h4>
-                                <p className="text-xs text-slate-400 font-medium">{drive.jobRole}</p>
+                                <h4 className="font-extrabold text-sm text-white leading-tight">
+                                  {deptItem.dept}
+                                </h4>
+                                <span className="text-xs text-slate-400">
+                                  {deptItem.totalStudents} Enrolled Candidate{deptItem.totalStudents === 1 ? '' : 's'}
+                                </span>
                               </div>
                             </div>
-                            <Badge variant={drive.status === 'Active' ? 'emerald' : 'neutral'} size="sm">
-                              {drive.status || 'Upcoming'}
+                            <Badge
+                              variant={
+                                deptItem.placementPercentage >= 60
+                                  ? 'emerald'
+                                  : deptItem.placementPercentage > 0
+                                  ? 'amber'
+                                  : 'neutral'
+                              }
+                              size="sm"
+                              className="font-bold flex-shrink-0"
+                            >
+                              {deptItem.placementPercentage}% Placed
                             </Badge>
                           </div>
 
-                          {/* Drive Details */}
-                          <div className="grid grid-cols-2 gap-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
-                            <div>
-                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Package / CTC</span>
-                              <span className="font-extrabold text-slate-100">{drive.packageCTC || 'Competitive'}</span>
+                          {/* Visual Placement Funnel Bar */}
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between text-[11px] font-medium text-slate-300">
+                              <span>Placement Distribution</span>
+                              <span className="font-bold text-white">
+                                {deptItem.uniquelyPlacedCount} of {deptItem.totalStudents} placed
+                              </span>
                             </div>
-                            <div>
-                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Drive Date</span>
-                              <span className="font-extrabold text-slate-100">{drive.driveDate || 'TBD'}</span>
+                            <div className="h-2.5 w-full rounded-full bg-slate-800 flex overflow-hidden shadow-inner">
+                              {deptItem.totalStudents > 0 ? (
+                                <>
+                                  <div
+                                    style={{
+                                      width: `${(deptItem.uniquelyPlacedCount / deptItem.totalStudents) * 100}%`
+                                    }}
+                                    className="h-full bg-emerald-500 transition-all duration-500"
+                                    title={`Placed: ${deptItem.uniquelyPlacedCount} candidates`}
+                                  />
+                                  <div
+                                    style={{
+                                      width: `${(deptItem.inProcessCount / deptItem.totalStudents) * 100}%`
+                                    }}
+                                    className="h-full bg-indigo-500 transition-all duration-500"
+                                    title={`In Process: ${deptItem.inProcessCount} candidates`}
+                                  />
+                                  <div
+                                    style={{
+                                      width: `${(deptItem.unplacedCount / deptItem.totalStudents) * 100}%`
+                                    }}
+                                    className="h-full bg-slate-750 transition-all duration-500"
+                                    title={`Open / Unplaced: ${deptItem.unplacedCount} candidates`}
+                                  />
+                                </>
+                              ) : null}
                             </div>
-                            <div>
-                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Min CGPA</span>
-                              <span className="font-bold text-slate-300">{drive.minCgpa || 'None'}</span>
-                            </div>
-                            <div>
-                              <span className="text-[10px] text-slate-400 block font-bold uppercase">Min Readiness</span>
-                              <span className="font-bold text-emerald-400">{drive.minReadiness ? `${drive.minReadiness}%` : 'Open'}</span>
+                            <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+                              <span className="flex items-center space-x-1">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+                                <span>Placed: {deptItem.uniquelyPlacedCount}</span>
+                              </span>
+                              <span className="flex items-center space-x-1">
+                                <span className="w-2 h-2 rounded-full bg-indigo-500 inline-block" />
+                                <span>In Process: {deptItem.inProcessCount}</span>
+                              </span>
+                              <span className="flex items-center space-x-1">
+                                <span className="w-2 h-2 rounded-full bg-slate-600 inline-block" />
+                                <span>Open: {deptItem.unplacedCount}</span>
+                              </span>
                             </div>
                           </div>
+
+                          {/* 4-Box Key Metrics Grid */}
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800 space-y-0.5">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                                Avg Readiness
+                              </span>
+                              <span
+                                className={`text-sm font-extrabold font-mono ${
+                                  deptItem.avgReadiness === null
+                                    ? 'text-slate-500'
+                                    : deptItem.avgReadiness >= 75
+                                    ? 'text-emerald-400'
+                                    : deptItem.avgReadiness >= 60
+                                    ? 'text-blue-400'
+                                    : 'text-amber-400'
+                                }`}
+                              >
+                                {deptItem.avgReadiness !== null ? `${deptItem.avgReadiness}%` : '—'}
+                              </span>
+                              <span className="text-[10px] text-slate-500 block truncate">
+                                {deptItem.readinessCount} assessed
+                              </span>
+                            </div>
+
+                            <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800 space-y-0.5">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                                Average CGPA
+                              </span>
+                              <span className="text-sm font-extrabold font-mono text-white">
+                                {deptItem.avgCGPA !== null ? deptItem.avgCGPA.toFixed(2) : '—'}
+                              </span>
+                              <span className="text-[10px] text-slate-500 block">Scale 10.0</span>
+                            </div>
+
+                            <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800 space-y-0.5">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                                Assessed Rate
+                              </span>
+                              <span className="text-sm font-extrabold font-mono text-purple-300">
+                                {deptItem.assessmentCompletionRate}%
+                              </span>
+                              <span className="text-[10px] text-slate-500 block">
+                                {deptItem.assessmentCompletedCount} of {deptItem.totalStudents} tests
+                              </span>
+                            </div>
+
+                            <div className="p-2.5 rounded-xl bg-slate-850/80 border border-slate-800 space-y-0.5">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 block">
+                                Applications
+                              </span>
+                              <span className="text-sm font-extrabold font-mono text-cyan-300">
+                                {deptItem.applicationsCount}
+                              </span>
+                              <span className="text-[10px] text-slate-500 block">
+                                {deptItem.shortlistedCount} shortlisted
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Assessed Competency Breakdown (Real Authenticated Averages) */}
+                          <div className="space-y-1.5 pt-1">
+                            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
+                              Assessment Pillar Averages
+                            </span>
+                            <div className="grid grid-cols-3 gap-1.5 bg-slate-950/70 p-2 rounded-xl border border-slate-800 text-center text-xs">
+                              <div>
+                                <span className="text-[9px] uppercase font-semibold text-slate-500 block">Tech</span>
+                                <span className="font-mono font-bold text-blue-400 text-xs">
+                                  {deptItem.avgTechnical !== null ? `${deptItem.avgTechnical}%` : '—'}
+                                </span>
+                                <span className="text-[9px] text-slate-500 block font-mono">
+                                  {deptItem.techAssessedCount}/{deptItem.totalStudents}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[9px] uppercase font-semibold text-slate-500 block">Aptitude</span>
+                                <span className="font-mono font-bold text-indigo-400 text-xs">
+                                  {deptItem.avgAptitude !== null ? `${deptItem.avgAptitude}%` : '—'}
+                                </span>
+                                <span className="text-[9px] text-slate-500 block font-mono">
+                                  {deptItem.aptAssessedCount}/{deptItem.totalStudents}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[9px] uppercase font-semibold text-slate-500 block">Comm</span>
+                                <span className="font-mono font-bold text-purple-400 text-xs">
+                                  {deptItem.avgCommunication !== null ? `${deptItem.avgCommunication}%` : '—'}
+                                </span>
+                                <span className="text-[9px] text-slate-500 block font-mono">
+                                  {deptItem.commAssessedCount}/{deptItem.totalStudents}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Readiness Cohort Distribution Badges */}
+                          {cohorts.length > 0 && (
+                            <div className="space-y-1 pt-1">
+                              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">
+                                Top Readiness Cohorts
+                              </span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {cohorts.map(([cName, count]) => (
+                                  <span
+                                    key={cName}
+                                    className="px-2 py-0.5 rounded-lg bg-slate-800 text-[10px] font-semibold text-slate-300 border border-slate-700/60 inline-flex items-center space-x-1"
+                                  >
+                                    <span className="truncate max-w-[130px]">{cName}</span>
+                                    <strong className="text-white font-mono">{count}</strong>
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
 
-                        {/* Footer Match & Action */}
-                        <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                          <span className="text-xs font-bold text-emerald-400">
-                            {matchedStudents.length} candidate{matchedStudents.length === 1 ? '' : 's'} eligible
-                          </span>
-                          <div className="flex items-center space-x-1.5">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              icon={Download}
-                              onClick={() => handleExportDriveCandidates(drive)}
-                            >
-                              Export Roster
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              icon={Trash2}
-                              onClick={() => handleDeleteDrive(drive.id, drive.companyName)}
-                              title="Delete drive"
-                            >
-                              Delete
-                            </Button>
-                          </div>
+                        {/* Interactive Card Action Footer */}
+                        <div className="pt-3 border-t border-slate-800/80 flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedDept(deptItem.dept);
+                              setCurrentPage(1);
+                              setActiveTab('students');
+                            }}
+                            className="flex-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700 text-xs font-bold transition-all flex items-center justify-center space-x-1.5"
+                          >
+                            <span>Inspect Students</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setKmeansDeptFilter(deptItem.dept);
+                              setCurrentKmeansPage(1);
+                              setActiveTab('kmeans');
+                            }}
+                            className="py-2 px-3 rounded-xl bg-brand-600/15 hover:bg-brand-600/25 text-brand-300 hover:text-white border border-brand-500/30 text-xs font-bold transition-all flex items-center space-x-1"
+                            title="Filter Readiness Groups for this Branch"
+                          >
+                            <Brain className="w-3.5 h-3.5" />
+                            <span>Groups</span>
+                          </button>
                         </div>
                       </Card>
                     );
                   })}
                 </div>
-              ) : (
+              )}
+
+              {/* View Mode 2: TABLE (Comparative Performance Matrix) */}
+              {deptViewMode === 'table' && (
+                <Card className="p-5 space-y-4 bg-slate-900 border border-slate-800 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+                          <th className="py-3 px-3">Academic Branch</th>
+                          <th className="py-3 px-3">Students</th>
+                          <th className="py-3 px-3">Placement Rate</th>
+                          <th className="py-3 px-3">Placed / In Process</th>
+                          <th className="py-3 px-3">Avg CGPA</th>
+                          <th className="py-3 px-3">Technical</th>
+                          <th className="py-3 px-3">Aptitude</th>
+                          <th className="py-3 px-3">Communication</th>
+                          <th className="py-3 px-3">Overall Readiness</th>
+                          <th className="py-3 px-3 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-850">
+                        {filteredDepartments.map((deptItem) => (
+                          <tr key={deptItem.dept} className="hover:bg-slate-850/50 transition-colors">
+                            <td className="py-3 px-3 font-semibold text-white">
+                              <div className="flex items-center space-x-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-300 font-extrabold text-xs">
+                                  {deptItem.dept.slice(0, 4)}
+                                </div>
+                                <div>
+                                  <div className="font-bold text-white">{deptItem.dept}</div>
+                                  <div className="text-[10px] text-slate-400">
+                                    {deptItem.assessmentCompletionRate}% assessed ({deptItem.assessmentCompletedCount}/{deptItem.totalStudents})
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 font-mono font-bold text-slate-300">
+                              {deptItem.totalStudents}
+                            </td>
+                            <td className="py-3 px-3">
+                              <div className="flex items-center space-x-2">
+                                <Badge
+                                  variant={
+                                    deptItem.placementPercentage >= 60
+                                      ? 'emerald'
+                                      : deptItem.placementPercentage > 0
+                                      ? 'amber'
+                                      : 'neutral'
+                                  }
+                                  size="xs"
+                                >
+                                  {deptItem.placementPercentage}%
+                                </Badge>
+                                <div className="w-16 h-1.5 rounded-full bg-slate-800 overflow-hidden hidden sm:block">
+                                  <div
+                                    className={`h-full ${
+                                      deptItem.placementPercentage >= 60 ? 'bg-emerald-500' : 'bg-amber-500'
+                                    }`}
+                                    style={{ width: `${deptItem.placementPercentage}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 text-slate-300">
+                              <div className="flex items-center space-x-1.5 font-mono text-[11px]">
+                                <span className="font-bold text-emerald-400">{deptItem.uniquelyPlacedCount} placed</span>
+                                <span className="text-slate-600">•</span>
+                                <span className="text-indigo-400">{deptItem.inProcessCount} active</span>
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 font-mono font-medium text-slate-300">
+                              {deptItem.avgCGPA !== null ? deptItem.avgCGPA.toFixed(2) : '—'}
+                            </td>
+                            <td className="py-3 px-3 font-mono">
+                              {deptItem.avgTechnical !== null ? (
+                                <span className="font-bold text-blue-400">{deptItem.avgTechnical}%</span>
+                              ) : (
+                                <span className="text-slate-500">—</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 font-mono">
+                              {deptItem.avgAptitude !== null ? (
+                                <span className="font-bold text-indigo-400">{deptItem.avgAptitude}%</span>
+                              ) : (
+                                <span className="text-slate-500">—</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 font-mono">
+                              {deptItem.avgCommunication !== null ? (
+                                <span className="font-bold text-purple-400">{deptItem.avgCommunication}%</span>
+                              ) : (
+                                <span className="text-slate-500">—</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3">
+                              {deptItem.avgReadiness !== null ? (
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold border inline-block ${
+                                    deptItem.avgReadiness >= 75
+                                      ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                                      : deptItem.avgReadiness >= 60
+                                      ? 'bg-blue-500/15 border-blue-500/30 text-blue-300'
+                                      : 'bg-amber-500/15 border-amber-500/30 text-amber-300'
+                                  }`}
+                                >
+                                  {deptItem.avgReadiness}% Readiness
+                                </span>
+                              ) : (
+                                <span className="text-slate-500 text-[10px]">Unassessed</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              <div className="flex items-center justify-end space-x-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedDept(deptItem.dept);
+                                    setCurrentPage(1);
+                                    setActiveTab('students');
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold border border-slate-700/80 transition-colors"
+                                >
+                                  Students
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setKmeansDeptFilter(deptItem.dept);
+                                    setCurrentKmeansPage(1);
+                                    setActiveTab('kmeans');
+                                  }}
+                                  className="px-2.5 py-1 rounded-lg bg-brand-600/15 hover:bg-brand-600/25 text-brand-300 text-xs font-semibold border border-brand-500/30 transition-colors"
+                                  title="Readiness Groups"
+                                >
+                                  Groups
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              )}
+
+              {/* Empty Search Result Fallback */}
+              {filteredDepartments.length === 0 && (
                 <div className="p-12 text-center text-xs text-slate-400 bg-slate-900 rounded-2xl border border-dashed border-slate-800 space-y-3">
-                  <p>No campus recruitment drives match the filter.</p>
-                  <Button variant="primary" size="sm" icon={Plus} onClick={() => setIsAddDriveModalOpen(true)}>
-                    Schedule First Drive
+                  <Building2 className="w-8 h-8 mx-auto text-slate-500" />
+                  <p className="font-semibold text-white">No academic branches match your search "{deptSearchQuery}".</p>
+                  <p className="text-slate-500">Check spelling or clear the search query to view all departments.</p>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setDeptSearchQuery('')}
+                    className="mx-auto"
+                  >
+                    Clear Filter
                   </Button>
                 </div>
               )}
@@ -2047,7 +2431,980 @@ export const AdminDashboard = () => {
           )}
 
           {/* =========================================================================
-              TAB 8: APPLICATIONS & RECRUITMENT TRACKING
+              TAB 5: K-MEANS MACHINE LEARNING STUDENT CLUSTERS
+             ========================================================================= */}
+          {activeTab === 'kmeans' && (
+            <div className="space-y-6 animate-fade-in">
+              {/* Header with Title, Explanation, and Refresh Groups Action */}
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Readiness Analytics']}
+                title="Student Readiness Groups"
+                subtitle="Students are grouped by similar scores across technical, aptitude, and communication assessments to guide targeted training."
+                actions={
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    icon={RefreshCw}
+                    disabled={isRefreshingKmeans}
+                    onClick={handleRefreshGroups}
+                    className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs"
+                  >
+                    {isRefreshingKmeans ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin mr-1.5" />
+                        <span>Refreshing Groups...</span>
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-4 h-4 mr-1.5" />
+                        <span>Refresh Groups</span>
+                      </>
+                    )}
+                  </Button>
+                }
+              />
+
+              {/* Error State Banner */}
+              {kmeansError && (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+                    <span>{kmeansError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRefreshGroups}
+                    className="px-3 py-1 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 font-bold transition-colors"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              {/* Limited Dataset Explanation (if dataset supports fewer than 4 groups) */}
+              {kmeansResult.isLimitedDataset && kmeansResult.datasetExplanation && (
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start space-x-2.5">
+                  <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white block mb-0.5">Dataset Notice:</strong>
+                    <span>{kmeansResult.datasetExplanation}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Two Summary Cards at the Top */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <StatCard
+                  title="Students Analyzed"
+                  value={kmeansResult.totalStudents}
+                  subtext={kmeansDeptFilter === 'all' ? 'All enrolled academic profiles' : `Filtered to ${kmeansDeptFilter}`}
+                  icon={Users}
+                  colorScheme="brand"
+                />
+                <StatCard
+                  title="Number of Groups"
+                  value={kmeansResult.clusters.length}
+                  subtext="Distinct readiness cohorts identified"
+                  icon={Layers}
+                  colorScheme="emerald"
+                />
+              </div>
+
+              {/* Single Simple Group-Distribution Chart */}
+              <Card className="p-4 bg-slate-850/80 border border-slate-800 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div className="flex items-center space-x-2">
+                    <BarChart3 className="w-4 h-4 text-brand-400" />
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-slate-200">
+                      Cohort Distribution Breakdown
+                    </h4>
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    Proportion across {kmeansResult.totalStudents} evaluated students
+                  </span>
+                </div>
+
+                {/* Multi-segment progress bar */}
+                <div className="h-3 w-full rounded-full bg-slate-800 flex overflow-hidden shadow-inner">
+                  {kmeansResult.clusters.map((cluster) =>
+                    cluster.percentage > 0 ? (
+                      <div
+                        key={cluster.id}
+                        style={{ width: `${cluster.percentage}%` }}
+                        className={`h-full transition-all duration-500 ${
+                          cluster.color === 'emerald'
+                            ? 'bg-emerald-500'
+                            : cluster.color === 'blue'
+                            ? 'bg-blue-500'
+                            : cluster.color === 'purple'
+                            ? 'bg-purple-500'
+                            : cluster.color === 'teal'
+                            ? 'bg-teal-500'
+                            : cluster.color === 'sky'
+                            ? 'bg-sky-500'
+                            : 'bg-amber-500'
+                        }`}
+                        title={`${cluster.name}: ${cluster.count} students (${cluster.percentage}%)`}
+                      />
+                    ) : null
+                  )}
+                </div>
+
+                {/* Legend */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/60 text-xs">
+                  {kmeansResult.clusters.map((cluster) => (
+                    <div key={cluster.id} className="flex items-center space-x-2">
+                      <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cluster.dotClass}`} />
+                      <span className="truncate text-slate-300 font-medium">{cluster.name}</span>
+                      <span className="font-mono font-bold text-slate-400 text-[11px]">
+                        {cluster.count} ({cluster.percentage}%)
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Group Cards Grid: 4 Clean, Compact Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {kmeansResult.clusters.map((cluster) => {
+                  const isSelected = kmeansGroupFilter === cluster.id;
+                  return (
+                    <Card
+                      key={cluster.id}
+                      className={`p-4 flex flex-col justify-between border transition-all ${
+                        isSelected
+                          ? 'border-brand-500 ring-1 ring-brand-500/50 bg-slate-850'
+                          : 'border-slate-800 bg-slate-900/90 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        {/* Group Name & Badge */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center space-x-2">
+                            <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cluster.dotClass}`} />
+                            <h4 className="font-extrabold text-sm text-white leading-tight">
+                              {cluster.name}
+                            </h4>
+                          </div>
+                        </div>
+
+                        {/* Student Count and Readiness Metric */}
+                        <div className="flex items-center justify-between text-xs">
+                          <Badge variant="neutral" size="sm" className={cluster.badgeClass}>
+                            {cluster.count} Students ({cluster.percentage}%)
+                          </Badge>
+                          <span className="text-[11px] font-mono text-slate-400">
+                            Avg: <strong className="text-white">{cluster.avgScores.readiness}%</strong>
+                          </span>
+                        </div>
+
+                        {/* Average Scores Mini-Grid */}
+                        <div className="grid grid-cols-3 gap-1.5 bg-slate-950/60 p-2 rounded-xl border border-slate-800/80 text-center text-[10px]">
+                          <div>
+                            <span className="text-slate-500 uppercase block font-semibold">Tech</span>
+                            <span className="font-bold text-blue-400 font-mono">{cluster.avgScores.technical}%</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 uppercase block font-semibold">Aptitude</span>
+                            <span className="font-bold text-indigo-400 font-mono">{cluster.avgScores.aptitude}%</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 uppercase block font-semibold">Comm</span>
+                            <span className="font-bold text-purple-400 font-mono">{cluster.avgScores.communication}%</span>
+                          </div>
+                        </div>
+
+                        {/* Measured Strengths / Focus Explanation */}
+                        <div className="space-y-1 text-xs">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                            Assessment Profile
+                          </span>
+                          <p className="text-slate-300 text-xs leading-relaxed">
+                            {cluster.explanation}
+                          </p>
+                        </div>
+
+                        {/* Practical Recommended Action */}
+                        <div className="p-2.5 rounded-xl bg-slate-800/50 border border-slate-700/50 text-xs space-y-1">
+                          <span className="text-[10px] font-bold text-brand-300 uppercase tracking-wider block">
+                            Recommended Action
+                          </span>
+                          <p className="text-slate-200 text-xs leading-relaxed font-medium">
+                            {cluster.recommendedAction}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* View Students in this Group Button */}
+                      <div className="pt-3 mt-3 border-t border-slate-800">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectGroupFilter(cluster.id)}
+                          className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
+                            isSelected
+                              ? 'bg-brand-600 text-white shadow-xs'
+                              : 'bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700/80'
+                          }`}
+                        >
+                          <span>{isSelected ? 'Viewing Group Students' : `View Students (${cluster.count})`}</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* Student Table Section */}
+              <Card id="student-readiness-table" className="p-5 space-y-4 bg-slate-900 border border-slate-800">
+                {/* Table Header and Essential Filters */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                  <div>
+                    <h3 className="font-extrabold text-sm sm:text-base text-white">
+                      Student Readiness Directory
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Showing {filteredGroupStudents.length} of {students.length} students
+                      {kmeansGroupFilter !== 'all' ? ` in ${kmeansResult.clusters.find(c => c.id === kmeansGroupFilter)?.name || 'selected group'}` : ''}
+                    </p>
+                  </div>
+
+                  {/* Essential Filters: Department and Group */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Department Filter */}
+                    <div className="flex items-center space-x-1.5">
+                      <span className="text-xs text-slate-400 font-semibold">Department:</span>
+                      <select
+                        value={kmeansDeptFilter}
+                        onChange={(e) => {
+                          setKmeansDeptFilter(e.target.value);
+                          setCurrentKmeansPage(1);
+                        }}
+                        className="px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850 focus:border-brand-500 focus:outline-none"
+                      >
+                        <option value="all">All Departments</option>
+                        {discoveredDepts.map(d => (
+                          <option key={d} value={d}>{d}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Group Filter */}
+                    <div className="flex items-center space-x-1.5">
+                      <span className="text-xs text-slate-400 font-semibold">Group:</span>
+                      <select
+                        value={kmeansGroupFilter}
+                        onChange={(e) => {
+                          setKmeansGroupFilter(e.target.value);
+                          setCurrentKmeansPage(1);
+                        }}
+                        className="px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850 focus:border-brand-500 focus:outline-none"
+                      >
+                        <option value="all">All Groups</option>
+                        {kmeansResult.clusters.map(c => (
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Reset Filters */}
+                    {(kmeansDeptFilter !== 'all' || kmeansGroupFilter !== 'all') && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setKmeansDeptFilter('all');
+                          setKmeansGroupFilter('all');
+                          setCurrentKmeansPage(1);
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl text-xs text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                      >
+                        Reset Filters
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Table Content */}
+                {filteredGroupStudents.length === 0 ? (
+                  <div className="p-8 text-center text-xs text-slate-400 space-y-2">
+                    <p>No students match the selected department and group filters.</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setKmeansDeptFilter('all');
+                        setKmeansGroupFilter('all');
+                        setCurrentKmeansPage(1);
+                      }}
+                      className="text-brand-400 hover:text-brand-300 font-bold underline"
+                    >
+                      Clear Filters
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider font-semibold">
+                            <th className="py-3 px-3">Student Name</th>
+                            <th className="py-3 px-3">Department</th>
+                            <th className="py-3 px-3">Readiness Group</th>
+                            <th className="py-3 px-3">CGPA</th>
+                            <th className="py-3 px-3">Technical</th>
+                            <th className="py-3 px-3">Aptitude</th>
+                            <th className="py-3 px-3">Communication</th>
+                            <th className="py-3 px-3">Overall</th>
+                            <th className="py-3 px-3 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-850">
+                          {paginatedKmeansStudents.map((st) => {
+                            const clusterInfo = studentClusterMap[st.uid];
+                            const rawTech = st.placementScores?.technicalScore ?? st.latestTechnicalScore ?? null;
+                            const rawApt = st.placementScores?.aptitudeScore ?? st.latestAptitudeAssessment?.score ?? null;
+                            const rawComm = st.placementScores?.communicationScore ?? st.latestCommunicationAssessment?.score ?? null;
+                            const rawReadiness = st.placementScores?.overallReadiness ?? null;
+                            const cgpa = st.education?.cgpa || st.cgpa || null;
+
+                            return (
+                              <tr key={st.uid} className="hover:bg-slate-850/50 transition-colors">
+                                <td className="py-3 px-3 font-medium text-white">
+                                  <div className="flex items-center space-x-2.5">
+                                    <div className="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-[11px] font-bold text-brand-300 border border-slate-700">
+                                      {(st.personalInfo?.fullName || 'S')[0].toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <div className="font-semibold">{st.personalInfo?.fullName || 'Student'}</div>
+                                      <div className="text-[10px] text-slate-400">{st.personalInfo?.email || '—'}</div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="py-3 px-3 text-slate-300">
+                                  {st.department || st.education?.branch || 'General'}
+                                </td>
+                                <td className="py-3 px-3">
+                                  {clusterInfo ? (
+                                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-block ${clusterInfo.badgeClass}`}>
+                                      {clusterInfo.name}
+                                    </span>
+                                  ) : (
+                                    <span className="text-slate-500 text-[10px]">Unassigned</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-3 font-mono font-medium text-slate-300">
+                                  {cgpa !== null ? cgpa : '—'}
+                                </td>
+                                <td className="py-3 px-3 font-mono">
+                                  {rawTech !== null ? (
+                                    <span className="font-bold text-blue-400">{Math.round(rawTech)}%</span>
+                                  ) : (
+                                    <span className="text-slate-500">—</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-3 font-mono">
+                                  {rawApt !== null ? (
+                                    <span className="font-bold text-indigo-400">{Math.round(rawApt)}%</span>
+                                  ) : (
+                                    <span className="text-slate-500">—</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-3 font-mono">
+                                  {rawComm !== null ? (
+                                    <span className="font-bold text-purple-400">{Math.round(rawComm)}%</span>
+                                  ) : (
+                                    <span className="text-slate-500">—</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-3 font-mono">
+                                  {rawReadiness !== null ? (
+                                    <span className="font-extrabold text-emerald-400">{Math.round(rawReadiness)}%</span>
+                                  ) : (
+                                    <span className="text-slate-500">—</span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-3 text-right">
+                                  <Button
+                                    variant="secondary"
+                                    size="xs"
+                                    onClick={() => handleOpenStudent(st)}
+                                    className="text-[11px]"
+                                  >
+                                    View Details
+                                  </Button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {totalKmeansPages > 1 && (
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs text-slate-400">
+                        <div>
+                          Page {currentKmeansPage} of {totalKmeansPages}
+                        </div>
+                        <div className="flex items-center space-x-1.5">
+                          <button
+                            type="button"
+                            disabled={currentKmeansPage <= 1}
+                            onClick={() => setCurrentKmeansPage(prev => Math.max(1, prev - 1))}
+                            className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium"
+                          >
+                            Previous
+                          </button>
+                          <button
+                            type="button"
+                            disabled={currentKmeansPage >= totalKmeansPages}
+                            onClick={() => setCurrentKmeansPage(prev => Math.min(totalKmeansPages, prev + 1))}
+                            className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium"
+                          >
+                            Next
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </Card>
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 6: JOBS & COMPANIES (Corporate Approvals & Campus Drives)
+             ========================================================================= */}
+          {activeTab === 'drives' && (
+            <div className="space-y-5 animate-fade-in">
+              <PageHeader
+                breadcrumb={['Admin Portal', 'Jobs & Companies']}
+                title="Jobs & Corporate Partners"
+                subtitle="Review incoming company registrations, authorize job role eligibility, and manage active campus recruitment drives."
+                actions={
+                  jobsCompaniesSubTab === 'drives' ? (
+                    <Button variant="primary" size="sm" icon={Plus} onClick={() => setIsAddDriveModalOpen(true)}>
+                      Schedule New Drive
+                    </Button>
+                  ) : null
+                }
+              />
+
+              {/* Subtabs Bar: Campus Drives | Company Approvals | Job Role Approvals */}
+              <div className="flex flex-wrap items-center gap-2 p-1.5 bg-slate-900 rounded-2xl border border-slate-800 shadow-subtle">
+                <button
+                  type="button"
+                  onClick={() => setJobsCompaniesSubTab('drives')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    jobsCompaniesSubTab === 'drives'
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Briefcase className="w-4 h-4" />
+                  <span>Campus Drives</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                    jobsCompaniesSubTab === 'drives' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {drives.length}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setJobsCompaniesSubTab('company_approvals')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    jobsCompaniesSubTab === 'company_approvals'
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4" />
+                  <span>Company Approvals</span>
+                  {(companyCounts.pending || 0) > 0 ? (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30 animate-pulse">
+                      {companyCounts.pending} Pending
+                    </span>
+                  ) : (
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                      jobsCompaniesSubTab === 'company_approvals' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {companyCounts.total || adminCompanies.length}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setJobsCompaniesSubTab('job_approvals')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    jobsCompaniesSubTab === 'job_approvals'
+                      ? 'bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Job Role Approvals</span>
+                  {(jobCounts.pending || 0) > 0 ? (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-extrabold border border-amber-500/30 animate-pulse">
+                      {jobCounts.pending} Pending
+                    </span>
+                  ) : (
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                      jobsCompaniesSubTab === 'job_approvals' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {jobCounts.total || adminJobs.length}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* -------------------------------------------------------------
+                  SUBVIEW 1: CAMPUS RECRUITMENT DRIVES
+                 ------------------------------------------------------------- */}
+              {jobsCompaniesSubTab === 'drives' && (
+                <div className="space-y-4">
+                  {/* Filters */}
+                  <Card className="p-4 space-y-3">
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                      <div className="relative flex-1">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          value={driveSearch}
+                          onChange={(e) => setDriveSearch(e.target.value)}
+                          placeholder="Search recruitment drives by company or job role..."
+                          className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-850"
+                        />
+                      </div>
+                      <div className="w-full sm:w-48">
+                        <select
+                          value={driveStatusFilter}
+                          onChange={(e) => setDriveStatusFilter(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850"
+                        >
+                          <option value="all">All Drive Statuses</option>
+                          <option value="Active">Active Drives</option>
+                          <option value="Upcoming">Upcoming Drives</option>
+                          <option value="Completed">Completed Drives</option>
+                        </select>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {loadingDrives ? (
+                    <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl">
+                      <Loader2 className="w-4 h-4 animate-spin text-brand-400" />
+                      <span>Loading recruitment drives...</span>
+                    </div>
+                  ) : filteredDrives.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredDrives.map((drive) => {
+                        const matchedStudents = students.filter(s => {
+                          const cgpa = parseFloat(s.education?.cgpa || 0) || 0;
+                          const readiness = s.placementScores?.overallReadiness || 0;
+                          const dept = s.department || 'Other';
+                          const okCgpa = drive.minCgpa ? cgpa >= drive.minCgpa : true;
+                          const okR = drive.minReadiness ? readiness >= drive.minReadiness : true;
+                          const okDept = (!drive.eligibleDepartments || drive.eligibleDepartments.includes('All'))
+                            ? true
+                            : drive.eligibleDepartments.some(d => d.toLowerCase() === dept.toLowerCase());
+                          return okCgpa && okR && okDept;
+                        });
+
+                        return (
+                          <Card key={drive.id} className="p-5 space-y-4 flex flex-col justify-between">
+                            <div className="space-y-3">
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-extrabold text-sm">
+                                    <Building2 className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-extrabold text-sm text-white leading-tight">{drive.companyName}</h4>
+                                    <p className="text-xs text-slate-400 font-medium">{drive.jobRole}</p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-1.5">
+                                  {drive.approvalStatus && drive.approvalStatus !== 'approved' && (
+                                    <Badge variant="amber" size="sm">
+                                      {drive.approvalStatus === 'rejected' ? 'Rejected' : 'Pending Review'}
+                                    </Badge>
+                                  )}
+                                  <Badge variant={drive.status === 'Active' ? 'emerald' : 'neutral'} size="sm">
+                                    {drive.status || 'Upcoming'}
+                                  </Badge>
+                                </div>
+                              </div>
+
+                              {/* Drive Details */}
+                              <div className="grid grid-cols-2 gap-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Package / CTC</span>
+                                  <span className="font-extrabold text-slate-100">{drive.packageCTC || 'Competitive'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Drive Date</span>
+                                  <span className="font-extrabold text-slate-100">{drive.driveDate || 'TBD'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Min CGPA</span>
+                                  <span className="font-bold text-slate-300">{drive.minCgpa || 'None'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Min Readiness</span>
+                                  <span className="font-bold text-emerald-400">{drive.minReadiness ? `${drive.minReadiness}%` : 'Open'}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Footer Match & Action */}
+                            <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+                              <span className="text-xs font-bold text-emerald-400">
+                                {matchedStudents.length} candidate{matchedStudents.length === 1 ? '' : 's'} eligible
+                              </span>
+                              <div className="flex items-center space-x-1.5">
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  icon={Download}
+                                  onClick={() => handleExportDriveCandidates(drive)}
+                                >
+                                  Export Roster
+                                </Button>
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  icon={Trash2}
+                                  onClick={() => handleDeleteDrive(drive.id, drive.companyName)}
+                                  title="Delete drive"
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center text-xs text-slate-400 bg-slate-900 rounded-2xl border border-dashed border-slate-800 space-y-3">
+                      <p>No campus recruitment drives match the filter.</p>
+                      <Button variant="primary" size="sm" icon={Plus} onClick={() => setIsAddDriveModalOpen(true)}>
+                        Schedule First Drive
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* -------------------------------------------------------------
+                  SUBVIEW 2: COMPANY REGISTRATION APPROVALS
+                 ------------------------------------------------------------- */}
+              {jobsCompaniesSubTab === 'company_approvals' && (
+                <div className="space-y-4">
+                  {/* Search and Status Filters */}
+                  <Card className="p-4 space-y-3">
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                      <div className="relative flex-1">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          value={companySearch}
+                          onChange={(e) => setCompanySearch(e.target.value)}
+                          placeholder="Search companies by name, email, or industry..."
+                          className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-850"
+                        />
+                      </div>
+                      <div className="w-full sm:w-52">
+                        <select
+                          value={companyStatusFilter}
+                          onChange={(e) => setCompanyStatusFilter(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850"
+                        >
+                          <option value="all">All Approval Statuses ({companyCounts.total || 0})</option>
+                          <option value="pending">Pending Review ({companyCounts.pending || 0})</option>
+                          <option value="approved">Approved & Active ({companyCounts.approved || 0})</option>
+                          <option value="rejected">Rejected ({companyCounts.rejected || 0})</option>
+                          <option value="suspended">Suspended Accounts</option>
+                        </select>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Company Summary Cards */}
+                  {loadingCompanies ? (
+                    <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl">
+                      <Loader2 className="w-4 h-4 animate-spin text-brand-400" />
+                      <span>Loading registered companies...</span>
+                    </div>
+                  ) : adminCompanies.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {adminCompanies.map((comp) => {
+                        const status = comp.approvalStatus || 'pending';
+                        return (
+                          <Card
+                            key={comp.id || comp.uid}
+                            className="p-5 space-y-4 bg-slate-900/90 border-slate-800 flex flex-col justify-between"
+                          >
+                            <div className="space-y-3">
+                              {/* Header: Company Name & Approval Badge */}
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex items-center space-x-3 min-w-0">
+                                  <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-black text-base shrink-0">
+                                    {comp.companyName ? comp.companyName.charAt(0).toUpperCase() : <Building2 className="w-5 h-5" />}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <h4 className="font-extrabold text-sm text-white truncate">
+                                      {comp.companyName || 'Corporate Partner'}
+                                    </h4>
+                                    <p className="text-xs text-slate-400 truncate">
+                                      {comp.industry || 'Industry unspecified'}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <Badge
+                                  variant={
+                                    status === 'approved'
+                                      ? 'emerald'
+                                      : status === 'rejected'
+                                      ? 'rose'
+                                      : status === 'suspended'
+                                      ? 'rose'
+                                      : 'amber'
+                                  }
+                                  size="sm"
+                                >
+                                  {status === 'approved'
+                                    ? 'Approved'
+                                    : status === 'rejected'
+                                    ? 'Rejected'
+                                    : status === 'suspended'
+                                    ? 'Suspended'
+                                    : 'Pending Review'}
+                                </Badge>
+                              </div>
+
+                              {/* Contact & Registration Meta */}
+                              <div className="grid grid-cols-2 gap-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
+                                <div className="truncate">
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Official Email</span>
+                                  <span className="font-semibold text-slate-200 truncate block">
+                                    {comp.officialEmail || comp.email || 'N/A'}
+                                  </span>
+                                </div>
+                                <div className="truncate">
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Phone / Contact</span>
+                                  <span className="font-semibold text-slate-200 truncate block">
+                                    {comp.phone || comp.contactPerson || 'N/A'}
+                                  </span>
+                                </div>
+                                <div className="truncate">
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Website</span>
+                                  <span className="font-semibold text-brand-400 truncate block">
+                                    {comp.website || 'Not provided'}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Registered</span>
+                                  <span className="font-semibold text-slate-300">
+                                    {comp.createdAt ? new Date(comp.createdAt).toLocaleDateString() : 'Active'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Description Snippet */}
+                              {(comp.companyDescription || comp.description) && (
+                                <p className="text-xs text-slate-400 line-clamp-2">
+                                  {comp.companyDescription || comp.description}
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Card Footer: Submitted Job Roles & VIEW DETAILS Action */}
+                            {/* Requirement: Do not allow direct approval from summary list without reviewing details */}
+                            <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                              <span className="text-slate-400 flex items-center gap-1.5">
+                                <Briefcase className="w-3.5 h-3.5 text-indigo-400" />
+                                <span><strong>{comp.jobCount || 0}</strong> job role{(comp.jobCount || 0) === 1 ? '' : 's'}</span>
+                              </span>
+
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                icon={Eye}
+                                onClick={() => {
+                                  setSelectedCompanyForReview(comp);
+                                  setIsCompanyReviewModalOpen(true);
+                                }}
+                              >
+                                View Details
+                              </Button>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center text-xs text-slate-400 bg-slate-900 rounded-2xl border border-dashed border-slate-800 space-y-3">
+                      <Building2 className="w-8 h-8 mx-auto text-slate-500" />
+                      <p className="font-semibold text-slate-300">No company registrations match the selected filter.</p>
+                      <p className="text-slate-500">Corporate recruiters registering through the portal will appear here for verification.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* -------------------------------------------------------------
+                  SUBVIEW 3: JOB ROLE APPROVALS
+                 ------------------------------------------------------------- */}
+              {jobsCompaniesSubTab === 'job_approvals' && (
+                <div className="space-y-4">
+                  {/* Filters */}
+                  <Card className="p-4 space-y-3">
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                      <div className="relative flex-1">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="text"
+                          value={jobReviewSearch}
+                          onChange={(e) => setJobReviewSearch(e.target.value)}
+                          placeholder="Search job roles by role title, company name, or location..."
+                          className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-850"
+                        />
+                      </div>
+                      <div className="w-full sm:w-52">
+                        <select
+                          value={jobReviewStatusFilter}
+                          onChange={(e) => setJobReviewStatusFilter(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850"
+                        >
+                          <option value="all">All Role Statuses ({jobCounts.total || 0})</option>
+                          <option value="pending">Pending Approval ({jobCounts.pending || 0})</option>
+                          <option value="approved">Approved & Published ({jobCounts.approved || 0})</option>
+                          <option value="rejected">Rejected Roles ({jobCounts.rejected || 0})</option>
+                        </select>
+                      </div>
+                    </div>
+                  </Card>
+
+                  {/* Job Cards */}
+                  {loadingJobs ? (
+                    <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl">
+                      <Loader2 className="w-4 h-4 animate-spin text-brand-400" />
+                      <span>Loading job roles for review...</span>
+                    </div>
+                  ) : adminJobs.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {adminJobs.map((jb) => {
+                        const status = jb.approvalStatus || 'pending';
+                        return (
+                          <Card
+                            key={jb.id}
+                            className="p-5 space-y-4 bg-slate-900/90 border-slate-800 flex flex-col justify-between"
+                          >
+                            <div className="space-y-3">
+                              {/* Header: Role & Status */}
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-xs uppercase font-bold text-slate-400">
+                                      {jb.companyName || 'Corporate Partner'}
+                                    </span>
+                                  </div>
+                                  <h4 className="font-extrabold text-sm text-white mt-0.5">
+                                    {jb.jobRole}
+                                  </h4>
+                                </div>
+
+                                <Badge
+                                  variant={
+                                    status === 'approved'
+                                      ? 'emerald'
+                                      : status === 'rejected'
+                                      ? 'rose'
+                                      : 'amber'
+                                  }
+                                  size="sm"
+                                >
+                                  {status === 'approved'
+                                    ? 'Approved for Students'
+                                    : status === 'rejected'
+                                    ? 'Rejected'
+                                    : 'Pending Review'}
+                                </Badge>
+                              </div>
+
+                              {/* Key Details Grid */}
+                              <div className="grid grid-cols-2 gap-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Package / CTC</span>
+                                  <span className="font-bold text-emerald-400">{jb.packageCTC || 'Negotiable'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Location</span>
+                                  <span className="font-bold text-slate-200">{jb.location || 'Campus / Virtual'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Cutoff CGPA</span>
+                                  <span className="font-bold text-slate-200">{jb.minCgpa || 'None'}</span>
+                                </div>
+                                <div>
+                                  <span className="text-[10px] text-slate-400 block font-bold uppercase">Deadline</span>
+                                  <span className="font-bold text-slate-200">{jb.applicationDeadline || 'Open'}</span>
+                                </div>
+                              </div>
+
+                              {/* Department Badges */}
+                              <div className="flex flex-wrap gap-1 items-center">
+                                <span className="text-[10px] font-bold uppercase text-slate-500 mr-1">Depts:</span>
+                                {(jb.eligibleDepartments || ['All']).slice(0, 3).map((d, i) => (
+                                  <span key={i} className="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-300 border border-slate-700">
+                                    {d}
+                                  </span>
+                                ))}
+                                {(jb.eligibleDepartments || []).length > 3 && (
+                                  <span className="text-[10px] text-slate-500">+{jb.eligibleDepartments.length - 3} more</span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Card Footer: Review Action */}
+                            <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                              <span className="text-slate-400">
+                                {jb.employmentType || 'Full-time'}
+                              </span>
+
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                icon={Eye}
+                                onClick={() => {
+                                  setSelectedJobForReview(jb);
+                                  setIsJobReviewModalOpen(true);
+                                }}
+                              >
+                                Review Role Details
+                              </Button>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center text-xs text-slate-400 bg-slate-900 rounded-2xl border border-dashed border-slate-800 space-y-3">
+                      <Briefcase className="w-8 h-8 mx-auto text-slate-500" />
+                      <p className="font-semibold text-slate-300">No job roles match the selected filter.</p>
+                      <p className="text-slate-500">Recruiters submitting new campus job openings will appear here for placement approval.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB 7: APPLICATIONS & RECRUITMENT TRACKING
              ========================================================================= */}
           {activeTab === 'applications' && (
             <div className="space-y-5 animate-fade-in">
@@ -2186,55 +3543,7 @@ export const AdminDashboard = () => {
           )}
 
           {/* =========================================================================
-              TAB 9: NOTIFICATIONS & ACTIVITY LOG
-             ========================================================================= */}
-          {activeTab === 'activity' && (
-            <div className="space-y-5 animate-fade-in">
-              <PageHeader
-                breadcrumb={['Admin Portal', 'Activity Log']}
-                title="Campus Placement Activity Log"
-                subtitle="Complete audit timeline of student applications, recruitment drives, and officer administrative actions."
-              />
-
-              <Card className="p-5 space-y-4">
-                <div className="space-y-3">
-                  {recentActivities.map((act) => {
-                    const IconComp = act.icon || Activity;
-                    return (
-                      <div key={act.id} className="p-4 rounded-xl bg-slate-850/80 border border-slate-800 flex items-start space-x-3.5 text-xs">
-                        <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-brand-400 flex-shrink-0 mt-0.5">
-                          <IconComp className="w-4.5 h-4.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="font-extrabold text-white text-sm">{act.title}</span>
-                            <span className="text-[10px] text-slate-500">
-                              {new Date(act.timestamp).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-                            </span>
-                          </div>
-                          <p className="text-slate-300 mt-0.5 text-xs">{act.subtitle}</p>
-                          <div className="mt-1 flex items-center space-x-2 text-[10px] text-slate-500">
-                            <span className="capitalize font-bold text-slate-400">{act.type} event</span>
-                            <span>•</span>
-                            <span>Verified record</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {recentActivities.length === 0 && (
-                    <div className="text-center py-12 text-slate-400 text-xs italic">
-                      No activity events recorded in the system yet.
-                    </div>
-                  )}
-                </div>
-              </Card>
-            </div>
-          )}
-
-          {/* =========================================================================
-              TAB 10: SYSTEM SETTINGS & ACCESS DIAGNOSTICS
+              TAB 8: SYSTEM SETTINGS & ACCESS DIAGNOSTICS
              ========================================================================= */}
           {activeTab === 'settings' && (
             <div className="space-y-5 animate-fade-in">
@@ -2391,6 +3700,30 @@ export const AdminDashboard = () => {
           setIsStudentModalOpen(false);
           setSelectedStudent(null);
         }}
+      />
+
+      <AdminCompanyReviewModal
+        company={selectedCompanyForReview}
+        isOpen={isCompanyReviewModalOpen}
+        onClose={() => {
+          setIsCompanyReviewModalOpen(false);
+          setSelectedCompanyForReview(null);
+        }}
+        onReviewSubmit={handleReviewCompanySubmit}
+        onOpenJobRoleReview={(job) => {
+          setSelectedJobForReview(job);
+          setIsJobReviewModalOpen(true);
+        }}
+      />
+
+      <AdminJobRoleReviewModal
+        job={selectedJobForReview}
+        isOpen={isJobReviewModalOpen}
+        onClose={() => {
+          setIsJobReviewModalOpen(false);
+          setSelectedJobForReview(null);
+        }}
+        onReviewSubmit={handleReviewJobSubmit}
       />
 
     </div>

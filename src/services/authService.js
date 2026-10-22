@@ -114,7 +114,18 @@ import { validateEmailClient } from './emailVerificationService.js';
  * - Email MUST be strictly validated before creating any user.
  * - Persists authoritatively to both Firestore and Backend.
  */
-export async function registerUser({ role, name, companyName, email, password }) {
+export async function registerUser({
+  role,
+  name,
+  companyName,
+  email,
+  password,
+  website,
+  industry,
+  description,
+  phone,
+  contactPerson
+}) {
   if (role === 'admin') {
     throw new Error('Admin accounts cannot be self-registered. Please contact the Placement Office.');
   }
@@ -163,7 +174,12 @@ export async function registerUser({ role, name, companyName, email, password })
     role: normalizedRole,
     email: cleanEmail,
     displayName,
-    companyName: normalizedRole === 'company' ? companyName : null
+    companyName: normalizedRole === 'company' ? companyName : null,
+    website: website || '',
+    industry: industry || 'Technology & Engineering',
+    description: description || '',
+    phone: phone || '',
+    contactPerson: contactPerson || displayName
   });
 
   return { user, role: normalizedRole };

@@ -18,6 +18,7 @@ import studentRoutes from './routes/studentRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
+import companyRoutes from './routes/companyRoutes.js';
 
 const app = express();
 const PORT = process.env.TEST_PORT || process.env.PORT || 5000;
@@ -54,6 +55,7 @@ app.use('/api/communication', communicationRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/company', companyRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api', applicationRoutes);
 

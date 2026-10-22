@@ -343,8 +343,13 @@ export const TechnicalAssessmentModal = ({
                 ) : (
                   <CodingQuestionView
                     question={currentQuestion}
+                    assessmentId={session?.assessmentId}
                     onSubmit={handleAnswerSubmit}
                     onNext={handleNextQuestion}
+                    onRetry={() => {
+                      setIsSubmitted(false);
+                      setSubmittedResult(null);
+                    }}
                     isSubmitted={isSubmitted}
                     submittedResult={submittedResult}
                     isGeneratingNext={isGeneratingNext}

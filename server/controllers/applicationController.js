@@ -9,6 +9,8 @@ import {
   markNotificationRead,
   markAllNotificationsRead,
   getAllPlacementDrives,
+  getPlacementDriveById,
+  getCompanyRecord,
   getStudentProfile,
   verifyAuthToken
 } from '../config/firebaseAdmin.js';
@@ -30,10 +32,14 @@ export async function applyToJob(req, res) {
     }
 
     // 1. Fetch recruitment drive
-    const drives = await getAllPlacementDrives();
-    const drive = drives.find(d => d.id === jobId);
+    const drive = await getPlacementDriveById(jobId);
     if (!drive) {
       return res.status(404).json({ error: 'Recruitment drive not found.' });
+    }
+
+    // Validate approval status
+    if (drive.approvalStatus !== 'approved' || drive.companyApprovalStatus === 'rejected') {
+      return res.status(400).json({ error: 'This job opportunity is not currently approved for student applications.' });
     }
 
     // Validate drive status
@@ -440,6 +446,27 @@ export async function getJobCandidates(req, res) {
     }
 
     const { jobId } = req.params;
+
+    // Strict security check for recruiters: must be approved and must own the job
+    if (user.role === 'company') {
+      const company = await getCompanyRecord(user.uid, user.email);
+      if (!company || company.approvalStatus !== 'approved') {
+        return res.status(403).json({ error: 'Access denied: Company account is pending administrative approval.' });
+      }
+
+      const drive = await getPlacementDriveById(jobId);
+      if (!drive) {
+        return res.status(404).json({ error: 'Recruitment drive not found.' });
+      }
+
+      const isOwner = drive.companyId === user.uid ||
+        (drive.companyName && company.companyName && drive.companyName.toLowerCase().trim() === company.companyName.toLowerCase().trim());
+
+      if (!isOwner) {
+        return res.status(403).json({ error: 'Access denied: You are not authorized to view candidates for another company\'s job.' });
+      }
+    }
+
     const candidates = await getApplicationsForJob(jobId);
 
     return res.status(200).json({
@@ -497,6 +524,23 @@ export async function updateCandidateStatus(req, res) {
     const application = await getApplicationById(id);
     if (!application) {
       return res.status(404).json({ error: 'Candidate application not found.' });
+    }
+
+    // Strict security check for recruiters: must be approved and must own the job
+    if (user.role === 'company') {
+      const company = await getCompanyRecord(user.uid, user.email);
+      if (!company || company.approvalStatus !== 'approved') {
+        return res.status(403).json({ error: 'Access denied: Company account is pending administrative approval.' });
+      }
+
+      const drive = await getPlacementDriveById(application.jobId);
+      const isOwner = (application.companyId && application.companyId === user.uid) ||
+        (drive && drive.companyId === user.uid) ||
+        (application.companyName && company.companyName && application.companyName.toLowerCase().trim() === company.companyName.toLowerCase().trim());
+
+      if (!isOwner) {
+        return res.status(403).json({ error: 'Access denied: You are not authorized to manage candidates for another company\'s job.' });
+      }
     }
 
     const updated = await saveApplication({

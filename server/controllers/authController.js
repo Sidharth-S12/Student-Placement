@@ -1,4 +1,4 @@
-import { getUserRole, getUserRecord, setUserRole } from '../config/firebaseAdmin.js';
+import { getUserRole, getUserRecord, setUserRole, saveCompanyProfile, getCompanyRecord } from '../config/firebaseAdmin.js';
 import {
   validateEmail,
   sendVerificationCode as sendCodeService,
@@ -7,7 +7,7 @@ import {
 
 /**
  * GET /api/auth/role/:uid
- * Returns verified role for a user UID or email.
+ * Returns verified role and company approval status for a user UID or email.
  */
 export async function getRole(req, res) {
   try {
@@ -21,12 +21,19 @@ export async function getRole(req, res) {
       return res.status(404).json({ error: 'Role not found for specified user.' });
     }
 
+    let companyProfile = null;
+    if (role === 'company') {
+      companyProfile = await getCompanyRecord(uid, email);
+    }
+
     return res.status(200).json({
       uid: record?.uid || uid,
       email: record?.email || email || null,
       role,
       displayName: record?.displayName || null,
-      companyName: record?.companyName || null
+      companyName: record?.companyName || companyProfile?.companyName || null,
+      approvalStatus: companyProfile?.approvalStatus || record?.approvalStatus || (role === 'company' ? 'pending' : null),
+      companyProfile: companyProfile || null
     });
   } catch (err) {
     console.error('[AuthController:getRole] Error:', err);
@@ -39,10 +46,22 @@ export async function getRole(req, res) {
  * Synchronizes user role during registration.
  * Allows ONLY 'student' or 'company' from frontend.
  * Admin role is strictly forbidden through this endpoint.
+ * Newly registering companies start with approvalStatus: 'pending' by default.
  */
 export async function syncRole(req, res) {
   try {
-    const { uid, email, role, displayName, companyName } = req.body;
+    const {
+      uid,
+      email,
+      role,
+      displayName,
+      companyName,
+      website,
+      industry,
+      description,
+      phone,
+      contactPerson
+    } = req.body;
 
     if (!uid) {
       return res.status(400).json({ error: 'User UID is required for role synchronization.' });
@@ -60,19 +79,38 @@ export async function syncRole(req, res) {
         error: 'Student accounts must register with a valid @gmail.com email address.'
       });
     }
+
     const updated = await setUserRole(uid, {
       role,
       email: cleanEmail,
       displayName,
-      companyName: role === 'company' ? companyName : null
+      companyName: role === 'company' ? companyName : null,
+      approvalStatus: role === 'company' ? 'pending' : null
     });
 
-    console.log(`[AuthController:syncRole] Synchronized role="${role}" for UID="${uid}" (${cleanEmail})`);
+    // If company, initialize company profile with pending status
+    if (role === 'company') {
+      await saveCompanyProfile(uid, {
+        companyName: companyName || displayName || 'Corporate Recruiter',
+        officialEmail: cleanEmail,
+        website: website || '',
+        industry: industry || 'Technology & Engineering',
+        description: description || 'Campus recruitment partner.',
+        contactPerson: contactPerson || displayName || 'Campus Recruiter',
+        phone: phone || '',
+        approvalStatus: 'pending' // Enforce pending status!
+      }, { isReview: false });
+    }
+
+    console.log(`[AuthController:syncRole] Synchronized role="${role}" for UID="${uid}" (${cleanEmail}) - Approval: ${role === 'company' ? 'pending' : 'N/A'}`);
 
     return res.status(200).json({
       success: true,
       message: `Role ${role} synchronized successfully.`,
-      user: updated
+      user: {
+        ...updated,
+        approvalStatus: role === 'company' ? 'pending' : null
+      }
     });
   } catch (err) {
     console.error('[AuthController:syncRole] Error:', err);

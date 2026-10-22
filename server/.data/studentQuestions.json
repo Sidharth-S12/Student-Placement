@@ -294,5 +294,163 @@
       "questionText": "Which of the following built-in data types in Python is immutable?",
       "recordedAt": "2026-10-19T11:13:29.119Z"
     }
+  ],
+  "Q6KNHVdMnGOUFbcScmxX872rV8c2": [
+    {
+      "id": "tech-q-1792660478141-rj0r5",
+      "skill": "Python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-22T09:14:38.149Z"
+    },
+    {
+      "id": "tech-q-1792660676365-synwd",
+      "skill": "Java",
+      "topic": "Core OOP & Inheritance",
+      "difficulty": "EASY",
+      "questionText": "Which Java keyword prevents a class from being subclassed and a method from being overridden?",
+      "recordedAt": "2026-10-22T09:17:56.370Z"
+    },
+    {
+      "id": "tech-q-1792660690789-ys5kk",
+      "skill": "JavaScript",
+      "topic": "Closures & Scope",
+      "difficulty": "EASY",
+      "questionText": "What is a closure in JavaScript?",
+      "recordedAt": "2026-10-22T09:18:10.796Z"
+    },
+    {
+      "id": "tech-q-1792660701641-u5l7u",
+      "skill": "SQL",
+      "topic": "Joins & Queries",
+      "difficulty": "EASY",
+      "questionText": "Which SQL JOIN returns all rows from the left table, and matched rows from the right table, filling nulls if no match exists?",
+      "recordedAt": "2026-10-22T09:18:21.647Z"
+    },
+    {
+      "id": "tech-q-1792660727539-aetke",
+      "skill": "MySQL",
+      "topic": "Event Loop & Concurrency",
+      "difficulty": "EASY",
+      "questionText": "Which component in the JavaScript/Node.js runtime is responsible for scheduling asynchronous callbacks and microtasks?",
+      "recordedAt": "2026-10-22T09:18:47.545Z"
+    },
+    {
+      "id": "tech-q-1792660780295-0yw18",
+      "skill": "MongoDB",
+      "topic": "Array Methods",
+      "difficulty": "MEDIUM",
+      "questionText": "Write a JavaScript function `findDuplicates(arr)` that returns an array of elements that appear more than once in the input array.",
+      "recordedAt": "2026-10-22T09:19:40.299Z"
+    },
+    {
+      "id": "tech-q-1792660804619-9nmw4",
+      "skill": "Git",
+      "topic": "Promises & Async/Await",
+      "difficulty": "MEDIUM",
+      "questionText": "What will Promise.all() do if one of the passed promises is rejected?",
+      "recordedAt": "2026-10-22T09:20:04.622Z"
+    },
+    {
+      "id": "tech-q-1792660814761-ep1q6",
+      "skill": "GitHub",
+      "topic": "Prototypes & Memory",
+      "difficulty": "HARD",
+      "questionText": "How does property lookup behave on JavaScript prototype chains when a property is not found on the instance?",
+      "recordedAt": "2026-10-22T09:20:14.765Z"
+    },
+    {
+      "id": "tech-q-1792660858432-irzxm",
+      "skill": "Python",
+      "topic": "Generators & Memory",
+      "difficulty": "MEDIUM",
+      "questionText": "What distinguishes a Python generator function using `yield` from a standard function using `return`?",
+      "recordedAt": "2026-10-22T09:20:58.437Z"
+    },
+    {
+      "id": "tech-q-1792660877296-qtv7f",
+      "skill": "Java",
+      "topic": "Memory Management",
+      "difficulty": "MEDIUM",
+      "questionText": "Where are Java object instances allocated during runtime execution?",
+      "recordedAt": "2026-10-22T09:21:17.299Z"
+    },
+    {
+      "id": "tech-q-1792660893218-axihf",
+      "skill": "SQL",
+      "topic": "Aggregation & Filtering",
+      "difficulty": "MEDIUM",
+      "questionText": "What is the key difference between the WHERE and HAVING clauses in SQL?",
+      "recordedAt": "2026-10-22T09:21:33.225Z"
+    },
+    {
+      "id": "tech-q-1792662418214-gqjdo",
+      "skill": "Python",
+      "topic": "Data Types & Mutability",
+      "difficulty": "EASY",
+      "questionText": "Which of the following built-in data types in Python is immutable?",
+      "recordedAt": "2026-10-22T09:46:58.218Z"
+    },
+    {
+      "id": "tech-q-1792662477191-uo21k",
+      "skill": "Java",
+      "topic": "Generics & Type Erasure",
+      "difficulty": "HARD",
+      "questionText": "What is Type Erasure in Java?",
+      "recordedAt": "2026-10-22T09:47:57.196Z"
+    },
+    {
+      "id": "tech-q-1792666357688-6bxgm",
+      "skill": "Python",
+      "topic": "String Manipulation",
+      "difficulty": "MEDIUM",
+      "questionText": "Write a Python function `is_palindrome(s)` that returns True if the alphanumeric characters in string `s` form a palindrome (ignoring casing).",
+      "recordedAt": "2026-10-22T10:52:37.692Z"
+    },
+    {
+      "id": "tech-q-1792667408195-rmk0n",
+      "skill": "Python",
+      "topic": "GIL & Multithreading",
+      "difficulty": "HARD",
+      "questionText": "Why does CPython’s Global Interpreter Lock (GIL) prevent true parallel CPU-bound execution across multiple OS threads?",
+      "recordedAt": "2026-10-22T11:10:08.198Z"
+    },
+    {
+      "id": "tech-q-1792668139615-sbj63",
+      "skill": "SQL",
+      "topic": "Indexing & Transactions",
+      "difficulty": "HARD",
+      "questionText": "What does the \"I\" in ACID database transactions represent, and what does it ensure?",
+      "recordedAt": "2026-10-22T11:22:19.621Z"
+    }
+  ],
+  "test_student": [
+    {
+      "id": "tech-q-1792669143778-kywhq",
+      "skill": "Python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-22T11:39:03.782Z"
+    }
+  ],
+  "test_student_pal": [
+    {
+      "id": "tech-q-1792669164058-teo22",
+      "skill": "Python",
+      "topic": "Data Types & Mutability",
+      "difficulty": "EASY",
+      "questionText": "Which of the following built-in data types in Python is immutable?",
+      "recordedAt": "2026-10-22T11:39:24.061Z"
+    },
+    {
+      "id": "tech-q-1792669165523-kvq4j",
+      "skill": "Python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-22T11:39:25.525Z"
+    }
   ]
 }

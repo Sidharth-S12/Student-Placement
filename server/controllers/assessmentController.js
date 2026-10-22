@@ -2,6 +2,7 @@ import { generateQuestionFromGroq } from '../services/groqQuestionService.js';
 import { predictDifficulty, DIFFICULTY_LEVELS } from '../services/mlDifficultyService.js';
 import {
   evaluateAnswer,
+  evaluateCodingTestCases,
   computeTechnicalScore,
   compileFinalInsights
 } from '../services/assessmentEvaluationService.js';
@@ -71,7 +72,8 @@ function sanitizeQuestionForClient(question, questionIndex, totalQuestions = 15)
     starterCode: question.starterCode || null,
     testCases: question.testCases ? question.testCases.map(tc => ({
       description: tc.description,
-      input: tc.input
+      input: tc.input,
+      expectedOutput: tc.expectedOutput
     })) : null,
     questionIndex,
     totalQuestions
@@ -205,12 +207,29 @@ export async function submitAnswer(req, res) {
     // 1. Server-side validation
     const { isCorrect, evalDetails } = evaluateAnswer(currentQuestion, studentAnswer);
 
+    // Check if the current question was already submitted in this session (retry/update)
+    const existingIndex = session.results.findIndex(r => r.question?.id === currentQuestion.id);
+    const isRetry = existingIndex !== -1;
+
     // 2. Update session counters
-    session.attemptedQuestions += 1;
-    if (isCorrect) {
-      session.correctAnswers += 1;
+    if (!isRetry) {
+      session.attemptedQuestions += 1;
+      if (isCorrect) {
+        session.correctAnswers += 1;
+      } else {
+        session.incorrectAnswers += 1;
+      }
     } else {
-      session.incorrectAnswers += 1;
+      const prevResult = session.results[existingIndex];
+      if (prevResult.isCorrect !== isCorrect) {
+        if (isCorrect) {
+          session.correctAnswers += 1;
+          session.incorrectAnswers = Math.max(0, session.incorrectAnswers - 1);
+        } else {
+          session.correctAnswers = Math.max(0, session.correctAnswers - 1);
+          session.incorrectAnswers += 1;
+        }
+      }
     }
 
     session.technicalScore = computeTechnicalScore(session.correctAnswers, session.attemptedQuestions);
@@ -228,16 +247,27 @@ export async function submitAnswer(req, res) {
       history: []
     };
 
-    skillState.questionsAttempted += 1;
-    if (isCorrect) {
-      skillState.correctAnswers += 1;
-      skillState.consecutiveCorrect += 1;
-      skillState.consecutiveIncorrect = 0;
+    if (!isRetry) {
+      skillState.questionsAttempted += 1;
+      if (isCorrect) {
+        skillState.correctAnswers += 1;
+        skillState.consecutiveCorrect += 1;
+        skillState.consecutiveIncorrect = 0;
+      } else {
+        skillState.consecutiveIncorrect += 1;
+        skillState.consecutiveCorrect = 0;
+      }
     } else {
-      skillState.consecutiveIncorrect += 1;
-      skillState.consecutiveCorrect = 0;
+      const prevResult = session.results[existingIndex];
+      if (prevResult.isCorrect !== isCorrect) {
+        if (isCorrect) {
+          skillState.correctAnswers += 1;
+        } else {
+          skillState.correctAnswers = Math.max(0, skillState.correctAnswers - 1);
+        }
+      }
     }
-    skillState.score = Math.round((skillState.correctAnswers / skillState.questionsAttempted) * 100);
+    skillState.score = Math.round((skillState.correctAnswers / (skillState.questionsAttempted || 1)) * 100);
 
     // Record question in session history (temporary for this assessment to prevent Groq repeats)
     const historyItem = {
@@ -251,8 +281,13 @@ export async function submitAnswer(req, res) {
       isCorrect,
       timestamp: new Date().toISOString()
     };
-    session.questionHistory.push(historyItem);
-    skillState.history.push(historyItem);
+    if (!isRetry) {
+      session.questionHistory.push(historyItem);
+      skillState.history.push(historyItem);
+    } else {
+      session.questionHistory[session.questionHistory.length - 1] = historyItem;
+      skillState.history[skillState.history.length - 1] = historyItem;
+    }
 
     // 4. ML Adaptive Difficulty Prediction
     const recentWindow = session.questionHistory.slice(-4);
@@ -279,7 +314,7 @@ export async function submitAnswer(req, res) {
     session.skillStates[skill] = skillState;
 
     // Record result details
-    session.results.push({
+    const resultItem = {
       question: currentQuestion,
       isCorrect,
       studentAnswer,
@@ -289,7 +324,13 @@ export async function submitAnswer(req, res) {
       difficulty: currentQuestion.difficulty,
       nextPredictedDifficulty: mlPrediction.difficulty,
       mlModelType: mlPrediction.modelType
-    });
+    };
+
+    if (isRetry) {
+      session.results[existingIndex] = resultItem;
+    } else {
+      session.results.push(resultItem);
+    }
 
     // Format human-readable yourAnswer and correctAnswer
     let formattedYourAnswer = '';
@@ -590,3 +631,36 @@ export async function generateQuestion(req, res) {
     });
   }
 }
+
+/**
+ * POST /api/technical-assessment/run-code
+ * Runs user code against test cases using Python or JavaScript runtime and returns results.
+ */
+export async function runCode(req, res) {
+  try {
+    const { assessmentId, code, testCases, skill } = req.body;
+    if (!code || typeof code !== 'string') {
+      return res.status(400).json({ error: 'No code submitted.' });
+    }
+
+    let actualTestCases = testCases || [];
+    let effectiveSkill = skill || '';
+
+    if (assessmentId) {
+      const session = activeSessions.get(assessmentId);
+      if (session && session.currentQuestion) {
+        if (session.currentQuestion.testCases && session.currentQuestion.testCases.length > 0) {
+          actualTestCases = session.currentQuestion.testCases;
+        }
+        effectiveSkill = effectiveSkill || session.currentQuestion.skill || '';
+      }
+    }
+
+    const evalDetails = evaluateCodingTestCases(code, actualTestCases, effectiveSkill);
+    return res.status(200).json(evalDetails);
+  } catch (err) {
+    console.error('[AssessmentController:runCode]', err);
+    return res.status(500).json({ error: err.message || 'Execution error.' });
+  }
+}
+

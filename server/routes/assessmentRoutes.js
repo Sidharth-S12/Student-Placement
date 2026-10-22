@@ -5,7 +5,8 @@ import {
   getNextQuestion,
   getLatestAssessment,
   getAssessmentById,
-  generateQuestion
+  generateQuestion,
+  runCode
 } from '../controllers/assessmentController.js';
 
 const router = Router();
@@ -13,6 +14,7 @@ const router = Router();
 // Assessment Session Management
 router.post('/start', startAssessment);
 router.post('/answer', submitAnswer);
+router.post('/run-code', runCode);
 router.post('/next-question', getNextQuestion);
 router.post('/generate-question', generateQuestion);
 

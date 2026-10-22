@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { fetchAllStudents } from '../../services/studentProfileService';
-import { fetchDrives } from '../../services/adminService';
 import { generateATSResumePDF } from '../../utils/generateATSResumePDF';
+import {
+  fetchCompanyOverview,
+  fetchCompanyDrives,
+  fetchCompanyProfile,
+  toggleJobCandidateShortlist
+} from '../../services/companyService';
 import {
   getRecruiterShortlist,
   saveRecruiterShortlist,
@@ -12,43 +16,34 @@ import {
 import { CompanySidebar } from './CompanySidebar';
 import { CompanyTopNav } from './CompanyTopNav';
 import { CompanyOverviewView } from './CompanyOverviewView';
-import { CompanyTalentDiscoveryView } from './CompanyTalentDiscoveryView';
+import { CompanyJobCandidatesView } from './CompanyJobCandidatesView';
 import { CompanyShortlistView } from './CompanyShortlistView';
 import { CompanyDrivesView } from './CompanyDrivesView';
 import { CompanyProfileView } from './CompanyProfileView';
 import { CompanyStudentDetailModal } from './CompanyStudentDetailModal';
 import { CompanyPostDriveModal } from './CompanyPostDriveModal';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Loader2 } from 'lucide-react';
 
-export const CompanyDashboard = () => {
+export const CompanyDashboard = ({ companyProfile: initialProfile = null }) => {
   const { currentUser, logout } = useAuth();
 
-  // Navigation state
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'candidates' | 'shortlist' | 'drives' | 'profile'
+  // Navigation state: 'overview' | 'candidates' | 'shortlist' | 'drives' | 'profile'
+  const [activeTab, setActiveTab] = useState('overview');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Search & filter state (Talent Discovery)
-  const [skillQuery, setSkillQuery] = useState('');
-  const [departmentFilter, setDepartmentFilter] = useState('all');
-  const [minReadiness, setMinReadiness] = useState(0);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
+  // Selected drive ID for candidate drill-down
+  const [selectedDriveId, setSelectedDriveId] = useState(null);
 
-  // Candidates & departments data
-  const [students, setStudents] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  // Company data
+  const [profile, setProfile] = useState(initialProfile || {});
+  const [overviewData, setOverviewData] = useState(null);
+  const [drives, setDrives] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Recruitment drives data
-  const [drives, setDrives] = useState([]);
-  const [loadingDrives, setLoadingDrives] = useState(false);
-
-  // Recruiter shortlist & company profile
+  // Recruiter shortlist
   const [shortlist, setShortlist] = useState(() =>
     getRecruiterShortlist(currentUser?.uid)
-  );
-  const [profile, setProfile] = useState(() =>
-    getRecruiterProfile(currentUser?.uid, currentUser)
   );
 
   // Modals state
@@ -64,59 +59,67 @@ export const CompanyDashboard = () => {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // 1. Fetch Students
-  const loadCandidates = async () => {
+  // Primary Data Fetcher: Loads isolated, company-scoped data only
+  const loadDashboardData = async () => {
     setLoading(true);
     try {
-      const data = await fetchAllStudents({
-        skill: skillQuery,
-        department: departmentFilter
-      });
-      setStudents(data.students || []);
-      if (data.departments && data.departments.length > 0) {
-        setDepartments(data.departments);
+      const [overview, driveList, prof] = await Promise.all([
+        fetchCompanyOverview(),
+        fetchCompanyDrives(),
+        initialProfile ? Promise.resolve(initialProfile) : fetchCompanyProfile()
+      ]);
+
+      if (overview) {
+        setOverviewData(overview);
+        if (overview.company) {
+          setProfile(overview.company);
+        }
+      }
+      if (driveList) {
+        setDrives(driveList);
+        if (!selectedDriveId && driveList.length > 0) {
+          setSelectedDriveId(driveList[0].id);
+        }
+      }
+      if (prof && !overview?.company) {
+        setProfile(prof);
       }
     } catch (err) {
-      console.error('Failed to load students for recruiter:', err);
+      console.error('[CompanyDashboard] Failed to load dashboard data:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // 2. Fetch Drives
-  const loadDrives = async () => {
-    setLoadingDrives(true);
-    try {
-      const list = await fetchDrives();
-      setDrives(list || []);
-    } catch (err) {
-      console.error('Failed to load drives for recruiter:', err);
-    } finally {
-      setLoadingDrives(false);
-    }
-  };
-
   useEffect(() => {
-    loadCandidates();
-  }, [skillQuery, departmentFilter]);
+    loadDashboardData();
+  }, [currentUser]);
 
-  useEffect(() => {
-    loadDrives();
-  }, []);
-
-  // Sync shortlist changes with persistent local storage
-  const handleToggleShortlist = (student) => {
+  // Shortlist Handlers
+  // Shortlist Handlers: toggles shortlist status, preventing duplicates and syncing with backend
+  const handleToggleShortlist = async (student, drive = null) => {
     if (!student || !student.uid) return;
-    const exists = shortlist.some((item) => item.uid === student.uid);
+    const studentUid = student.uid;
+    const driveId = drive?.id || null;
+
+    const exists = shortlist.some((item) =>
+      item.uid === studentUid && (!driveId || !item.jobId || item.jobId === driveId)
+    );
 
     let updated = [];
+    const studentName = student.personalInfo?.fullName || student.fullName || 'Candidate';
+
     if (exists) {
-      updated = shortlist.filter((item) => item.uid !== student.uid);
-      showToast(`Removed ${student.personalInfo?.fullName || 'Candidate'} from shortlist.`);
+      updated = shortlist.filter((item) =>
+        !(item.uid === studentUid && (!driveId || !item.jobId || item.jobId === driveId))
+      );
+      showToast(`Removed ${studentName} from shortlist.`);
     } else {
       updated = [
         {
-          uid: student.uid,
+          uid: studentUid,
+          jobId: driveId,
+          jobRole: drive?.jobRole || null,
           student,
           shortlistedAt: new Date().toISOString(),
           stage: 'Shortlisted',
@@ -124,11 +127,20 @@ export const CompanyDashboard = () => {
         },
         ...shortlist
       ];
-      showToast(`Shortlisted ${student.personalInfo?.fullName || 'Candidate'} successfully!`);
+      showToast(`Shortlisted ${studentName} successfully!`);
     }
 
     setShortlist(updated);
     saveRecruiterShortlist(currentUser?.uid, updated);
+
+    // Persist to backend if drive context is available
+    if (driveId) {
+      try {
+        await toggleJobCandidateShortlist(driveId, studentUid);
+      } catch (err) {
+        console.warn('[CompanyDashboard] Backend shortlist sync error (continuing with local state):', err.message);
+      }
+    }
   };
 
   const handleUpdateShortlistStage = (studentUid, newStage) => {
@@ -162,8 +174,8 @@ export const CompanyDashboard = () => {
   };
 
   const handleDriveSaved = (newDrive) => {
-    setDrives((prev) => [newDrive, ...prev.filter((d) => d.id !== newDrive.id)]);
-    showToast(`Recruitment drive "${newDrive.companyName} - ${newDrive.jobRole}" posted.`);
+    loadDashboardData();
+    showToast(`Recruitment drive "${newDrive.companyName || ''} - ${newDrive.jobRole}" submitted for review.`);
   };
 
   const handleDownloadResume = (e, student) => {
@@ -188,12 +200,6 @@ export const CompanyDashboard = () => {
     }
   };
 
-  // Filter students based on min readiness if specified
-  const filteredCandidates = students.filter((s) => {
-    const r = s.placementScores?.overallReadiness || 0;
-    return r >= minReadiness;
-  });
-
   const companyDisplayName =
     profile.companyName || currentUser?.displayName || 'Campus Recruiter';
   const recruiterDisplayEmail =
@@ -202,6 +208,11 @@ export const CompanyDashboard = () => {
   const isCurrentCandidateShortlisted = selectedCandidate
     ? shortlist.some((item) => item.uid === selectedCandidate.uid)
     : false;
+
+  const totalCandidatesMetric =
+    overviewData?.stats?.totalEligibleCandidates ||
+    overviewData?.stats?.totalApplications ||
+    0;
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 antialiased flex selection:bg-brand-500 selection:text-white">
@@ -216,7 +227,7 @@ export const CompanyDashboard = () => {
         companyName={companyDisplayName}
         recruiterEmail={recruiterDisplayEmail}
         shortlistCount={shortlist.length}
-        candidatesCount={students.length}
+        candidatesCount={totalCandidatesMetric}
         drivesCount={drives.length}
         onOpenPostDrive={() => setIsPostDriveModalOpen(true)}
         onSignOut={logout}
@@ -237,75 +248,88 @@ export const CompanyDashboard = () => {
 
         {/* Page Content */}
         <main className="max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex-1">
-          {activeTab === 'overview' && (
-            <CompanyOverviewView
-              companyName={companyDisplayName}
-              students={students}
-              drives={drives}
-              shortlist={shortlist}
-              onNavigate={(tab) => setActiveTab(tab)}
-              onOpenPostDrive={() => setIsPostDriveModalOpen(true)}
-              onSelectCandidate={(cand) => {
-                setSelectedCandidate(cand);
-                setIsCandidateModalOpen(true);
-              }}
-              onToggleShortlist={handleToggleShortlist}
-              onDownloadResume={handleDownloadResume}
-            />
-          )}
+          {loading && !overviewData ? (
+            <div className="p-20 text-center text-xs text-slate-400 flex flex-col items-center justify-center space-y-3">
+              <Loader2 className="w-8 h-8 animate-spin text-brand-400" />
+              <p className="font-semibold text-slate-200">Loading authorized recruiter portal...</p>
+            </div>
+          ) : (
+            <>
+              {activeTab === 'overview' && (
+                <CompanyOverviewView
+                  companyProfile={profile}
+                  overviewData={overviewData}
+                  drives={drives}
+                  shortlist={shortlist}
+                  onNavigate={(tab) => setActiveTab(tab)}
+                  onOpenPostDrive={() => setIsPostDriveModalOpen(true)}
+                  onSelectCandidate={(cand) => {
+                    setSelectedCandidate(cand);
+                    setIsCandidateModalOpen(true);
+                  }}
+                  onToggleShortlist={handleToggleShortlist}
+                  onDownloadResume={handleDownloadResume}
+                />
+              )}
 
-          {activeTab === 'candidates' && (
-            <CompanyTalentDiscoveryView
-              skillQuery={skillQuery}
-              setSkillQuery={setSkillQuery}
-              departmentFilter={departmentFilter}
-              setDepartmentFilter={setDepartmentFilter}
-              minReadiness={minReadiness}
-              setMinReadiness={setMinReadiness}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              departments={departments}
-              filteredCandidates={filteredCandidates}
-              loading={loading}
-              shortlist={shortlist}
-              onToggleShortlist={handleToggleShortlist}
-              onSelectCandidate={(cand) => {
-                setSelectedCandidate(cand);
-                setIsCandidateModalOpen(true);
-              }}
-              onDownloadResume={handleDownloadResume}
-            />
-          )}
+              {activeTab === 'candidates' && (
+                <CompanyJobCandidatesView
+                  drives={drives}
+                  initialDriveId={selectedDriveId}
+                  companyProfile={profile}
+                  shortlist={shortlist}
+                  onToggleShortlist={handleToggleShortlist}
+                  onSelectCandidate={(cand) => {
+                    setSelectedCandidate(cand);
+                    setIsCandidateModalOpen(true);
+                  }}
+                  onDownloadResume={handleDownloadResume}
+                  onNavigate={(tab) => setActiveTab(tab)}
+                  onOpenPostDrive={() => setIsPostDriveModalOpen(true)}
+                  showToast={showToast}
+                />
+              )}
 
-          {activeTab === 'shortlist' && (
-            <CompanyShortlistView
-              shortlist={shortlist}
-              onUpdateStage={handleUpdateShortlistStage}
-              onUpdateNotes={handleUpdateShortlistNotes}
-              onRemoveFromShortlist={handleRemoveFromShortlist}
-              onSelectCandidate={(cand) => {
-                setSelectedCandidate(cand);
-                setIsCandidateModalOpen(true);
-              }}
-              onDownloadResume={handleDownloadResume}
-              onNavigate={(tab) => setActiveTab(tab)}
-            />
-          )}
+              {activeTab === 'shortlist' && (
+                <CompanyShortlistView
+                  shortlist={shortlist}
+                  onUpdateStage={handleUpdateShortlistStage}
+                  onUpdateNotes={handleUpdateShortlistNotes}
+                  onRemoveFromShortlist={handleRemoveFromShortlist}
+                  onSelectCandidate={(cand) => {
+                    setSelectedCandidate(cand);
+                    setIsCandidateModalOpen(true);
+                  }}
+                  onDownloadResume={handleDownloadResume}
+                  onNavigate={(tab) => setActiveTab(tab)}
+                />
+              )}
 
-          {activeTab === 'drives' && (
-            <CompanyDrivesView
-              drives={drives}
-              companyName={companyDisplayName}
-              onOpenPostDrive={() => setIsPostDriveModalOpen(true)}
-            />
-          )}
+              {activeTab === 'drives' && (
+                <CompanyDrivesView
+                  drives={drives}
+                  companyName={companyDisplayName}
+                  onOpenPostDrive={() => setIsPostDriveModalOpen(true)}
+                  onSelectDriveCandidates={(driveId) => {
+                    setSelectedDriveId(driveId);
+                    setActiveTab('candidates');
+                  }}
+                  onDriveDeleted={(deletedId) => {
+                    setDrives((prev) => prev.filter((d) => d.id !== deletedId));
+                    loadDashboardData();
+                  }}
+                  showToast={showToast}
+                />
+              )}
 
-          {activeTab === 'profile' && (
-            <CompanyProfileView
-              profile={profile}
-              onSaveProfile={handleSaveProfile}
-              showToast={showToast}
-            />
+              {activeTab === 'profile' && (
+                <CompanyProfileView
+                  profile={profile}
+                  onSaveProfile={handleSaveProfile}
+                  showToast={showToast}
+                />
+              )}
+            </>
           )}
         </main>
       </div>

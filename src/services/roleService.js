@@ -128,7 +128,7 @@ export async function getUserRole(uid, email = '') {
  * Persists a user's role to both Firestore and the backend persistent store.
  * Validates role strictly before writing.
  */
-export async function persistUserRole(uid, { role, email, displayName = '', companyName = null }) {
+export async function persistUserRole(uid, { role, email, displayName = '', companyName = null, ...extra }) {
   if (!uid) throw new Error('UID is required to persist user role.');
 
   const normalizedRole = normalizeRole(role);
@@ -143,6 +143,8 @@ export async function persistUserRole(uid, { role, email, displayName = '', comp
     email: cleanEmail,
     displayName: displayName || (cleanEmail ? cleanEmail.split('@')[0] : 'User'),
     companyName: normalizedRole === 'company' ? companyName : null,
+    approvalStatus: normalizedRole === 'company' ? 'pending' : null,
+    ...extra,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -153,7 +155,33 @@ export async function persistUserRole(uid, { role, email, displayName = '', comp
   // 1. Attempt Firestore client write
   if (isConfigured && db) {
     try {
-      await setDoc(doc(db, 'users', uid), payload, { merge: true });
+      await setDoc(doc(db, 'users', uid), {
+        uid,
+        role: normalizedRole,
+        email: cleanEmail,
+        displayName: payload.displayName,
+        companyName: payload.companyName,
+        approvalStatus: payload.approvalStatus,
+        createdAt: payload.createdAt,
+        updatedAt: payload.updatedAt
+      }, { merge: true });
+
+      if (normalizedRole === 'company') {
+        await setDoc(doc(db, 'companies', uid), {
+          uid,
+          companyName: payload.companyName || payload.displayName,
+          officialEmail: cleanEmail,
+          website: extra.website || '',
+          industry: extra.industry || 'Technology & Engineering',
+          description: extra.description || '',
+          contactPerson: extra.contactPerson || payload.displayName,
+          phone: extra.phone || '',
+          approvalStatus: 'pending',
+          createdAt: payload.createdAt,
+          updatedAt: payload.updatedAt
+        }, { merge: true });
+      }
+
       firestoreSuccess = true;
     } catch (dbErr) {
       console.warn('[RoleService] Firestore client write failed (falling back to backend sync):', dbErr.message);

@@ -42,28 +42,52 @@ if (firebaseConfig.apiKey && firebaseConfig.projectId) {
 }
 
 /**
- * Gets authentication token for backend requests.
+ * Gets authentication token and identification headers for backend requests.
+ * Authoritatively resolves from active Firebase user or persisted session.
  */
-export async function getAuthHeaders(studentId = 'default_student') {
-  const effectiveUid = auth?.currentUser?.uid || studentId;
+export async function getAuthHeaders(studentId = null) {
+  let activeSession = null;
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const raw = window.localStorage.getItem('placement_genie_active_session');
+      if (raw) activeSession = JSON.parse(raw);
+    }
+  } catch (e) {
+    // Ignore JSON parse errors in local session
+  }
+
+  const effectiveUid = auth?.currentUser?.uid ||
+    (studentId && studentId !== 'default_student' ? studentId : null) ||
+    activeSession?.uid ||
+    studentId ||
+    'default_student';
+
+  const effectiveEmail = auth?.currentUser?.email || activeSession?.email || '';
+  const effectiveRole = activeSession?.role || '';
 
   if (isConfigured && auth?.currentUser) {
     try {
       const token = await auth.currentUser.getIdToken();
-      return {
+      const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'x-student-id': effectiveUid
       };
+      if (effectiveEmail) headers['x-user-email'] = effectiveEmail;
+      if (effectiveRole) headers['x-user-role'] = effectiveRole;
+      return headers;
     } catch (err) {
       console.warn('Failed to retrieve Firebase ID token:', err);
     }
   }
 
-  return {
+  const headers = {
     'Content-Type': 'application/json',
     'x-student-id': effectiveUid
   };
+  if (effectiveEmail) headers['x-user-email'] = effectiveEmail;
+  if (effectiveRole) headers['x-user-role'] = effectiveRole;
+  return headers;
 }
 
 /**

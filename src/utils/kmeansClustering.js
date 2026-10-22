@@ -225,35 +225,133 @@ export function calculateElbowCurve(students = []) {
   };
 }
 
+
+
+/**
+ * Dynamically derives a meaningful cohort name, concise explanation, and practical action
+ * from actual cluster average scores.
+ */
+export function deriveCohortDetails(avgScores = {}, clusterIndex = 0) {
+  const { technical: tech = 0, aptitude: apt = 0, communication: comm = 0, readiness = 0 } = avgScores;
+
+  // 1. All-round high performers
+  if (tech >= 70 && apt >= 65 && comm >= 65 && readiness >= 70) {
+    return {
+      id: 'elite',
+      name: 'Day-1 Ready Achievers',
+      tagline: 'High Performance Across Core Pillars',
+      color: 'emerald',
+      icon: 'Sparkles',
+      bgClass: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+      badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+      dotClass: 'bg-emerald-400',
+      explanation: 'Consistently strong measured performance across technical code assessments, quantitative aptitude, and interview articulation.',
+      recommendedAction: 'Prioritize for Tier-1 dream company drives and executive system design mock interviews.'
+    };
+  }
+
+  // 2. High technical coding standout (coding proficiency leads other dimensions)
+  if (tech >= 65 && (apt < 60 || comm < 60 || tech > apt + 15)) {
+    return {
+      id: 'tech_specialist',
+      name: 'Technical Specialists',
+      tagline: 'Strong Coding • Soft Skills Polish Needed',
+      color: 'blue',
+      icon: 'Cpu',
+      bgClass: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+      badgeClass: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
+      dotClass: 'bg-blue-400',
+      explanation: 'Demonstrates advanced coding and algorithm problem-solving; measured verbal articulation or speed aptitude indicates targeted polish is needed.',
+      recommendedAction: 'Enroll in behavioral STAR-method mock interviews and timed aptitude practice sprints.'
+    };
+  }
+
+  // 3. High aptitude / analytical logic standout
+  if (apt >= 65 && (tech < 60 || apt > tech + 10)) {
+    return {
+      id: 'analytical_thinker',
+      name: 'Analytical & Logic Thinkers',
+      tagline: 'High Quantitative Acumen • Coding Practice Needed',
+      color: 'purple',
+      icon: 'Brain',
+      bgClass: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+      badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+      dotClass: 'bg-purple-400',
+      explanation: 'Sharp quantitative and logical reasoning capabilities; requires guided practical coding and hands-on repository development.',
+      recommendedAction: 'Assign weekly LeetCode pattern sprints and paired debugging workshops.'
+    };
+  }
+
+  // 4. Communication standout (strong verbal readiness, tech acceleration needed)
+  if (comm >= 65 && (tech >= 10 || apt >= 5)) {
+    return {
+      id: 'comm_oriented',
+      name: 'Communication & Leadership Focus',
+      tagline: 'High Articulation • Technical Acceleration Needed',
+      color: 'teal',
+      icon: 'Users',
+      bgClass: 'bg-teal-500/10 text-teal-400 border-teal-500/30',
+      badgeClass: 'bg-teal-500/20 text-teal-300 border-teal-500/40',
+      dotClass: 'bg-teal-400',
+      explanation: 'Excels in articulation and behavioral interview communication; measured scores indicate need for structured technical upskilling.',
+      recommendedAction: 'Guide toward technical consulting or business analyst roles alongside coding bootcamps.'
+    };
+  }
+
+  // 5. Emerging balanced competencies
+  if (readiness >= 40) {
+    return {
+      id: 'balanced_emerging',
+      name: 'Emerging Balanced Core',
+      tagline: 'Moderate Competency • Targeted Sprint Needed',
+      color: 'sky',
+      icon: 'TrendingUp',
+      bgClass: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+      badgeClass: 'bg-sky-500/20 text-sky-300 border-sky-500/40',
+      dotClass: 'bg-sky-400',
+      explanation: 'Balanced performance across pillars with steady baseline scores; ready for targeted revision to reach placement thresholds.',
+      recommendedAction: 'Conduct 2-week intensive sprints on high-frequency campus hiring interview topics.'
+    };
+  }
+
+  // 6. Foundational / pre-assessment development
+  return {
+    id: 'foundational_growth',
+    name: 'Foundational Development Group',
+    tagline: 'Multi-Pillar Reinforcement & Remedial Guidance',
+    color: 'amber',
+    icon: 'Target',
+    bgClass: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+    dotClass: 'bg-amber-400',
+    explanation: 'Initial assessment scores indicate need for foundational reinforcement across core programming syntax, basic problem logic, and general aptitude.',
+    recommendedAction: 'Schedule remedial programming sessions and daily fundamental quizzes.'
+  };
+}
+
 /**
  * Runs K-Means Clustering on real student profiles.
  *
  * @param {Array} students Array of student objects
  * @param {number} k Number of clusters (defaults to 4)
  * @param {number} maxIterations Maximum iterations for centroid convergence
- * @returns {Object} { clusters, totalStudents, inertia, iterationsRun, calculatedAt, recommendedK }
+ * @returns {Object} { clusters, totalStudents, inertia, iterationsRun, calculatedAt, k, isLimitedDataset, datasetExplanation }
  */
 export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
-  const chosenK = Math.max(2, Math.min(Number(k) || 4, 6));
+  const maxPossibleK = students.length > 0 ? Math.min(Number(k) || 4, students.length) : 4;
+  const chosenK = Math.max(1, Math.min(maxPossibleK, 6));
 
   if (!students || students.length === 0) {
     return {
-      clusters: COHORT_DEFINITIONS.slice(0, chosenK).map(def => ({
-        ...def,
-        students: [],
-        count: 0,
-        percentage: 0,
-        centroid: { technical: 0, aptitude: 0, communication: 0, readiness: 0 },
-        avgScores: { technical: 0, aptitude: 0, communication: 0, readiness: 0 },
-        strengths: [],
-        areasForImprovement: []
-      })),
+      clusters: [],
       totalStudents: 0,
       inertia: 0,
       iterationsRun: 0,
       calculatedAt: new Date().toISOString(),
-      recommendedK: 4,
-      disclaimer: 'K-Means identifies similarity patterns across assessment competencies for cohort training and does not independently guarantee job eligibility or selection.'
+      k: chosenK,
+      isLimitedDataset: true,
+      datasetExplanation: 'No student assessment records found for the selected department filter.',
+      disclaimer: 'Students are grouped by similar scores across technical, aptitude, and communication assessments to guide targeted training.'
     };
   }
 
@@ -324,7 +422,8 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
   }
 
   // Group students by cluster and compute real metrics
-  const clustersData = COHORT_DEFINITIONS.slice(0, chosenK).map((def, cIdx) => {
+  const rawClustersData = [];
+  for (let cIdx = 0; cIdx < chosenK; cIdx++) {
     const clusterStudents = students.filter((_, idx) => assignments[idx] === cIdx);
     const count = clusterStudents.length;
     const percentage = students.length > 0 ? Math.round((count / students.length) * 100) : 0;
@@ -336,10 +435,10 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
 
     clusterStudents.forEach(s => {
       const scores = s.placementScores || {};
-      sumTech += Number(scores.technicalScore || s.latestTechnicalScore || 0);
-      sumApt += Number(scores.aptitudeScore || 0);
-      sumComm += Number(scores.communicationScore || 75);
-      sumReadiness += Number(scores.overallReadiness || 0);
+      sumTech += Number(scores.technicalScore ?? s.latestTechnicalScore ?? 0);
+      sumApt += Number(scores.aptitudeScore ?? s.latestAptitudeAssessment?.score ?? 0);
+      sumComm += Number(scores.communicationScore ?? s.latestCommunicationAssessment?.score ?? 75);
+      sumReadiness += Number(scores.overallReadiness ?? 0);
     });
 
     const avgScores = {
@@ -349,24 +448,11 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
       readiness: count > 0 ? Math.round(sumReadiness / count) : centroids[cIdx][3]
     };
 
-    // Dynamically derive strengths and areas for improvement from actual data
-    const strengths = [];
-    const areasForImprovement = [];
+    const details = deriveCohortDetails(avgScores, cIdx);
 
-    if (avgScores.technical >= 75) strengths.push('Advanced Core Programming & Technical Problem Solving');
-    else if (avgScores.technical < 60) areasForImprovement.push('Fundamental Data Structures & Coding Logic Reinforcement');
-
-    if (avgScores.aptitude >= 75) strengths.push('High Quantitative & Logical Reasoning Speed');
-    else if (avgScores.aptitude < 60) areasForImprovement.push('Quantitative Aptitude & Time-Constrained Problem Solving');
-
-    if (avgScores.communication >= 75) strengths.push('Clear Articulation & Behavioral Interview Readiness');
-    else if (avgScores.communication < 70) areasForImprovement.push('STAR-Method Behavioral Structuring & English Fluency');
-
-    if (strengths.length === 0) strengths.push('Consistent Baseline Across Core Placement Metrics');
-    if (areasForImprovement.length === 0) areasForImprovement.push('Mock Interview Polish & Advanced System Design Simulations');
-
-    return {
-      ...def,
+    rawClustersData.push({
+      ...details,
+      id: `${details.id}_${cIdx}`,
       clusterIndex: cIdx,
       students: clusterStudents,
       count,
@@ -377,20 +463,28 @@ export function runKMeansClustering(students = [], k = 4, maxIterations = 50) {
         communication: centroids[cIdx][2],
         readiness: centroids[cIdx][3]
       },
-      avgScores,
-      strengths,
-      areasForImprovement
-    };
-  });
+      avgScores
+    });
+  }
+
+  // Sort clusters by readiness descending for clean logical progression
+  rawClustersData.sort((a, b) => (b.avgScores.readiness || 0) - (a.avgScores.readiness || 0));
+
+  const isLimited = chosenK < 4 && students.length > 0;
+  const datasetExplanation = isLimited
+    ? `The dataset currently contains ${students.length} student records, supporting ${chosenK} distinct readiness group${chosenK > 1 ? 's' : ''}. A full 4-group breakdown is established when 4 or more students are assessed.`
+    : null;
 
   return {
-    clusters: clustersData,
+    clusters: rawClustersData,
     totalStudents: students.length,
     inertia: Math.round(totalInertia),
     iterationsRun,
     calculatedAt: new Date().toISOString(),
     k: chosenK,
-    disclaimer: 'K-Means identifies similarity patterns across assessment competencies for cohort training and does not independently guarantee job eligibility or selection.'
+    isLimitedDataset: isLimited,
+    datasetExplanation,
+    disclaimer: 'Students are grouped by similar scores across technical, aptitude, and communication assessments to guide targeted training.'
   };
 }
 

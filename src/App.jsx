@@ -3,6 +3,9 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { StudentProvider, useStudent } from './context/StudentContext';
 import { SinglePageDashboard } from './components/SinglePageDashboard';
 import { CompanyDashboard } from './components/company/CompanyDashboard';
+import { CompanyPendingApprovalView } from './components/company/CompanyPendingApprovalView';
+import { CompanyRejectedView } from './components/company/CompanyRejectedView';
+import { fetchCompanyProfile } from './services/companyService';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AuthPage } from './components/auth/AuthPage';
 import { LandingPage } from './components/landing/LandingPage';
@@ -296,11 +299,68 @@ const MainAppContent = () => {
     );
   }
 
-  // 6. Authenticated -> Role-Based Dashboard Redirection
+const CompanyPortalRouter = () => {
+  const { currentUser, logout } = useAuth();
+  const [profile, setProfile] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  const loadStatus = async () => {
+    setLoading(true);
+    try {
+      const p = await fetchCompanyProfile();
+      setProfile(p);
+    } catch (err) {
+      console.warn('Failed to fetch company profile status:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    loadStatus();
+  }, [currentUser]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 text-slate-100">
+        <Loader2 className="w-6 h-6 animate-spin text-brand-400 mb-2" />
+        <p className="text-xs text-slate-400 font-medium">Verifying company recruitment authorization...</p>
+      </div>
+    );
+  }
+
+  const approvalStatus = profile?.approvalStatus || 'pending';
+
+  if (approvalStatus === 'pending') {
+    return (
+      <CompanyPendingApprovalView
+        companyProfile={profile}
+        currentUser={currentUser}
+        onRefreshStatus={loadStatus}
+        onSignOut={logout}
+      />
+    );
+  }
+
+  if (approvalStatus === 'rejected' || approvalStatus === 'suspended') {
+    return (
+      <CompanyRejectedView
+        companyProfile={profile}
+        currentUser={currentUser}
+        onRefreshStatus={loadStatus}
+        onSignOut={logout}
+      />
+    );
+  }
+
+  return <CompanyDashboard companyProfile={profile} />;
+};
+
+// 6. Authenticated -> Role-Based Dashboard Redirection
   if (userRole === 'company') {
     return (
       <>
-        <CompanyDashboard />
+        <CompanyPortalRouter />
         <DevRoleBadge user={currentUser} role={userRole} />
       </>
     );

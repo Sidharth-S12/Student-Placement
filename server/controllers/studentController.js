@@ -5,6 +5,10 @@ import {
   getAllStudentsFromFirestore,
   getStudentAssessmentHistory,
   getUserRecord,
+  getCompanyRecord,
+  getAllPlacementDrives,
+  getApplicationsForStudent,
+  evaluateStudentJobEligibility,
   verifyAuthToken
 } from '../config/firebaseAdmin.js';
 
@@ -13,6 +17,7 @@ import {
  * Lists students registered in the system with search and dynamic department filtering.
  * Used by Admin and Company portals.
  * Enforces department-specific access scope restrictions for department officers.
+ * Blocks unapproved/pending/rejected companies from accessing the student directory.
  */
 export async function listStudents(req, res) {
   try {
@@ -21,6 +26,13 @@ export async function listStudents(req, res) {
     // Authorization check: Students cannot access the candidate directory
     if (user.role === 'student' && !user.isDevMock) {
       return res.status(403).json({ error: 'Access denied: Students are not authorized to access candidate directory.' });
+    }
+
+    // Authorization check: Recruiters cannot access the college-wide student directory
+    if (user.role === 'company') {
+      return res.status(403).json({
+        error: 'Access denied: Recruiters can only access candidates eligible for or applying to their company\'s authorized job postings.'
+      });
     }
 
     // Check officer access scope (college-wide vs department-specific)
@@ -113,6 +125,23 @@ export async function getStudentHistory(req, res) {
       return res.status(400).json({ error: 'Student ID is required.' });
     }
 
+    if (user.role === 'company') {
+      const company = await getCompanyRecord(user.uid, user.email);
+      if (!company || company.approvalStatus !== 'approved') {
+        return res.status(403).json({ error: 'Access denied: Company approval required.' });
+      }
+      const allDrives = await getAllPlacementDrives({ role: 'admin' });
+      const myDrives = allDrives.filter(d =>
+        (d.companyId && d.companyId === company.uid) ||
+        (d.companyName && company.companyName && d.companyName.toLowerCase().trim() === company.companyName.toLowerCase().trim())
+      );
+      const myJobIds = new Set(myDrives.map(d => d.id));
+      const studentApps = await getApplicationsForStudent(studentId);
+      if (!studentApps.some(a => myJobIds.has(a.jobId))) {
+        return res.status(403).json({ error: 'Access denied: Assessment history is restricted to applicants for your company\'s jobs.' });
+      }
+    }
+
     const history = await getStudentAssessmentHistory(studentId);
     return res.status(200).json(history);
   } catch (err) {
@@ -138,6 +167,39 @@ export async function getProfile(req, res) {
 
     if (!profile) {
       return res.status(200).json({ found: false, profile: null });
+    }
+
+    // Company authorization check: Must be associated with at least one job
+    if (user.role === 'company') {
+      const company = await getCompanyRecord(user.uid, user.email);
+      if (!company || company.approvalStatus !== 'approved') {
+        return res.status(403).json({ error: 'Access denied: Company account is pending administrative approval.' });
+      }
+      const allDrives = await getAllPlacementDrives({ role: 'admin' });
+      const myDrives = allDrives.filter(d =>
+        (d.companyId && d.companyId === company.uid) ||
+        (d.companyName && company.companyName && d.companyName.toLowerCase().trim() === company.companyName.toLowerCase().trim())
+      );
+      const myJobIds = new Set(myDrives.map(d => d.id));
+      const studentApps = await getApplicationsForStudent(studentId);
+      const hasAppliedOrNominated = studentApps.some(a => myJobIds.has(a.jobId));
+
+      let isEligible = false;
+      for (const drive of myDrives) {
+        if (drive.approvalStatus === 'approved') {
+          const evalRes = evaluateStudentJobEligibility(profile, drive);
+          if (evalRes.isEligible) {
+            isEligible = true;
+            break;
+          }
+        }
+      }
+
+      if (!hasAppliedOrNominated && !isEligible) {
+        return res.status(403).json({
+          error: 'Access denied: You are not authorized to view students not associated with your recruitment drives.'
+        });
+      }
     }
 
     // Check officer access scope (college-wide vs department-specific)

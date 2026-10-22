@@ -60,6 +60,7 @@ const APTITUDE_ASSESSMENTS_FILE = path.join(LOCAL_STORE_DIR, 'aptitudeAssessment
 const APTITUDE_QUESTIONS_FILE = path.join(LOCAL_STORE_DIR, 'studentAptitudeQuestions.json');
 const COMMUNICATION_ASSESSMENTS_FILE = path.join(LOCAL_STORE_DIR, 'communicationAssessments.json');
 const USERS_FILE = path.join(LOCAL_STORE_DIR, 'users.json');
+const COMPANIES_FILE = path.join(LOCAL_STORE_DIR, 'companies.json');
 const DRIVES_FILE = path.join(LOCAL_STORE_DIR, 'placementDrives.json');
 const APPLICATIONS_FILE = path.join(LOCAL_STORE_DIR, 'applications.json');
 const NOTIFICATIONS_FILE = path.join(LOCAL_STORE_DIR, 'notifications.json');
@@ -85,6 +86,9 @@ function ensureLocalStore() {
   }
   if (!fs.existsSync(USERS_FILE)) {
     fs.writeFileSync(USERS_FILE, JSON.stringify({}), 'utf8');
+  }
+  if (!fs.existsSync(COMPANIES_FILE)) {
+    fs.writeFileSync(COMPANIES_FILE, JSON.stringify({}), 'utf8');
   }
   if (!fs.existsSync(DRIVES_FILE)) {
     fs.writeFileSync(DRIVES_FILE, JSON.stringify({}), 'utf8');
@@ -353,17 +357,23 @@ export async function setUserRole(uid, { role, email = '', displayName = '', com
 
 /**
  * Verifies Firebase Authentication token from HTTP headers.
+ * Resolves user identity authoritatively by token, UID, and email.
  */
 export async function verifyAuthToken(req) {
   const authHeader = req.headers.authorization;
   const customStudentId = req.headers['x-student-id'] || req.body?.studentId || 'default_student';
+  const rawEmail = req.headers['x-user-email'] || (customStudentId.includes('@') ? customStudentId : `${customStudentId}@placement.edu`);
+  const customEmail = (rawEmail || '').trim().toLowerCase();
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    const role = await getUserRole(customStudentId, `${customStudentId}@placement.edu`);
+    const record = await getUserRecord(customStudentId, customEmail);
+    const role = record?.role || await getUserRole(customStudentId, customEmail);
     return {
-      uid: customStudentId,
-      email: `${customStudentId}@placement.edu`,
+      uid: record?.uid || customStudentId,
+      email: record?.email || customEmail,
+      displayName: record?.displayName || null,
       role,
+      approvalStatus: record?.approvalStatus || null,
       isDevMock: true
     };
   }
@@ -373,11 +383,14 @@ export async function verifyAuthToken(req) {
   if (isFirebaseConfigured) {
     try {
       const decoded = await admin.auth().verifyIdToken(token);
-      const role = await getUserRole(decoded.uid, decoded.email);
+      const record = await getUserRecord(decoded.uid, decoded.email);
+      const role = record?.role || await getUserRole(decoded.uid, decoded.email);
       return {
         uid: decoded.uid,
         email: decoded.email,
+        displayName: record?.displayName || decoded.name || null,
         role,
+        approvalStatus: record?.approvalStatus || null,
         isDevMock: false
       };
     } catch (err) {
@@ -386,11 +399,14 @@ export async function verifyAuthToken(req) {
     }
   }
 
-  const role = await getUserRole(customStudentId, `${customStudentId}@placement.edu`);
+  const record = await getUserRecord(customStudentId, customEmail);
+  const role = record?.role || await getUserRole(customStudentId, customEmail);
   return {
-    uid: customStudentId,
-    email: `${customStudentId}@placement.edu`,
+    uid: record?.uid || customStudentId,
+    email: record?.email || customEmail,
+    displayName: record?.displayName || null,
     role,
+    approvalStatus: record?.approvalStatus || null,
     isDevMock: true
   };
 }
@@ -830,7 +846,107 @@ export function extractDepartmentName(raw) {
 }
 
 /**
+ * Evaluates whether a student candidate qualifies for a specific job drive.
+ * Validates Department, CGPA, Placement Readiness, and Batch.
+ * Strictly verifies data presence and returns detailed matching outcome.
+ */
+export function evaluateStudentJobEligibility(student, drive) {
+  if (!student || !drive) return { isEligible: false, reason: 'Invalid student or job data.' };
+
+  // 1. Safe numeric parsing for CGPA
+  const rawCgpa = student.education?.cgpa !== undefined && student.education?.cgpa !== null ? student.education.cgpa : student.cgpa;
+  const studentCgpa = (rawCgpa !== undefined && rawCgpa !== null && rawCgpa !== '' && !isNaN(Number(rawCgpa)))
+    ? Number(rawCgpa)
+    : null;
+
+  // 2. Safe numeric parsing for placement readiness (distinguish genuine 0 from unassessed/missing)
+  const rawReadiness = student.placementScores?.overallReadiness !== undefined && student.placementScores?.overallReadiness !== null
+    ? student.placementScores.overallReadiness
+    : (student.overallReadiness !== undefined && student.overallReadiness !== null ? student.overallReadiness : null);
+  const studentReadiness = (rawReadiness !== undefined && rawReadiness !== null && rawReadiness !== '' && !isNaN(Number(rawReadiness)))
+    ? Number(rawReadiness)
+    : null;
+
+  // 3. Department normalization
+  const rawDept = (student.department || student.education?.branch || '').trim();
+  const studentDept = rawDept ? extractDepartmentName(rawDept) : '';
+
+  // 4. Batch normalization (extract 4-digit graduation year)
+  const extractYear = (val) => {
+    if (!val) return '';
+    const match = String(val).match(/\b(20\d\d)\b/);
+    return match ? match[1] : String(val).trim();
+  };
+
+  const driveBatch = extractYear(drive.batch || drive.graduationBatch || drive.batchEligibility);
+  const studentBatch = extractYear(student.education?.graduationYear || student.batch || student.graduationYear);
+
+  // 5. Data Presence: CGPA must be recorded, valid, and > 0
+  if (studentCgpa === null || isNaN(studentCgpa) || studentCgpa <= 0) {
+    return { isEligible: false, reason: 'CGPA data is unrecorded or invalid.', missingData: true };
+  }
+
+  // 6. Data Presence: Academic department must be verified and present
+  if (!studentDept || studentDept === 'Other') {
+    return { isEligible: false, reason: 'Academic department is unrecorded.', missingData: true };
+  }
+
+  // 7. Department Cutoff Matching
+  const eligibleDepts = Array.isArray(drive.eligibleDepartments) ? drive.eligibleDepartments : [];
+  if (eligibleDepts.length > 0 && !eligibleDepts.includes('All')) {
+    const normStudentDept = studentDept.toLowerCase();
+    const matchesDept = eligibleDepts.some(d => {
+      const normD = extractDepartmentName(d).toLowerCase();
+      return normStudentDept === normD ||
+             normStudentDept.includes(normD) ||
+             normD.includes(normStudentDept);
+    });
+    if (!matchesDept) {
+      return { isEligible: false, reason: `Department '${studentDept}' not eligible. Required: ${eligibleDepts.join(', ')}` };
+    }
+  }
+
+  // 8. Minimum CGPA Cutoff
+  const rawMinCgpa = drive.minCgpa || drive.minCGPA;
+  const minCgpa = (rawMinCgpa !== undefined && rawMinCgpa !== null && !isNaN(Number(rawMinCgpa))) ? Number(rawMinCgpa) : 0;
+  if (minCgpa > 0 && studentCgpa < minCgpa) {
+    return { isEligible: false, reason: `CGPA ${studentCgpa.toFixed(2)} is below minimum cutoff of ${minCgpa}` };
+  }
+
+  // 9. Minimum Placement Readiness Cutoff (conservative: unassessed data is not eligible)
+  const rawMinReadiness = drive.minReadiness;
+  const minReadiness = (rawMinReadiness !== undefined && rawMinReadiness !== null && !isNaN(Number(rawMinReadiness))) ? Number(rawMinReadiness) : 0;
+  if (minReadiness > 0) {
+    if (studentReadiness === null) {
+      return { isEligible: false, reason: 'Placement readiness has not been assessed yet.', missingData: true };
+    }
+    if (studentReadiness < minReadiness) {
+      return { isEligible: false, reason: `Placement readiness ${studentReadiness}% is below cutoff of ${minReadiness}%` };
+    }
+  }
+
+  // 10. Graduation Batch Cutoff (dynamically verified against drive criteria; conservative on missing batch)
+  if (driveBatch) {
+    if (!studentBatch) {
+      return { isEligible: false, reason: 'Graduation batch is unrecorded.', missingData: true };
+    }
+    if (driveBatch !== studentBatch) {
+      return { isEligible: false, reason: `Graduation batch '${studentBatch}' does not match required batch '${driveBatch}'` };
+    }
+  }
+
+  return {
+    isEligible: true,
+    studentCgpa,
+    studentReadiness,
+    studentDept,
+    studentBatch
+  };
+}
+
+/**
  * Retrieves all registered student profiles from Firestore / local store.
+ * Filters out non-student records and deduplicates by email/identity.
  */
 export async function getAllStudentsFromFirestore() {
   let rawList = [];
@@ -856,13 +972,50 @@ export async function getAllStudentsFromFirestore() {
     }));
   }
 
-  // Filter only actual student profile records
-  const validStudents = rawList.filter(s => s && (s.personalInfo?.fullName || s.education?.college || s.technicalSkills));
+  // Filter out non-student records (companies, officers, etc.)
+  const localUsers = readLocalData(USERS_FILE);
+  const localCompanies = readLocalData(COMPANIES_FILE);
+  const companyUids = new Set([
+    ...Object.values(localUsers).filter(u => u.role === 'company' || u.role === 'admin').map(u => u.uid),
+    ...Object.keys(localCompanies),
+    ...Object.values(localCompanies).map(c => c.uid)
+  ]);
 
-  // Normalize each student record
-  return validStudents.map(s => {
+  const validStudents = rawList.filter(s => {
+    if (!s) return false;
+    if (s.role === 'company' || s.role === 'admin') return false;
+    if (companyUids.has(s.uid)) return false;
+    const name = (s.personalInfo?.fullName || s.displayName || '').toLowerCase();
+    if (name.includes('corp') || name.includes('company') || name.includes('solutions')) return false;
+    // Must have student profile indicators
+    return Boolean(s.personalInfo?.fullName || s.education?.college || s.technicalSkills);
+  });
+
+  // Deduplicate students by normalized email or fullName + department
+  const seenEmails = new Set();
+  const seenIdentities = new Set();
+  const seenUids = new Set();
+  const deduplicated = [];
+
+  // Sort by updatedAt descending so latest profile data takes precedence
+  validStudents.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+
+  for (const s of validStudents) {
+    const uid = s.uid || s.studentId;
+    if (seenUids.has(uid)) continue;
+
+    const email = (s.personalInfo?.email || s.email || '').toLowerCase().trim();
+    const fullName = (s.personalInfo?.fullName || s.displayName || '').toLowerCase().trim();
     const rawBranch = s.education?.branch || s.department || s.education?.degree || 'Other';
     const dept = extractDepartmentName(rawBranch);
+    const identityKey = fullName ? `${fullName}__${dept}` : null;
+
+    if (email && seenEmails.has(email)) continue;
+    if (identityKey && seenIdentities.has(identityKey)) continue;
+
+    seenUids.add(uid);
+    if (email) seenEmails.add(email);
+    if (identityKey) seenIdentities.add(identityKey);
 
     // Extract flat array of skills for easy filtering
     const skillList = [];
@@ -881,9 +1034,9 @@ export async function getAllStudentsFromFirestore() {
       });
     }
 
-    return {
+    deduplicated.push({
       ...s,
-      uid: s.uid || s.studentId,
+      uid,
       department: dept,
       normalizedSkills: Array.from(new Set(skillList)),
       placementVisibility: s.placementVisibility || {
@@ -898,8 +1051,10 @@ export async function getAllStudentsFromFirestore() {
         resume: true,
         contact: false
       }
-    };
-  });
+    });
+  }
+
+  return deduplicated;
 }
 
 /**
@@ -1228,37 +1383,396 @@ export async function removePlacementOfficer(uid) {
  * Retrieves all registered Company / Recruiter accounts.
  */
 export async function getAllCompanies() {
-  const localUsers = readLocalData(USERS_FILE);
-  let companyUsers = Object.values(localUsers).filter(u => u.role === 'company');
-
-  if (isFirebaseConfigured && db) {
-    try {
-      const snap = await db.collection('users').where('role', '==', 'company').get();
-      if (!snap.empty) {
-        const firestoreCompanies = [];
-        snap.forEach(doc => firestoreCompanies.push({ ...doc.data(), uid: doc.id }));
-        return firestoreCompanies;
-      }
-    } catch (e) {
-      console.warn('[Firebase Admin] getAllCompanies Firestore query failed:', e.message);
-    }
-  }
-
-  return companyUsers;
+  const companies = await getAllCompaniesFull();
+  return companies;
 }
 
 /**
- * Retrieves all Campus Placement Drives.
+ * Retrieves a single company record by UID or official email.
  */
-export async function getAllPlacementDrives() {
+export async function getCompanyRecord(uid, email = '') {
+  ensureLocalStore();
+  const companies = readLocalData(COMPANIES_FILE);
+
+  if (isFirebaseConfigured && db && uid) {
+    try {
+      const docSnap = await db.collection('companies').doc(uid).get();
+      if (docSnap.exists) {
+        return { ...docSnap.data(), uid: docSnap.id };
+      }
+    } catch (e) {
+      console.warn('[Firebase Admin] getCompanyRecord Firestore error:', e.message);
+    }
+  }
+
+  if (uid && companies[uid]) return companies[uid];
+
+  const cleanEmail = (email || '').toLowerCase().trim();
+  if (cleanEmail) {
+    const found = Object.values(companies).find(c => (c.officialEmail || c.email || '').toLowerCase() === cleanEmail);
+    if (found) return found;
+  }
+
+  // Fallback to checking users.json
+  const localUsers = readLocalData(USERS_FILE);
+  const user = (uid && localUsers[uid]) || (cleanEmail && Object.values(localUsers).find(u => (u.email || '').toLowerCase() === cleanEmail));
+  if (user && user.role === 'company') {
+    const isPreseeded = ['recruiter@techcorp.com', 'campus-hiring@google.com', 'hr@estech.com', 'recruiter@techcorp.io'].includes((user.email || '').toLowerCase());
+    const profile = {
+      uid: user.uid,
+      companyName: user.companyName || user.displayName || 'Corporate Recruiter',
+      officialEmail: user.email,
+      industry: user.industry || 'Technology & Software Engineering',
+      website: user.website || 'https://careers.company.com',
+      description: user.description || 'Verified Campus Hiring Partner.',
+      contactPerson: user.contactPerson || user.displayName || 'Campus Recruiter',
+      phone: user.phone || '+91 98765 43210',
+      approvalStatus: user.approvalStatus || (isPreseeded ? 'approved' : 'pending'),
+      createdAt: user.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      reviewedBy: user.reviewedBy || (isPreseeded ? 'admin_sidharths4669_gmail_com' : null),
+      reviewerName: user.reviewerName || (isPreseeded ? 'Placement Cell Admin' : null),
+      reviewedAt: user.reviewedAt || (isPreseeded ? user.createdAt : null),
+      rejectionReason: user.rejectionReason || null
+    };
+    companies[user.uid] = profile;
+    writeLocalData(COMPANIES_FILE, companies);
+    return profile;
+  }
+
+  return null;
+}
+
+/**
+ * Saves or updates a Company Profile document.
+ * Non-officer callers CANNOT modify approvalStatus or reviewer metadata.
+ */
+export async function saveCompanyProfile(uid, profileData, options = { isReview: false }, callerUser = null) {
+  const effectiveCaller = callerUser || (options?.uid && options?.role ? options : options?.callerUser);
+  const isReview = options?.isReview === true;
+
+  // Strict Data Isolation: A company can only modify its own profile
+  if (effectiveCaller) {
+    if (effectiveCaller.role === 'company' && effectiveCaller.uid !== uid) {
+      throw new Error('Forbidden: A company cannot access or modify another company profile.');
+    }
+    if (effectiveCaller.role === 'student') {
+      throw new Error('Forbidden: Students cannot modify company profiles.');
+    }
+  }
+
+  ensureLocalStore();
+  const companies = readLocalData(COMPANIES_FILE);
+  const existing = companies[uid] || await getCompanyRecord(uid, profileData.officialEmail || profileData.email) || {};
+
+  let approvalStatus = existing.approvalStatus || 'pending';
+  let reviewedBy = existing.reviewedBy || null;
+  let reviewerName = existing.reviewerName || null;
+  let reviewedAt = existing.reviewedAt || null;
+  let rejectionReason = existing.rejectionReason || null;
+
+  if (isReview) {
+    approvalStatus = profileData.approvalStatus || approvalStatus;
+    reviewedBy = profileData.reviewedBy || null;
+    reviewerName = profileData.reviewerName || null;
+    reviewedAt = profileData.reviewedAt || new Date().toISOString();
+    rejectionReason = profileData.rejectionReason || null;
+  }
+
+  const payload = {
+    ...existing,
+    ...profileData,
+    uid,
+    companyName: profileData.companyName || existing.companyName || 'Corporate Recruiter',
+    officialEmail: (profileData.officialEmail || profileData.email || existing.officialEmail || existing.email || '').toLowerCase().trim(),
+    website: profileData.website !== undefined ? profileData.website : (existing.website || ''),
+    industry: profileData.industry !== undefined ? profileData.industry : (existing.industry || 'Technology & Engineering'),
+    description: profileData.description !== undefined ? profileData.description : (existing.description || ''),
+    contactPerson: profileData.contactPerson !== undefined ? profileData.contactPerson : (existing.contactPerson || ''),
+    phone: profileData.phone !== undefined ? profileData.phone : (existing.phone || ''),
+    approvalStatus,
+    reviewedBy,
+    reviewerName,
+    reviewedAt,
+    rejectionReason,
+    createdAt: existing.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('companies').doc(uid).set(payload, { merge: true });
+      await db.collection('users').doc(uid).set({
+        companyName: payload.companyName,
+        approvalStatus: payload.approvalStatus
+      }, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase Admin] saveCompanyProfile Firestore write failed:', e.message);
+    }
+  }
+
+  companies[uid] = payload;
+  writeLocalData(COMPANIES_FILE, companies);
+
+  // Sync to users.json
+  const users = readLocalData(USERS_FILE);
+  if (users[uid]) {
+    users[uid] = {
+      ...users[uid],
+      companyName: payload.companyName,
+      approvalStatus: payload.approvalStatus,
+      rejectionReason: payload.rejectionReason,
+      reviewedBy: payload.reviewedBy,
+      reviewerName: payload.reviewerName,
+      reviewedAt: payload.reviewedAt,
+      updatedAt: new Date().toISOString()
+    };
+    writeLocalData(USERS_FILE, users);
+  } else if (payload.officialEmail) {
+    const byEmailKey = Object.keys(users).find(
+      k => (users[k].email || '').toLowerCase() === payload.officialEmail.toLowerCase()
+    );
+    if (byEmailKey) {
+      users[byEmailKey] = {
+        ...users[byEmailKey],
+        companyName: payload.companyName,
+        approvalStatus: payload.approvalStatus,
+        rejectionReason: payload.rejectionReason,
+        reviewedBy: payload.reviewedBy,
+        reviewerName: payload.reviewerName,
+        reviewedAt: payload.reviewedAt,
+        updatedAt: new Date().toISOString()
+      };
+      writeLocalData(USERS_FILE, users);
+    }
+  }
+
+  return payload;
+}
+
+/**
+ * Retrieves all registered companies with job counts, approval statuses, and review details.
+ */
+export async function getAllCompaniesFull() {
+  ensureLocalStore();
+  const companies = readLocalData(COMPANIES_FILE);
+  const users = readLocalData(USERS_FILE);
+  const drives = readLocalData(DRIVES_FILE);
+
+  // Backfill any company accounts from users.json
+  Object.values(users).forEach(u => {
+    if (u.role === 'company' && !companies[u.uid]) {
+      const isPreseeded = ['recruiter@techcorp.com', 'campus-hiring@google.com', 'hr@estech.com', 'recruiter@techcorp.io'].includes((u.email || '').toLowerCase());
+      companies[u.uid] = {
+        uid: u.uid,
+        companyName: u.companyName || u.displayName || 'Corporate Recruiter',
+        officialEmail: u.email,
+        industry: u.industry || 'Technology & Software Engineering',
+        website: u.website || 'https://careers.company.com',
+        description: u.description || 'Verified Campus Hiring Partner.',
+        contactPerson: u.contactPerson || u.displayName || 'Recruiter Lead',
+        phone: u.phone || '+91 98765 43210',
+        approvalStatus: u.approvalStatus || (isPreseeded ? 'approved' : 'pending'),
+        createdAt: u.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        reviewedBy: u.reviewedBy || (isPreseeded ? 'admin_sidharths4669_gmail_com' : null),
+        reviewerName: u.reviewerName || (isPreseeded ? 'Placement Cell Admin' : null),
+        reviewedAt: u.reviewedAt || (isPreseeded ? u.createdAt : null),
+        rejectionReason: u.rejectionReason || null
+      };
+    }
+  });
+
+  writeLocalData(COMPANIES_FILE, companies);
+
+  const driveList = Object.values(drives);
+  const companyList = Object.values(companies).map(comp => {
+    const compDrives = driveList.filter(d =>
+      (d.companyId && d.companyId === comp.uid) ||
+      (d.companyName && comp.companyName && d.companyName.toLowerCase().trim() === comp.companyName.toLowerCase().trim())
+    );
+    const pendingDrivesCount = compDrives.filter(d => d.approvalStatus === 'pending').length;
+    const approvedDrivesCount = compDrives.filter(d => d.approvalStatus === 'approved').length;
+    const rejectedDrivesCount = compDrives.filter(d => d.approvalStatus === 'rejected').length;
+
+    return {
+      ...comp,
+      jobRolesCount: compDrives.length,
+      pendingJobRolesCount: pendingDrivesCount,
+      approvedJobRolesCount: approvedDrivesCount,
+      rejectedJobRolesCount: rejectedDrivesCount
+    };
+  });
+
+  return companyList.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+}
+
+/**
+ * Officer Action: Reviews and approves, rejects, or suspends a registered company.
+ */
+export async function reviewCompanyAccount(companyId, { status, reason, reviewerUid, reviewerName } = {}, callerUser = null) {
+  if (callerUser && callerUser.role !== 'admin') {
+    throw new Error('Unauthorized: Only placement officers / administrators can review company registrations.');
+  }
+
+  const effectiveReviewerUid = reviewerUid || callerUser?.uid || 'admin';
+  const effectiveReviewerName = reviewerName || callerUser?.displayName || callerUser?.email || 'Placement Officer';
+
+  if (!['approved', 'rejected', 'suspended', 'pending'].includes(status)) {
+    throw new Error('Invalid company approval status. Allowed: approved, rejected, suspended, pending.');
+  }
+
+  if (status === 'rejected' && (!reason || !reason.trim())) {
+    throw new Error('A rejection reason is required when rejecting a company registration.');
+  }
+
+  const updated = await saveCompanyProfile(companyId, {
+    approvalStatus: status,
+    reviewedBy: effectiveReviewerUid,
+    reviewerName: effectiveReviewerName,
+    reviewedAt: new Date().toISOString(),
+    rejectionReason: status === 'rejected' ? reason.trim() : null
+  }, { isReview: true });
+
+  // Update associated drives' companyApprovalStatus
+  ensureLocalStore();
+  const drives = readLocalData(DRIVES_FILE);
+  let drivesUpdated = false;
+  Object.values(drives).forEach(d => {
+    if (d.companyId === companyId || (d.companyName && updated.companyName && d.companyName.toLowerCase().trim() === updated.companyName.toLowerCase().trim())) {
+      d.companyApprovalStatus = status;
+      drivesUpdated = true;
+    }
+  });
+  if (drivesUpdated) {
+    writeLocalData(DRIVES_FILE, drives);
+  }
+
+  // Create in-app notification for the company
+  let notifTitle = 'Company Registration Approved 🎉';
+  let notifMessage = `Your company "${updated.companyName}" has been approved by the Placement Cell. You now have full access to campus recruitment drives and candidate talent discovery.`;
+  if (status === 'rejected') {
+    notifTitle = 'Company Registration Status: Rejected';
+    notifMessage = `Your company registration review was not approved. Reason: ${reason}. Please update your profile or contact the placement office.`;
+  } else if (status === 'suspended') {
+    notifTitle = 'Company Account Suspended';
+    notifMessage = `Your company portal access has been temporarily suspended by the Placement Cell. Please contact the administrator.`;
+  }
+
+  await createNotification({
+    recipientId: companyId,
+    recipientRole: 'company',
+    title: notifTitle,
+    message: notifMessage,
+    type: status === 'approved' ? 'approval' : 'alert',
+    relatedCompanyId: companyId
+  });
+
+  return updated;
+}
+
+/**
+ * Officer Action: Reviews and approves or rejects an individual job role.
+ */
+export async function reviewJobRole(jobId, { status, reason, reviewerUid, reviewerName } = {}, callerUser = null) {
+  if (callerUser && callerUser.role !== 'admin') {
+    throw new Error('Unauthorized: Only placement officers / administrators can review job roles.');
+  }
+
+  const effectiveReviewerUid = reviewerUid || callerUser?.uid || 'admin';
+  const effectiveReviewerName = reviewerName || callerUser?.displayName || callerUser?.email || 'Placement Officer';
+
+  if (!['approved', 'rejected', 'pending'].includes(status)) {
+    throw new Error('Invalid job approval status. Allowed: approved, rejected, pending.');
+  }
+
+  if (status === 'rejected' && (!reason || !reason.trim())) {
+    throw new Error('A rejection reason is required when rejecting a job role.');
+  }
+
+  ensureLocalStore();
+  const drives = readLocalData(DRIVES_FILE);
+  const drive = drives[jobId];
+  if (!drive) {
+    throw new Error('Job role / recruitment drive not found.');
+  }
+
+  drive.approvalStatus = status;
+  drive.reviewedBy = effectiveReviewerUid;
+  drive.reviewerName = effectiveReviewerName;
+  drive.reviewedAt = new Date().toISOString();
+  drive.rejectionReason = status === 'rejected' ? reason.trim() : null;
+  drive.reviewNotes = status === 'rejected' ? reason.trim() : (reason || null);
+  drive.updatedAt = new Date().toISOString();
+
+  if (status === 'approved' && (!drive.status || drive.status === 'Draft')) {
+    drive.status = 'Upcoming';
+  }
+
+  writeLocalData(DRIVES_FILE, drives);
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('placementDrives').doc(jobId).set(drive, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase Admin] reviewJobRole Firestore write failed:', e.message);
+    }
+  }
+
+  if (drive.companyId) {
+    const notifTitle = status === 'approved' ? 'Job Role Approved 🎉' : 'Job Role Review: Revision Required';
+    const notifMessage = status === 'approved'
+      ? `Your job role "${drive.jobRole}" has been approved by the Placement Cell and published to eligible students!`
+      : `Your job role "${drive.jobRole}" was not approved by the Placement Cell. Reason: ${reason}`;
+
+    await createNotification({
+      recipientId: drive.companyId,
+      recipientRole: 'company',
+      title: notifTitle,
+      message: notifMessage,
+      type: status === 'approved' ? 'approval' : 'alert',
+      relatedJobId: jobId
+    });
+  }
+
+  return drive;
+}
+
+/**
+ * Retrieves a single Campus Placement Drive by its ID.
+ */
+export async function getPlacementDriveById(id) {
+  ensureLocalStore();
+  if (isFirebaseConfigured && db) {
+    try {
+      const snap = await db.collection('placementDrives').doc(id).get();
+      if (snap.exists) return { ...snap.data(), id: snap.id };
+    } catch (e) {
+      console.warn('[Firebase Admin] getPlacementDriveById Firestore error:', e.message);
+    }
+  }
+  const drives = readLocalData(DRIVES_FILE);
+  return drives[id] || null;
+}
+
+/**
+ * Retrieves all Campus Placement Drives with role-based filtering.
+ * - Admin: sees all drives with approval statuses.
+ * - Company: sees approved drives + all drives submitted by this company.
+ * - Students / Public: sees ONLY approved drives from approved companies!
+ */
+export async function getAllPlacementDrives(callerUser = null) {
   ensureLocalStore();
   let drives = readLocalData(DRIVES_FILE);
   if (!drives || Object.keys(drives).length === 0) {
     const initialDrives = {
       "drive_google_2026": {
         id: "drive_google_2026",
+        companyId: "uid_recruiter_google",
         companyName: "Google Cloud",
         jobRole: "Software Engineer - Campus 2026",
+        approvalStatus: "approved",
+        companyApprovalStatus: "approved",
         eligibleDepartments: ["CSE", "ECE", "AI & DS"],
         minCgpa: 8.0,
         minReadiness: 75,
@@ -1267,12 +1781,24 @@ export async function getAllPlacementDrives() {
         status: "Upcoming",
         location: "Campus / Virtual",
         jobDescription: "Developing scalable distributed systems, microservices, and AI cloud tools.",
+        responsibilities: "Architect, develop, and deploy cloud-native microservices; collaborate with AI infrastructure teams; write unit and integration tests.",
+        requiredSkills: ["Data Structures", "Algorithms", "Distributed Systems", "Go/Java/C++"],
+        optionalSkills: ["Kubernetes", "GCP", "Docker"],
+        qualifications: "B.Tech / B.E. in CSE, ECE, AI & DS",
+        batch: "2026",
+        experience: "Freshers (0 years)",
+        employmentType: "Full-time",
+        applicationDeadline: "2026-10-24",
+        selectionProcess: "Online Technical Coding Round -> System Design & DSA Interview -> HR Round",
         createdAt: new Date().toISOString()
       },
       "drive_techcorp_2026": {
         id: "drive_techcorp_2026",
+        companyId: "uid_recruiter_techcorp",
         companyName: "TechCorp Solutions",
         jobRole: "Full Stack Developer",
+        approvalStatus: "approved",
+        companyApprovalStatus: "approved",
         eligibleDepartments: ["All"],
         minCgpa: 7.0,
         minReadiness: 65,
@@ -1281,12 +1807,24 @@ export async function getAllPlacementDrives() {
         status: "Active",
         location: "Main Auditorium",
         jobDescription: "React, Node.js, and cloud application engineering.",
+        responsibilities: "Build enterprise dashboard components, design robust RESTful APIs, and integrate automated testing suites.",
+        requiredSkills: ["JavaScript", "React", "Node.js", "SQL"],
+        optionalSkills: ["TypeScript", "AWS", "Docker"],
+        qualifications: "B.Tech / B.E. / M.C.A. (All branches eligible)",
+        batch: "2026",
+        experience: "Freshers (0 years)",
+        employmentType: "Full-time",
+        applicationDeadline: "2026-10-17",
+        selectionProcess: "Online MCQ & Coding Assessment -> Technical Round -> HR Discussion",
         createdAt: new Date().toISOString()
       },
       "drive_estech_2026": {
         id: "drive_estech_2026",
+        companyId: "uid_recruiter_estech",
         companyName: "ES Tech Global",
         jobRole: "Embedded Systems & Firmware Engineer",
+        approvalStatus: "approved",
+        companyApprovalStatus: "approved",
         eligibleDepartments: ["ECE", "EEE", "ME"],
         minCgpa: 7.0,
         minReadiness: 60,
@@ -1295,29 +1833,125 @@ export async function getAllPlacementDrives() {
         status: "Upcoming",
         location: "Virtual",
         jobDescription: "Microcontrollers, C/C++, RTOS, and IoT hardware integration.",
+        responsibilities: "Firmware programming for ARM Cortex processors, board bring-up, communication bus protocol implementation (SPI, I2C, CAN).",
+        requiredSkills: ["Embedded C", "C++", "Microcontrollers", "RTOS"],
+        optionalSkills: ["PCB Design", "Linux Device Drivers", "CAN Bus"],
+        qualifications: "B.Tech / B.E. in ECE, EEE, ME",
+        batch: "2026",
+        experience: "Freshers (0 years)",
+        employmentType: "Full-time",
+        applicationDeadline: "2026-11-03",
+        selectionProcess: "Core Electronics & Embedded Test -> Technical Interview -> HR Round",
         createdAt: new Date().toISOString()
       }
     };
     writeLocalData(DRIVES_FILE, initialDrives);
     drives = initialDrives;
   }
-  return Object.values(drives).sort((a, b) => new Date(a.driveDate) - new Date(b.driveDate));
+
+  // Ensure default approval fields for any legacy drives
+  Object.values(drives).forEach(d => {
+    if (!d.approvalStatus) d.approvalStatus = 'approved';
+    if (!d.companyApprovalStatus) d.companyApprovalStatus = 'approved';
+  });
+
+  const allList = Object.values(drives).sort((a, b) => new Date(a.driveDate || 0) - new Date(b.driveDate || 0));
+
+  // If caller is admin, return everything
+  if (callerUser && callerUser.role === 'admin') {
+    return allList;
+  }
+
+  // If caller is company, return approved drives + their own submitted drives
+  if (callerUser && callerUser.role === 'company') {
+    return allList.filter(d =>
+      (d.companyId && d.companyId === callerUser.uid) ||
+      (d.approvalStatus === 'approved' && d.companyApprovalStatus === 'approved')
+    );
+  }
+
+  // If caller is student or unauthenticated: return ONLY approved jobs from approved companies!
+  return allList.filter(d => d.approvalStatus === 'approved' && d.companyApprovalStatus === 'approved');
 }
 
 /**
  * Creates or updates a Campus Placement Drive.
+ * Enforces company approval and initial 'pending' approval status for recruiters.
  */
-export async function savePlacementDrive(driveData) {
+export async function savePlacementDrive(driveData, callerUser = null) {
   ensureLocalStore();
   const drives = readLocalData(DRIVES_FILE);
   const id = driveData.id || `drive_${Date.now()}`;
+  const existing = drives[id] || {};
+
+  // Determine approval status
+  let approvalStatus = driveData.approvalStatus || existing.approvalStatus || 'pending';
+  let companyApprovalStatus = driveData.companyApprovalStatus || existing.companyApprovalStatus || 'pending';
+  let companyId = driveData.companyId || existing.companyId || (callerUser ? callerUser.uid : null);
+
+  // If created or modified by a Recruiter:
+  if (callerUser && callerUser.role === 'company') {
+    companyId = callerUser.uid;
+    const company = await getCompanyRecord(callerUser.uid, callerUser.email);
+    if (!company || company.approvalStatus !== 'approved') {
+      throw new Error('Access denied: Company must be approved by the Placement Cell before creating job roles.');
+    }
+    companyApprovalStatus = company.approvalStatus;
+
+    // Changes to important fields trigger re-review:
+    if (existing.id && existing.approvalStatus === 'approved') {
+      const isCriticalChange =
+        driveData.jobRole !== existing.jobRole ||
+        driveData.packageCTC !== existing.packageCTC ||
+        driveData.minCgpa !== existing.minCgpa ||
+        driveData.minReadiness !== existing.minReadiness;
+      if (isCriticalChange) {
+        approvalStatus = 'pending';
+      }
+    } else if (!existing.id) {
+      approvalStatus = 'pending'; // New drives start as pending
+    }
+  } else if (!callerUser || callerUser.role === 'admin') {
+    // Admin directly creating or editing drive
+    if (!existing.id && !driveData.approvalStatus) {
+      approvalStatus = 'approved';
+      companyApprovalStatus = 'approved';
+    } else if (driveData.approvalStatus) {
+      approvalStatus = driveData.approvalStatus;
+      companyApprovalStatus = driveData.companyApprovalStatus || 'approved';
+    }
+  }
+
   const payload = {
+    ...existing,
     ...driveData,
     id,
+    companyId,
+    approvalStatus,
+    companyApprovalStatus,
+    responsibilities: driveData.responsibilities || existing.responsibilities || '',
+    requiredSkills: driveData.requiredSkills || existing.requiredSkills || [],
+    optionalSkills: driveData.optionalSkills || existing.optionalSkills || [],
+    qualifications: driveData.qualifications || existing.qualifications || '',
+    batch: driveData.batch || existing.batch || '2026',
+    experience: driveData.experience || existing.experience || 'Freshers (0 years)',
+    employmentType: driveData.employmentType || existing.employmentType || 'Full-time',
+    applicationDeadline: driveData.applicationDeadline || existing.applicationDeadline || '',
+    selectionProcess: driveData.selectionProcess || existing.selectionProcess || '',
     updatedAt: new Date().toISOString()
   };
+
   drives[id] = payload;
   writeLocalData(DRIVES_FILE, drives);
+
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('placementDrives').doc(id).set(payload, { merge: true });
+    } catch (e) {
+      console.warn('[Firebase Admin] savePlacementDrive Firestore write failed:', e.message);
+    }
+  }
+
   return payload;
 }
 
@@ -1330,6 +1964,13 @@ export async function deletePlacementDrive(id) {
   if (drives[id]) {
     delete drives[id];
     writeLocalData(DRIVES_FILE, drives);
+  }
+  if (isFirebaseConfigured && db) {
+    try {
+      await db.collection('placementDrives').doc(id).delete();
+    } catch (e) {
+      console.warn('[Firebase Admin] deletePlacementDrive Firestore delete failed:', e.message);
+    }
   }
   return { success: true };
 }

@@ -111,6 +111,11 @@ export const BrowseJobsView = ({
   // Filter drives
   const filteredDrives = useMemo(() => {
     return drives.filter(dr => {
+      // Safety filter: Only approved job roles can appear to students
+      if (dr.approvalStatus && dr.approvalStatus !== 'approved') {
+        return false;
+      }
+
       // Keyword search
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q ||

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Building2,
   Mail,
@@ -10,9 +10,12 @@ import {
   Save,
   CheckCircle2,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  Clock,
+  AlertCircle
 } from 'lucide-react';
 import { Card, Button, Badge } from '../ui';
+import { updateCompanyProfile } from '../../services/companyService';
 
 const DEPARTMENTS = ['CSE', 'ECE', 'AI & DS', 'EEE', 'ME', 'CE', 'All'];
 
@@ -23,9 +26,15 @@ export const CompanyProfileView = ({
 }) => {
   const [formData, setFormData] = useState(profile);
   const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  useEffect(() => {
+    setFormData(profile);
+  }, [profile]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrorMsg(null);
   };
 
   const handleDeptToggle = (dept) => {
@@ -45,22 +54,34 @@ export const CompanyProfileView = ({
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setTimeout(() => {
+    setErrorMsg(null);
+    try {
+      const updated = await updateCompanyProfile(formData);
       if (onSaveProfile) {
-        onSaveProfile(formData);
+        onSaveProfile(updated);
       }
-      setSaving(false);
       if (showToast) {
-        showToast('Company profile & hiring criteria updated.');
+        showToast('Company profile & recruitment preferences updated.');
       }
-    }, 400);
+    } catch (err) {
+      console.error('Failed to update company profile:', err);
+      setErrorMsg(err.message || 'Failed to update company profile.');
+      if (showToast) {
+        showToast(err.message || 'Failed to update company profile.');
+      }
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const isApproved = formData.approvalStatus === 'approved';
+  const isRejected = formData.approvalStatus === 'rejected';
+
   return (
-    <div className="space-y-6 max-w-4xl animate-fade-in">
+    <div className="space-y-6 max-w-4xl animate-fade-in text-slate-100">
       {/* 1. Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
         <div className="space-y-1">
@@ -68,14 +89,26 @@ export const CompanyProfileView = ({
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Company Profile & Hiring Preferences
             </h1>
-            <Badge variant="emerald">
-              <ShieldCheck className="w-3 h-3 mr-1" />
-              Verified Partner
-            </Badge>
+            {isApproved ? (
+              <Badge variant="emerald">
+                <ShieldCheck className="w-3 h-3 mr-1" />
+                Verified & Approved Partner
+              </Badge>
+            ) : isRejected ? (
+              <Badge variant="danger">
+                <Clock className="w-3 h-3 mr-1" />
+                Approval Rejected
+              </Badge>
+            ) : (
+              <Badge variant="warning">
+                <Clock className="w-3 h-3 mr-1" />
+                Verification Pending
+              </Badge>
+            )}
           </div>
           <p className="text-xs sm:text-sm text-slate-400">
             Configure your organization details and set campus hiring cut-offs and preferred
-            departments.
+            departments. Only authorized administrators can alter approval status.
           </p>
         </div>
 
@@ -91,9 +124,16 @@ export const CompanyProfileView = ({
         </Button>
       </div>
 
+      {errorMsg && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center space-x-2">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Card 1: Organization Details */}
-        <Card className="p-5 sm:p-6 space-y-4">
+        <Card className="p-5 sm:p-6 space-y-4 bg-slate-900/90 border-slate-800">
           <div className="flex items-center space-x-2.5 border-b border-slate-800 pb-3">
             <div className="w-8 h-8 rounded-xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-400">
               <Building2 className="w-4 h-4" />
@@ -109,10 +149,11 @@ export const CompanyProfileView = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Company / Organization Name
+                Company / Organization Name *
               </label>
               <input
                 type="text"
+                required
                 value={formData.companyName || ''}
                 onChange={(e) => handleChange('companyName', e.target.value)}
                 placeholder="e.g. Google Cloud, TechCorp"
@@ -122,12 +163,12 @@ export const CompanyProfileView = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Official Recruiter Email
+                Official Recruiter Email (Verified)
               </label>
               <input
                 type="email"
                 disabled
-                value={formData.recruiterEmail || ''}
+                value={formData.recruiterEmail || formData.email || ''}
                 className="w-full px-3.5 py-2.5 rounded-xl bg-slate-850 border border-slate-800 text-xs sm:text-sm text-slate-400 cursor-not-allowed"
                 title="Account email is managed via authentication"
               />
@@ -161,8 +202,8 @@ export const CompanyProfileView = ({
           </div>
         </Card>
 
-        {/* Card 2: Recruiter Contact Person */}
-        <Card className="p-5 sm:p-6 space-y-4">
+        {/* Card 2: Recruiter Contact Lead */}
+        <Card className="p-5 sm:p-6 space-y-4 bg-slate-900/90 border-slate-800">
           <div className="flex items-center space-x-2.5 border-b border-slate-800 pb-3">
             <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
               <Phone className="w-4 h-4" />
@@ -205,15 +246,15 @@ export const CompanyProfileView = ({
         </Card>
 
         {/* Card 3: Hiring Preferences & Cut-Offs */}
-        <Card className="p-5 sm:p-6 space-y-4">
+        <Card className="p-5 sm:p-6 space-y-4 bg-slate-900/90 border-slate-800">
           <div className="flex items-center space-x-2.5 border-b border-slate-800 pb-3">
             <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-white">Campus Hiring Criteria</h3>
+              <h3 className="text-sm font-extrabold text-white">Default Campus Hiring Criteria</h3>
               <p className="text-[11px] text-slate-400">
-                Placement Genie matches candidates who meet your criteria
+                Default qualification cutoffs applied to new job postings
               </p>
             </div>
           </div>

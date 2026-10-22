@@ -24,7 +24,7 @@ export const CompanyTopNav = ({
       case 'overview':
         return 'Dashboard Overview';
       case 'candidates':
-        return 'Talent Discovery';
+        return 'Job Candidates & Talent Pool';
       case 'shortlist':
         return 'Shortlisted Candidates';
       case 'drives':

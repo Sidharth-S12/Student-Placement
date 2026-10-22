@@ -9,6 +9,10 @@ import {
   deletePlacementDrive,
   getAllStudentsFromFirestore,
   getAllCompanies,
+  getAllCompaniesFull,
+  getCompanyRecord,
+  reviewCompanyAccount,
+  reviewJobRole,
   getAllApplications,
   getApplicationById,
   saveApplication,
@@ -28,6 +32,305 @@ export async function requireAdminAuth(req, res, next) {
     next();
   } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired authentication credentials.' });
+  }
+}
+
+/**
+ * GET /api/admin/companies
+ * Lists all registered companies with approval statuses, contact info, and job role counts.
+ */
+export async function listCompaniesAdmin(req, res) {
+  try {
+    const { status, search } = req.query;
+    const allCompanies = await getAllCompaniesFull();
+
+    let filtered = [...allCompanies];
+
+    if (status && status !== 'all') {
+      filtered = filtered.filter(c => (c.approvalStatus || 'pending').toLowerCase() === status.toLowerCase());
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim().toLowerCase();
+      filtered = filtered.filter(c =>
+        (c.companyName || '').toLowerCase().includes(q) ||
+        (c.officialEmail || '').toLowerCase().includes(q) ||
+        (c.industry || '').toLowerCase().includes(q)
+      );
+    }
+
+    return res.status(200).json({
+      companies: filtered,
+      totalCount: filtered.length,
+      counts: {
+        total: allCompanies.length,
+        pending: allCompanies.filter(c => (c.approvalStatus || 'pending') === 'pending').length,
+        approved: allCompanies.filter(c => c.approvalStatus === 'approved').length,
+        rejected: allCompanies.filter(c => c.approvalStatus === 'rejected').length,
+        suspended: allCompanies.filter(c => c.approvalStatus === 'suspended').length
+      }
+    });
+  } catch (err) {
+    console.error('[AdminController:listCompaniesAdmin] Error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve company registrations.' });
+  }
+}
+
+/**
+ * GET /api/admin/companies/:id
+ * Retrieves full company profile details along with all submitted job roles.
+ */
+export async function getCompanyDetailsAdmin(req, res) {
+  try {
+    const { id } = req.params;
+    const company = await getCompanyRecord(id);
+    if (!company) {
+      return res.status(404).json({ error: 'Company record not found.' });
+    }
+
+    const allDrives = await getAllPlacementDrives({ role: 'admin' });
+    const companyJobs = allDrives.filter(d =>
+      (d.companyId && d.companyId === id) ||
+      (d.companyName && company.companyName && d.companyName.toLowerCase().trim() === company.companyName.toLowerCase().trim())
+    );
+
+    return res.status(200).json({
+      company,
+      jobs: companyJobs,
+      totalJobs: companyJobs.length
+    });
+  } catch (err) {
+    console.error('[AdminController:getCompanyDetailsAdmin] Error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve company profile.' });
+  }
+}
+
+/**
+ * POST /api/admin/companies/:id/review
+ * Approves, rejects, or suspends a registered company account.
+ */
+export async function reviewCompanyAdmin(req, res) {
+  try {
+    const { id } = req.params;
+    const { status, reason } = req.body;
+
+    if (!['approved', 'rejected', 'suspended'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid decision status. Must be approved, rejected, or suspended.' });
+    }
+
+    if (status === 'rejected' && (!reason || !reason.trim())) {
+      return res.status(400).json({ error: 'A specific rejection reason is required to notify the company.' });
+    }
+
+    const reviewer = req.adminUser || { uid: 'admin_officer', displayName: 'Placement Officer' };
+    const updated = await reviewCompanyAccount(id, {
+      status,
+      reason,
+      reviewerUid: reviewer.uid,
+      reviewerName: reviewer.displayName || reviewer.email
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Company registration ${status} successfully.`,
+      company: updated
+    });
+  } catch (err) {
+    console.error('[AdminController:reviewCompanyAdmin] Error:', err);
+    return res.status(400).json({ error: err.message || 'Failed to review company registration.' });
+  }
+}
+
+/**
+ * GET /api/admin/jobs
+ * Lists all submitted job roles across all companies for review.
+ */
+export async function listJobsAdmin(req, res) {
+  try {
+    const { status, search } = req.query;
+    const allDrives = await getAllPlacementDrives({ role: 'admin' });
+
+    let filtered = [...allDrives];
+
+    if (status && status !== 'all') {
+      filtered = filtered.filter(j => (j.approvalStatus || 'pending').toLowerCase() === status.toLowerCase());
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim().toLowerCase();
+      filtered = filtered.filter(j =>
+        (j.jobRole || '').toLowerCase().includes(q) ||
+        (j.companyName || '').toLowerCase().includes(q) ||
+        (j.packageCTC || '').toLowerCase().includes(q)
+      );
+    }
+
+    return res.status(200).json({
+      jobs: filtered,
+      totalCount: filtered.length,
+      counts: {
+        total: allDrives.length,
+        pending: allDrives.filter(j => (j.approvalStatus || 'pending') === 'pending').length,
+        approved: allDrives.filter(j => j.approvalStatus === 'approved').length,
+        rejected: allDrives.filter(j => j.approvalStatus === 'rejected').length
+      }
+    });
+  } catch (err) {
+    console.error('[AdminController:listJobsAdmin] Error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve job roles.' });
+  }
+}
+
+/**
+ * POST /api/admin/jobs/:id/review
+ * Approves or rejects a specific submitted job role.
+ */
+export async function reviewJobAdmin(req, res) {
+  try {
+    const { id } = req.params;
+    const { status, reason } = req.body;
+
+    if (!['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: 'Decision status must be approved or rejected.' });
+    }
+
+    if (status === 'rejected' && (!reason || !reason.trim())) {
+      return res.status(400).json({ error: 'A specific rejection reason is required when rejecting a job role.' });
+    }
+
+    const reviewer = req.adminUser || { uid: 'admin_officer', displayName: 'Placement Officer' };
+    const updated = await reviewJobRole(id, {
+      status,
+      reason,
+      reviewerUid: reviewer.uid,
+      reviewerName: reviewer.displayName || reviewer.email
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Job role ${status} successfully.`,
+      drive: updated
+    });
+  } catch (err) {
+    console.error('[AdminController:reviewJobAdmin] Error:', err);
+    return res.status(400).json({ error: err.message || 'Failed to review job role.' });
+  }
+}
+
+/**
+ * GET /api/admin/drives
+ * Lists recruitment drives with role-based visibility.
+ * Students only receive approved job roles from approved companies!
+ */
+export async function listDrives(req, res) {
+  try {
+    const user = await verifyAuthToken(req).catch(() => null);
+    const drives = await getAllPlacementDrives(user);
+    return res.status(200).json({
+      drives,
+      totalCount: drives.length
+    });
+  } catch (err) {
+    console.error('[AdminController:listDrives] Error:', err);
+    return res.status(500).json({ error: 'Failed to retrieve recruitment drives.' });
+  }
+}
+
+/**
+ * POST /api/admin/drives
+ * Creates or updates a recruitment drive.
+ */
+export async function createOrUpdateDrive(req, res) {
+  try {
+    const user = await verifyAuthToken(req).catch(() => null);
+    const driveData = req.body;
+    if (!driveData.companyName || !driveData.companyName.trim()) {
+      return res.status(400).json({ error: 'Company name is required.' });
+    }
+    if (!driveData.jobRole || !driveData.jobRole.trim()) {
+      return res.status(400).json({ error: 'Job role / designation is required.' });
+    }
+
+    // Numerical validation
+    const minCgpa = typeof driveData.minCgpa === 'number'
+      ? Math.min(10, Math.max(0, driveData.minCgpa))
+      : Math.min(10, Math.max(0, parseFloat(driveData.minCgpa) || 0));
+
+    const minReadiness = typeof driveData.minReadiness === 'number'
+      ? Math.min(100, Math.max(0, driveData.minReadiness))
+      : Math.min(100, Math.max(0, parseInt(driveData.minReadiness, 10) || 0));
+
+    // Normalize driveDate (handles DD-MM-YYYY -> YYYY-MM-DD or standard ISO/date string)
+    let driveDate = driveData.driveDate ? String(driveData.driveDate).trim() : '';
+    if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(driveDate)) {
+      const parts = driveDate.split('-');
+      driveDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+
+    // Department normalization
+    let eligibleDepartments = Array.isArray(driveData.eligibleDepartments)
+      ? driveData.eligibleDepartments
+      : (driveData.eligibleDepartments ? [driveData.eligibleDepartments] : ['All']);
+
+    if (eligibleDepartments.length === 0 || eligibleDepartments.includes('All')) {
+      eligibleDepartments = ['All'];
+    }
+
+    const cleanedDriveData = {
+      ...driveData,
+      companyName: driveData.companyName.trim(),
+      jobRole: driveData.jobRole.trim(),
+      minCgpa,
+      minReadiness,
+      driveDate,
+      eligibleDepartments,
+      packageCTC: driveData.packageCTC?.trim() || 'Negotiable',
+      location: driveData.location?.trim() || 'Campus / Virtual',
+      status: driveData.status || 'Upcoming',
+      jobDescription: driveData.jobDescription?.trim() || ''
+    };
+
+    // If submitted via /api/admin/drives (the Admin/Placement Officer portal):
+    // By default, campus drives created by the placement cell are approved
+    const effectiveUser = user || { role: 'admin', uid: 'admin_officer' };
+    if (!cleanedDriveData.approvalStatus && (!user || user.role === 'admin')) {
+      cleanedDriveData.approvalStatus = 'approved';
+      cleanedDriveData.companyApprovalStatus = 'approved';
+    }
+
+    const saved = await savePlacementDrive(cleanedDriveData, effectiveUser);
+    return res.status(200).json({
+      success: true,
+      message: saved.approvalStatus === 'pending'
+        ? 'Recruitment drive submitted for Placement Cell approval.'
+        : 'Recruitment drive published successfully.',
+      drive: saved
+    });
+  } catch (err) {
+    console.error('[AdminController:createOrUpdateDrive] Error:', err);
+    return res.status(400).json({ error: err.message || 'Failed to save drive.' });
+  }
+}
+
+/**
+ * DELETE /api/admin/drives/:id
+ * Deletes a recruitment drive.
+ */
+export async function removeDrive(req, res) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: 'Drive ID is required.' });
+    }
+
+    await deletePlacementDrive(id);
+    return res.status(200).json({
+      success: true,
+      message: 'Recruitment drive deleted successfully.'
+    });
+  } catch (err) {
+    console.error('[AdminController:removeDrive] Error:', err);
+    return res.status(500).json({ error: err.message || 'Failed to delete drive.' });
   }
 }
 
@@ -174,67 +477,7 @@ export async function deleteOfficer(req, res) {
   }
 }
 
-/**
- * GET /api/admin/drives
- * Lists all campus recruitment drives.
- */
-export async function listDrives(req, res) {
-  try {
-    const drives = await getAllPlacementDrives();
-    return res.status(200).json({
-      drives,
-      totalCount: drives.length
-    });
-  } catch (err) {
-    console.error('[AdminController:listDrives] Error:', err);
-    return res.status(500).json({ error: 'Failed to retrieve recruitment drives.' });
-  }
-}
 
-/**
- * POST /api/admin/drives
- * Creates or updates a recruitment drive.
- */
-export async function createOrUpdateDrive(req, res) {
-  try {
-    const driveData = req.body;
-    if (!driveData.companyName || !driveData.companyName.trim()) {
-      return res.status(400).json({ error: 'Company name is required.' });
-    }
-
-    const saved = await savePlacementDrive(driveData);
-    return res.status(200).json({
-      success: true,
-      message: 'Recruitment drive saved successfully.',
-      drive: saved
-    });
-  } catch (err) {
-    console.error('[AdminController:createOrUpdateDrive] Error:', err);
-    return res.status(500).json({ error: err.message || 'Failed to save drive.' });
-  }
-}
-
-/**
- * DELETE /api/admin/drives/:id
- * Deletes a recruitment drive.
- */
-export async function removeDrive(req, res) {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json({ error: 'Drive ID is required.' });
-    }
-
-    await deletePlacementDrive(id);
-    return res.status(200).json({
-      success: true,
-      message: 'Recruitment drive deleted successfully.'
-    });
-  } catch (err) {
-    console.error('[AdminController:removeDrive] Error:', err);
-    return res.status(500).json({ error: err.message || 'Failed to delete drive.' });
-  }
-}
 
 /**
  * GET /api/admin/applications
@@ -339,15 +582,40 @@ export async function getCampusSummary(req, res) {
     // Applications stats
     const totalApplications = allApplications.length;
     const shortlistedApps = allApplications.filter(a => a.status === 'Shortlisted');
-    const selectedApps = allApplications.filter(a => a.status === 'Selected');
+    const selectedApps = allApplications.filter(a => {
+      const st = (a.status || '').toLowerCase();
+      return st === 'selected' || st === 'hired' || st === 'offer accepted';
+    });
 
-    // Unique placed student IDs (prevent duplicate counting)
-    const uniquePlacedStudentIds = new Set(selectedApps.map(a => a.studentId));
-    const uniquePlacedCount = uniquePlacedStudentIds.size;
+    // Extract placed student identities to prevent duplicate offer counting across drives
+    const selectedStudentUids = new Set();
+    const selectedStudentEmails = new Set();
+    const selectedStudentNames = new Set();
+
+    selectedApps.forEach(app => {
+      if (app.studentId) selectedStudentUids.add(app.studentId);
+      if (app.studentEmail) selectedStudentEmails.add(app.studentEmail.toLowerCase().trim());
+      if (app.studentName) selectedStudentNames.add(app.studentName.toLowerCase().trim());
+    });
+
+    const isStudentPlaced = (s) => {
+      const email = (s.personalInfo?.email || s.email || '').toLowerCase().trim();
+      const name = (s.personalInfo?.fullName || s.displayName || '').toLowerCase().trim();
+      const pStatus = (s.placementStatus || '').toLowerCase();
+      return pStatus === 'placed' ||
+             selectedStudentUids.has(s.uid) ||
+             selectedStudentUids.has(s.studentId) ||
+             (email && selectedStudentEmails.has(email)) ||
+             (name && selectedStudentNames.has(name));
+    };
+
+    // Calculate unique placed students from actual registered student population
+    const uniquelyPlacedStudents = allStudents.filter(isStudentPlaced);
+    const uniquePlacedCount = uniquelyPlacedStudents.length;
 
     // Defined placement percentage: Uniquely placed candidates / total registered student population
     const overallPlacementPercentage = totalStudents > 0
-      ? Math.round((uniquePlacedCount / totalStudents) * 100)
+      ? Math.min(100, Math.round((uniquePlacedCount / totalStudents) * 100))
       : 0;
 
     // Department-wise aggregated metrics
@@ -356,22 +624,32 @@ export async function getCampusSummary(req, res) {
       deptMap[dept] = {
         dept,
         totalStudents: 0,
-        assessedStudents: 0,
+        assessedStudentsCount: 0,
+        placedStudentsCount: 0,
         totalTech: 0,
+        techCount: 0,
         totalApt: 0,
+        aptCount: 0,
         totalComm: 0,
+        commCount: 0,
         totalReadiness: 0,
+        readinessCount: 0,
+        totalCgpa: 0,
+        cgpaCount: 0,
         applicationsCount: 0,
         shortlistedCount: 0,
-        selectedCount: 0,
-        uniquePlacedIds: new Set()
+        selectedCount: 0
       };
     });
 
     let collegeTotalTech = 0;
+    let collegeTechCount = 0;
     let collegeTotalApt = 0;
+    let collegeAptCount = 0;
     let collegeTotalComm = 0;
+    let collegeCommCount = 0;
     let collegeTotalReadiness = 0;
+    let collegeReadinessCount = 0;
     let highReadyCount = 0;
     let modReadyCount = 0;
     let remedialCount = 0;
@@ -382,82 +660,115 @@ export async function getCampusSummary(req, res) {
         deptMap[dept] = {
           dept,
           totalStudents: 0,
-          assessedStudents: 0,
+          assessedStudentsCount: 0,
+          placedStudentsCount: 0,
           totalTech: 0,
+          techCount: 0,
           totalApt: 0,
+          aptCount: 0,
           totalComm: 0,
+          commCount: 0,
           totalReadiness: 0,
+          readinessCount: 0,
+          totalCgpa: 0,
+          cgpaCount: 0,
           applicationsCount: 0,
           shortlistedCount: 0,
-          selectedCount: 0,
-          uniquePlacedIds: new Set()
+          selectedCount: 0
         };
       }
 
       deptMap[dept].totalStudents++;
 
       const scores = s.placementScores || {};
-      const tech = Number(scores.technicalScore || s.latestTechnicalScore || 0);
-      const apt = Number(scores.aptitudeScore || 0);
-      const comm = Number(scores.communicationScore || 75);
-      const readiness = Number(scores.overallReadiness || 0);
+      const rawTech = scores.technicalScore !== undefined && scores.technicalScore !== null ? Number(scores.technicalScore) : (s.latestTechnicalScore !== undefined ? Number(s.latestTechnicalScore) : null);
+      const rawApt = scores.aptitudeScore !== undefined && scores.aptitudeScore !== null ? Number(scores.aptitudeScore) : (s.latestAptitudeAssessment?.score !== undefined ? Number(s.latestAptitudeAssessment.score) : null);
+      const rawComm = scores.communicationScore !== undefined && scores.communicationScore !== null ? Number(scores.communicationScore) : (s.latestCommunicationAssessment?.score !== undefined ? Number(s.latestCommunicationAssessment.score) : null);
+      const rawReadiness = scores.overallReadiness !== undefined && scores.overallReadiness !== null ? Number(scores.overallReadiness) : (s.overallReadiness !== undefined ? Number(s.overallReadiness) : null);
+      const rawCgpa = (s.education?.cgpa !== undefined && s.education?.cgpa !== null && !isNaN(Number(s.education.cgpa)))
+        ? Number(s.education.cgpa)
+        : (s.cgpa !== undefined && s.cgpa !== null && !isNaN(Number(s.cgpa)) ? Number(s.cgpa) : null);
 
-      if (s.latestAssessmentId || scores.technicalScore !== undefined) {
-        deptMap[dept].assessedStudents++;
+      let hasAnyAssessment = false;
+
+      if (rawTech !== null) {
+        deptMap[dept].totalTech += rawTech;
+        deptMap[dept].techCount++;
+        collegeTotalTech += rawTech;
+        collegeTechCount++;
+        hasAnyAssessment = true;
+      }
+      if (rawApt !== null) {
+        deptMap[dept].totalApt += rawApt;
+        deptMap[dept].aptCount++;
+        collegeTotalApt += rawApt;
+        collegeAptCount++;
+        hasAnyAssessment = true;
+      }
+      if (rawComm !== null) {
+        deptMap[dept].totalComm += rawComm;
+        deptMap[dept].commCount++;
+        collegeTotalComm += rawComm;
+        collegeCommCount++;
+        hasAnyAssessment = true;
+      }
+      if (rawReadiness !== null) {
+        deptMap[dept].totalReadiness += rawReadiness;
+        deptMap[dept].readinessCount++;
+        collegeTotalReadiness += rawReadiness;
+        collegeReadinessCount++;
+        if (rawReadiness >= 80) highReadyCount++;
+        else if (rawReadiness >= 60) modReadyCount++;
+        else remedialCount++;
+      }
+      if (rawCgpa !== null) {
+        deptMap[dept].totalCgpa += rawCgpa;
+        deptMap[dept].cgpaCount++;
       }
 
-      deptMap[dept].totalTech += tech;
-      deptMap[dept].totalApt += apt;
-      deptMap[dept].totalComm += comm;
-      deptMap[dept].totalReadiness += readiness;
+      if (hasAnyAssessment || s.latestAssessmentId) {
+        deptMap[dept].assessedStudentsCount++;
+      }
 
-      collegeTotalTech += tech;
-      collegeTotalApt += apt;
-      collegeTotalComm += comm;
-      collegeTotalReadiness += readiness;
-
-      if (readiness >= 80) highReadyCount++;
-      else if (readiness >= 60) modReadyCount++;
-      else remedialCount++;
+      if (isStudentPlaced(s)) {
+        deptMap[dept].placedStudentsCount++;
+      }
     });
 
     // Populate applications into departments
     allApplications.forEach(app => {
-      // Find candidate's department
       const candidate = allStudents.find(s => s.uid === app.studentId);
       const dept = candidate?.department || app.studentDepartment || 'Other';
       if (deptMap[dept]) {
         deptMap[dept].applicationsCount++;
         if (app.status === 'Shortlisted') deptMap[dept].shortlistedCount++;
-        if (app.status === 'Selected') {
-          deptMap[dept].selectedCount++;
-          deptMap[dept].uniquePlacedIds.add(app.studentId);
-        }
+        if (app.status === 'Selected' || app.status === 'Hired') deptMap[dept].selectedCount++;
       }
     });
 
     // Format department summaries
     const departmentBreakdown = Object.values(deptMap).map(d => {
-      const uniquePlacedInDept = d.uniquePlacedIds.size;
+      const placed = d.placedStudentsCount;
       const deptPlacementRate = d.totalStudents > 0
-        ? Math.round((uniquePlacedInDept / d.totalStudents) * 100)
+        ? Math.min(100, Math.round((placed / d.totalStudents) * 100))
         : 0;
 
       return {
         dept: d.dept,
         totalStudents: d.totalStudents,
-        assessmentCompletedCount: d.assessedStudents,
+        assessmentCompletedCount: d.assessedStudentsCount,
         assessmentCompletionRate: d.totalStudents > 0
-          ? Math.round((d.assessedStudents / d.totalStudents) * 100)
+          ? Math.round((d.assessedStudentsCount / d.totalStudents) * 100)
           : 0,
-        avgReadiness: d.totalStudents > 0 ? Math.round(d.totalReadiness / d.totalStudents) : 0,
-        avgTechnical: d.totalStudents > 0 ? Math.round(d.totalTech / d.totalStudents) : 0,
-        avgAptitude: d.totalStudents > 0 ? Math.round(d.totalApt / d.totalStudents) : 0,
-        avgCommunication: d.totalStudents > 0 ? Math.round(d.totalComm / d.totalStudents) : 0,
+        avgReadiness: d.readinessCount > 0 ? Math.round(d.totalReadiness / d.readinessCount) : null,
+        avgTechnical: d.techCount > 0 ? Math.round(d.totalTech / d.techCount) : null,
+        avgAptitude: d.aptCount > 0 ? Math.round(d.totalApt / d.aptCount) : null,
+        avgCommunication: d.commCount > 0 ? Math.round(d.totalComm / d.commCount) : null,
+        avgCGPA: d.cgpaCount > 0 ? Number((d.totalCgpa / d.cgpaCount).toFixed(2)) : null,
         applicationsCount: d.applicationsCount,
         shortlistedCount: d.shortlistedCount,
         selectedCount: d.selectedCount,
-        uniquelyPlacedCount: uniquePlacedInDept,
+        uniquelyPlacedCount: placed,
         placementPercentage: deptPlacementRate
       };
     }).sort((a, b) => b.totalStudents - a.totalStudents);

@@ -534,5 +534,976 @@
     "status": "Completed",
     "completedAt": "2026-09-20T18:31:03.975Z",
     "savedAt": "2026-09-20T18:31:03.977Z"
+  },
+  "assess_1792660476416_ai4y2": {
+    "assessmentId": "assess_1792660476416_ai4y2",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T09:14:38.159Z",
+    "completedAt": "2026-10-22T09:21:37.665Z",
+    "totalQuestions": 15,
+    "correctAnswers": 10,
+    "incorrectAnswers": 5,
+    "technicalScore": 66.67,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "JavaScript": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "SQL": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Linux": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      }
+    },
+    "topicPerformance": {
+      "List Comprehensions": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Core OOP & Inheritance": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Closures & Scope": {
+        "skill": "JavaScript",
+        "accuracy": 50,
+        "attempts": 2,
+        "correct": 1
+      },
+      "Joins & Queries": {
+        "skill": "SQL",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Event Loop & Concurrency": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "MongoDB",
+        "accuracy": 0,
+        "attempts": 2,
+        "correct": 0
+      },
+      "Promises & Async/Await": {
+        "skill": "Git",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Prototypes & Memory": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Generators & Memory": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "JavaScript (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "List Comprehensions in Python (Consistent correctness)",
+      "Core OOP & Inheritance in Java (Consistent correctness)",
+      "Event Loop & Concurrency in MySQL (Consistent correctness)",
+      "Promises & Async/Await in Git (Consistent correctness)",
+      "Prototypes & Memory in GitHub (Consistent correctness)",
+      "Generators & Memory in Python (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Java (50% accuracy - practice EASY fundamentals)",
+      "SQL (50% accuracy - practice MEDIUM fundamentals)",
+      "MongoDB (0% accuracy - practice EASY fundamentals)",
+      "Postman (0% accuracy - practice EASY fundamentals)",
+      "Linux (0% accuracy - practice EASY fundamentals)",
+      "Joins & Queries in SQL (Review concepts)",
+      "Array Methods in MongoDB (Review concepts)",
+      "Memory Management in Java (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T09:21:37.680Z"
+  },
+  "test_assess_1792667671748": {
+    "assessmentId": "test_assess_1792667671748",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-10-22T11:14:31.748Z",
+    "savedAt": "2026-10-22T11:14:31.750Z"
+  },
+  "assess_1792668111287_lmzrx": {
+    "assessmentId": "assess_1792668111287_lmzrx",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:21:52.977Z",
+    "completedAt": "2026-10-22T11:26:12.568Z",
+    "totalQuestions": 15,
+    "correctAnswers": 11,
+    "incorrectAnswers": 4,
+    "technicalScore": 73.33,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "MongoDB": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Git": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Linux": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      }
+    },
+    "topicPerformance": {
+      "GIL & Multithreading": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Promises & Async/Await": {
+        "skill": "JavaScript",
+        "accuracy": 25,
+        "attempts": 4,
+        "correct": 1
+      },
+      "Indexing & Transactions": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Event Loop & Concurrency": {
+        "skill": "MongoDB",
+        "accuracy": 100,
+        "attempts": 3,
+        "correct": 3
+      },
+      "Prototypes & Memory": {
+        "skill": "VS Code",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "String Manipulation": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Core OOP & Inheritance": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Java (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MongoDB (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "Postman (100% proficiency achieved)",
+      "Linux (100% proficiency achieved)",
+      "Memory Management in Java (Consistent correctness)",
+      "Indexing & Transactions in SQL (Consistent correctness)",
+      "Event Loop & Concurrency in MongoDB (Consistent correctness)",
+      "Prototypes & Memory in VS Code (Consistent correctness)",
+      "String Manipulation in Python (Consistent correctness)",
+      "Core OOP & Inheritance in Java (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Python (50% accuracy - practice MEDIUM fundamentals)",
+      "JavaScript (50% accuracy - practice MEDIUM fundamentals)",
+      "MySQL (0% accuracy - practice EASY fundamentals)",
+      "Git (0% accuracy - practice EASY fundamentals)",
+      "GIL & Multithreading in Python (Review concepts)",
+      "Promises & Async/Await in JavaScript (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:26:12.594Z"
+  },
+  "assess_1792668401595_7algk": {
+    "assessmentId": "assess_1792668401595_7algk",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:26:43.108Z",
+    "completedAt": "2026-10-22T11:30:54.967Z",
+    "totalQuestions": 15,
+    "correctAnswers": 14,
+    "incorrectAnswers": 1,
+    "technicalScore": 93.33,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Linux": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      }
+    },
+    "topicPerformance": {
+      "Data Types & Mutability": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Core OOP & Inheritance": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Closures & Scope": {
+        "skill": "JavaScript",
+        "accuracy": 50,
+        "attempts": 2,
+        "correct": 1
+      },
+      "Joins & Queries": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 3,
+        "correct": 3
+      },
+      "Event Loop & Concurrency": {
+        "skill": "VS Code",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Prototypes & Memory": {
+        "skill": "Postman",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "List Comprehensions": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Promises & Async/Await": {
+        "skill": "JavaScript",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "Java (100% proficiency achieved)",
+      "JavaScript (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "Postman (100% proficiency achieved)",
+      "Linux (100% proficiency achieved)",
+      "Data Types & Mutability in Python (Consistent correctness)",
+      "Core OOP & Inheritance in Java (Consistent correctness)",
+      "Joins & Queries in SQL (Consistent correctness)",
+      "Array Methods in MySQL (Consistent correctness)",
+      "Event Loop & Concurrency in VS Code (Consistent correctness)",
+      "Prototypes & Memory in Postman (Consistent correctness)",
+      "List Comprehensions in Python (Consistent correctness)",
+      "Memory Management in Java (Consistent correctness)",
+      "Promises & Async/Await in JavaScript (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "MongoDB (0% accuracy - practice EASY fundamentals)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:30:54.996Z"
+  },
+  "assess_1792668693166_mik1f": {
+    "assessmentId": "assess_1792668693166_mik1f",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:31:34.679Z",
+    "completedAt": "2026-10-22T11:33:49.394Z",
+    "totalQuestions": 15,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "technicalScore": 80,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Linux": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      }
+    },
+    "topicPerformance": {
+      "String Manipulation": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Generics & Type Erasure": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Promises & Async/Await": {
+        "skill": "JavaScript",
+        "accuracy": 0,
+        "attempts": 2,
+        "correct": 0
+      },
+      "Joins & Queries": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Closures & Scope": {
+        "skill": "MongoDB",
+        "accuracy": 67,
+        "attempts": 3,
+        "correct": 2
+      },
+      "Event Loop & Concurrency": {
+        "skill": "Git",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "GIL & Multithreading": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "Java (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "MongoDB (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "String Manipulation in Python (Consistent correctness)",
+      "Generics & Type Erasure in Java (Consistent correctness)",
+      "Joins & Queries in SQL (Consistent correctness)",
+      "Array Methods in MySQL (Consistent correctness)",
+      "Event Loop & Concurrency in Git (Consistent correctness)",
+      "GIL & Multithreading in Python (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "JavaScript (50% accuracy - practice MEDIUM fundamentals)",
+      "Postman (0% accuracy - practice EASY fundamentals)",
+      "Linux (0% accuracy - practice EASY fundamentals)",
+      "Promises & Async/Await in JavaScript (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:33:49.416Z"
+  },
+  "test_assess_1792669242260": {
+    "assessmentId": "test_assess_1792669242260",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-10-22T11:40:42.260Z",
+    "savedAt": "2026-10-22T11:40:42.262Z"
+  },
+  "assess_1792669366204_p42us": {
+    "assessmentId": "assess_1792669366204_p42us",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:42:47.797Z",
+    "completedAt": "2026-10-22T11:47:23.746Z",
+    "totalQuestions": 15,
+    "correctAnswers": 15,
+    "incorrectAnswers": 0,
+    "technicalScore": 100,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Linux": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      }
+    },
+    "topicPerformance": {
+      "List Comprehensions": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Event Loop & Concurrency": {
+        "skill": "JavaScript",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Closures & Scope": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Prototypes & Memory": {
+        "skill": "MongoDB",
+        "accuracy": 100,
+        "attempts": 3,
+        "correct": 3
+      },
+      "Promises & Async/Await": {
+        "skill": "Git",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "Linux",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Generators & Memory": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Generics & Type Erasure": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "Java (100% proficiency achieved)",
+      "JavaScript (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "MongoDB (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "Postman (100% proficiency achieved)",
+      "Linux (100% proficiency achieved)",
+      "List Comprehensions in Python (Consistent correctness)",
+      "Memory Management in Java (Consistent correctness)",
+      "Event Loop & Concurrency in JavaScript (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)",
+      "Closures & Scope in MySQL (Consistent correctness)",
+      "Prototypes & Memory in MongoDB (Consistent correctness)",
+      "Promises & Async/Await in Git (Consistent correctness)",
+      "Array Methods in Linux (Consistent correctness)",
+      "Generators & Memory in Python (Consistent correctness)",
+      "Generics & Type Erasure in Java (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Continue tackling HARD tier algorithmic and system design challenges"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:47:23.783Z"
   }
 }

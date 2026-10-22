@@ -60,13 +60,48 @@ export const AdminAddDriveModal = ({ isOpen, onClose, onDriveSaved }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.companyName.trim()) {
+    if (isLoading) return; // Prevent duplicate submissions
+
+    const companyName = formData.companyName.trim();
+    const jobRole = formData.jobRole.trim();
+
+    if (!companyName) {
       setErrorMessage('Please enter company name.');
       return;
     }
-    if (!formData.jobRole.trim()) {
+    if (!jobRole) {
       setErrorMessage('Please enter job role or designation.');
       return;
+    }
+
+    // Numerical validation
+    const parsedCgpa = parseFloat(formData.minCgpa);
+    if (isNaN(parsedCgpa) || parsedCgpa < 0 || parsedCgpa > 10) {
+      setErrorMessage('Minimum CGPA cutoff must be a valid number between 0.0 and 10.0.');
+      return;
+    }
+
+    const parsedReadiness = parseInt(formData.minReadiness, 10);
+    if (isNaN(parsedReadiness) || parsedReadiness < 0 || parsedReadiness > 100) {
+      setErrorMessage('Minimum Placement Readiness must be a percentage between 0% and 100%.');
+      return;
+    }
+
+    // Date normalization (supports DD-MM-YYYY or YYYY-MM-DD)
+    let driveDate = (formData.driveDate || '').trim();
+    if (driveDate) {
+      if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(driveDate)) {
+        const parts = driveDate.split('-');
+        driveDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+      }
+    } else {
+      driveDate = new Date().toISOString().split('T')[0];
+    }
+
+    // Departments normalization
+    let depts = formData.eligibleDepartments;
+    if (!depts || depts.length === 0 || depts.includes('All')) {
+      depts = ['All'];
     }
 
     setIsLoading(true);
@@ -74,15 +109,15 @@ export const AdminAddDriveModal = ({ isOpen, onClose, onDriveSaved }) => {
 
     try {
       const saved = await saveDrive({
-        companyName: formData.companyName.trim(),
-        jobRole: formData.jobRole.trim(),
-        eligibleDepartments: formData.eligibleDepartments,
-        minCgpa: parseFloat(formData.minCgpa) || 0,
-        minReadiness: parseInt(formData.minReadiness, 10) || 0,
-        packageCTC: formData.packageCTC.trim(),
-        driveDate: formData.driveDate,
-        status: formData.status,
-        location: formData.location.trim(),
+        companyName,
+        jobRole,
+        eligibleDepartments: depts,
+        minCgpa: parsedCgpa,
+        minReadiness: parsedReadiness,
+        packageCTC: formData.packageCTC.trim() || 'Negotiable',
+        driveDate,
+        status: formData.status || 'Upcoming',
+        location: formData.location.trim() || 'Campus / Virtual',
         jobDescription: formData.jobDescription.trim()
       });
 
