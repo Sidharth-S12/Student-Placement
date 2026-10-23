@@ -7,16 +7,26 @@
     color-scheme: light;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-slate-50 text-slate-800 font-sans selection:bg-brand-600 selection:text-white;
     min-height: 100vh;
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
   }
+}
+
+/* Ensure sticky navigation headers remain pinned to the top of viewport */
+header.sticky {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
 }
 
 /* Custom Scrollbars */

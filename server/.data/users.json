@@ -105,7 +105,12 @@
     "email": "sid@company.com",
     "displayName": "Sid Company",
     "companyName": "Company Solutions",
-    "updatedAt": "2026-09-20T18:32:49.384Z"
+    "updatedAt": "2026-10-22T15:56:42.511Z",
+    "approvalStatus": "approved",
+    "rejectionReason": null,
+    "reviewedBy": "local_admin_placement_edu",
+    "reviewerName": "Placement Administrator",
+    "reviewedAt": "2026-10-22T15:56:42.467Z"
   },
   "test_student_uid_1789929174921": {
     "uid": "test_student_uid_1789929174921",
@@ -143,8 +148,8 @@
     "department": "Central Placement & Training Cell",
     "phone": "",
     "createdAt": "2026-10-19T03:57:10.800Z",
-    "updatedAt": "2026-10-19T17:53:46.278Z",
-    "status": "inactive",
+    "updatedAt": "2026-10-22T15:53:46.667Z",
+    "status": "active",
     "accessScope": "college",
     "assignedDepartment": null
   },

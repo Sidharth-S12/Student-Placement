@@ -1566,7 +1566,7 @@ export const SinglePageDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex relative selection:bg-brand-500 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex relative selection:bg-brand-500 selection:text-white overflow-x-clip">
       {/* Ambient background glow to match landing page */}
       <div className="fixed inset-0 pointer-events-none -z-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-600/10 rounded-full blur-3xl"></div>
@@ -1616,7 +1616,7 @@ export const SinglePageDashboard = () => {
       <div className="flex-1 min-w-0 flex flex-col min-h-screen relative z-10">
 
         {/* Top Navbar Header */}
-        <header className="sticky top-0 z-20 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 shadow-xl flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-3.5 shadow-xl flex items-center justify-between gap-4">
 
           {/* Left: Mobile hamburger & Clean Compact Brand / Context */}
           <div className="flex items-center space-x-3 min-w-0 flex-shrink-0">

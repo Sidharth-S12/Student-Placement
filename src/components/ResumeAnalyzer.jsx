@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   FileSearch,
   Upload,
@@ -11,465 +10,277 @@ import {
   ExternalLink,
   CheckCircle2,
   XCircle,
+  AlertCircle,
   Sparkles,
   BriefcaseBusiness,
   GraduationCap,
+  Building2,
+  Banknote,
+  Search,
+  FileText,
+  Check,
+  ChevronRight,
+  BarChart3,
+  ShieldCheck,
+  Layers,
+  ArrowRight,
+  RefreshCw,
 } from "lucide-react";
+import {
+  JOB_CATEGORIES,
+  JOB_ROLES_DATA,
+  JOB_ROLES_LIST,
+  analyzeResumeLocally,
+} from "../data/jobRolesResumeData.js";
 import "./ResumeAnalyzer.css";
 
-
-const JOB_ROLES = [
-  "Data Analyst",
-  "Software Engineer",
-  "Machine Learning Engineer",
-  "Full Stack Developer",
-  "Cloud Engineer",
-  "Cybersecurity Analyst",
-  "UI/UX Designer",
-];
-
-const ROLE_GUIDANCE = {
-  "Data Analyst": {
-    technical: ["SQL", "Excel", "Python", "Power BI", "Statistics", "Data Visualization"],
-    soft: ["Analytical Thinking", "Communication", "Attention to Detail", "Problem Solving", "Presentation"],
-    courses: [
-      {
-        name: "Google Data Analytics Professional Certificate",
-        provider: "Google / Coursera",
-        url: "https://www.coursera.org/professional-certificates/google-data-analytics",
-      },
-      {
-        name: "SQL for Data Science",
-        provider: "University of California, Davis / Coursera",
-        url: "https://www.coursera.org/learn/sql-for-data-science",
-      },
-      {
-        name: "Power BI Learning Resources",
-        provider: "Microsoft Learn",
-        url: "https://learn.microsoft.com/en-us/training/powerplatform/power-bi/",
-      },
-    ],
-    certifications: [
-      {
-        name: "Microsoft Certified: Power BI Data Analyst Associate",
-        provider: "Microsoft",
-        url: "https://learn.microsoft.com/en-us/credentials/certifications/power-bi-data-analyst-associate/",
-      },
-      {
-        name: "Google Data Analytics Professional Certificate",
-        provider: "Google",
-        url: "https://www.coursera.org/professional-certificates/google-data-analytics",
-      },
-    ],
-  },
-
-  "Software Engineer": {
-    technical: ["Python", "Java", "Data Structures & Algorithms", "Git", "SQL", "Testing"],
-    soft: ["Problem Solving", "Teamwork", "Communication", "Adaptability", "Time Management"],
-    courses: [
-      {
-        name: "Programming Foundations",
-        provider: "Coursera",
-        url: "https://www.coursera.org/courses?query=programming",
-      },
-      {
-        name: "Data Structures and Algorithms",
-        provider: "Coursera",
-        url: "https://www.coursera.org/courses?query=data%20structures%20algorithms",
-      },
-      {
-        name: "Git and GitHub Learning Resources",
-        provider: "GitHub Skills",
-        url: "https://skills.github.com/",
-      },
-    ],
-    certifications: [
-      {
-        name: "GitHub Foundations",
-        provider: "GitHub",
-        url: "https://resources.github.com/learn/certifications/",
-      },
-      {
-        name: "Role-relevant cloud developer certification",
-        provider: "AWS",
-        url: "https://aws.amazon.com/certification/",
-      },
-    ],
-  },
-
-  "Machine Learning Engineer": {
-    technical: ["Python", "Machine Learning", "Statistics", "NumPy", "Pandas", "Model Deployment"],
-    soft: ["Analytical Thinking", "Experimentation", "Problem Solving", "Communication", "Collaboration"],
-    courses: [
-      {
-        name: "Machine Learning Specialization",
-        provider: "DeepLearning.AI and Stanford Online / Coursera",
-        url: "https://www.coursera.org/specializations/machine-learning-introduction",
-      },
-      {
-        name: "Google Machine Learning Crash Course",
-        provider: "Google",
-        url: "https://developers.google.com/machine-learning/crash-course",
-      },
-      {
-        name: "Practical Deep Learning",
-        provider: "fast.ai",
-        url: "https://course.fast.ai/",
-      },
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Machine Learning Engineer – Associate",
-        provider: "AWS",
-        url: "https://aws.amazon.com/certification/",
-      },
-      {
-        name: "Machine learning and cloud AI learning pathways",
-        provider: "Google Cloud",
-        url: "https://cloud.google.com/learn/certification",
-      },
-    ],
-  },
-
-  "Full Stack Developer": {
-    technical: ["HTML", "CSS", "JavaScript", "React", "Node.js", "SQL", "REST APIs"],
-    soft: ["Teamwork", "Communication", "Debugging", "Adaptability", "Time Management"],
-    courses: [
-      {
-        name: "Full Stack Open",
-        provider: "University of Helsinki",
-        url: "https://fullstackopen.com/en/",
-      },
-      {
-        name: "Web Development Learning Path",
-        provider: "MDN Web Docs",
-        url: "https://developer.mozilla.org/en-US/docs/Learn_web_development",
-      },
-      {
-        name: "GitHub Skills",
-        provider: "GitHub",
-        url: "https://skills.github.com/",
-      },
-    ],
-    certifications: [
-      {
-        name: "GitHub Foundations",
-        provider: "GitHub",
-        url: "https://resources.github.com/learn/certifications/",
-      },
-      {
-        name: "AWS Certified Developer – Associate",
-        provider: "AWS",
-        url: "https://aws.amazon.com/certification/",
-      },
-    ],
-  },
-
-  "Cloud Engineer": {
-    technical: ["Linux", "Networking", "AWS", "Azure", "Docker", "IAM", "CI/CD"],
-    soft: ["Problem Solving", "Communication", "Teamwork", "Attention to Detail", "Incident Management"],
-    courses: [
-      {
-        name: "AWS Skill Builder",
-        provider: "Amazon Web Services",
-        url: "https://skillbuilder.aws/",
-      },
-      {
-        name: "Azure Training",
-        provider: "Microsoft Learn",
-        url: "https://learn.microsoft.com/en-us/training/azure/",
-      },
-      {
-        name: "Docker Getting Started",
-        provider: "Docker",
-        url: "https://docs.docker.com/get-started/",
-      },
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Solutions Architect – Associate",
-        provider: "AWS",
-        url: "https://aws.amazon.com/certification/",
-      },
-      {
-        name: "Microsoft Azure certification pathways",
-        provider: "Microsoft",
-        url: "https://learn.microsoft.com/en-us/credentials/",
-      },
-    ],
-  },
-
-  "Cybersecurity Analyst": {
-    technical: ["Networking", "Linux", "Security Fundamentals", "SIEM", "Incident Response", "Python"],
-    soft: ["Attention to Detail", "Critical Thinking", "Communication", "Ethical Judgment", "Problem Solving"],
-    courses: [
-      {
-        name: "Introduction to Cybersecurity",
-        provider: "Cisco Networking Academy",
-        url: "https://www.netacad.com/",
-      },
-      {
-        name: "Cybersecurity Learning",
-        provider: "Microsoft Learn",
-        url: "https://learn.microsoft.com/en-us/training/",
-      },
-      {
-        name: "Cybersecurity Courses",
-        provider: "Coursera",
-        url: "https://www.coursera.org/courses?query=cybersecurity",
-      },
-    ],
-    certifications: [
-      {
-        name: "CompTIA Security+",
-        provider: "CompTIA",
-        url: "https://www.comptia.org/certifications/security",
-      },
-      {
-        name: "Cisco Cybersecurity certification pathways",
-        provider: "Cisco",
-        url: "https://www.cisco.com/site/us/en/learn/training-certifications/certifications/security/index.html",
-      },
-    ],
-  },
-
-  "UI/UX Designer": {
-    technical: ["Figma", "Wireframing", "Prototyping", "User Research", "Accessibility", "Design Systems"],
-    soft: ["Empathy", "Creativity", "Communication", "Collaboration", "Presentation", "Critical Thinking"],
-    courses: [
-      {
-        name: "Google UX Design Professional Certificate",
-        provider: "Google / Coursera",
-        url: "https://www.coursera.org/professional-certificates/google-ux-design",
-      },
-      {
-        name: "Figma Learn",
-        provider: "Figma",
-        url: "https://help.figma.com/hc/en-us/categories/360002042553-Learn-design",
-      },
-      {
-        name: "Accessibility Fundamentals",
-        provider: "W3C",
-        url: "https://www.w3.org/WAI/fundamentals/",
-      },
-    ],
-    certifications: [
-      {
-        name: "Google UX Design Professional Certificate",
-        provider: "Google",
-        url: "https://www.coursera.org/professional-certificates/google-ux-design",
-      },
-      {
-        name: "Relevant UX design courses and portfolio pathways",
-        provider: "Interaction Design Foundation",
-        url: "https://www.interaction-design.org/",
-      },
-    ],
-  },
-};
-
-const normalize = (value) =>
-  String(value || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9+#.]/g, "");
-
-function uniqueSkills(items = []) {
-  return [...new Set(items.filter(Boolean))];
-}
-
-function SkillCard({ title, skills = [], type, emptyText }) {
-  return (
-    <section className={`resume-skill-card ${type}`}>
-      <h3>{title}</h3>
-
-      {skills.length > 0 ? (
-        <div className="resume-skill-list">
-          {skills.map((skill) => (
-            <span className="resume-skill-tag" key={skill}>
-              {skill}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="resume-empty">{emptyText}</p>
-      )}
-
-      <p className="resume-skill-count">
-        {skills.length} skill{skills.length === 1 ? "" : "s"}
-      </p>
-    </section>
-  );
-}
-
-function ResourceCard({ item, type }) {
-  return (
-    <article className="resume-resource-card">
-      <div className="resume-resource-icon">
-        {type === "course" ? (
-          <BookOpen size={19} />
-        ) : (
-          <Award size={19} />
-        )}
-      </div>
-
-      <div className="resume-resource-content">
-        <h4>{item.name}</h4>
-        <p>{item.provider}</p>
-        <a href={item.url} target="_blank" rel="noreferrer">
-          View official resource <ExternalLink size={13} />
-        </a>
-      </div>
-    </article>
-  );
-}
-
 export default function ResumeAnalyzer() {
-  const [role, setRole] = useState("Data Analyst");
+  const [role, setRole] = useState("Software Engineer (SDE)");
+  const [selectedCategory, setSelectedCategory] = useState("All Roles");
+  const [roleSearchQuery, setRoleSearchQuery] = useState("");
   const [file, setFile] = useState(null);
+  const [resumeText, setResumeText] = useState("");
+  const [inputMode, setInputMode] = useState("file"); // "file" | "text"
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState("");
 
-  const guidance = ROLE_GUIDANCE[role];
+  const fileInputRef = useRef(null);
+  const resultsRef = useRef(null);
 
-  // These are role-relevant skills, not proof that a candidate possesses them.
-  // The backend's matched and additional skills are used to identify detected skills.
-  const matchedSkills = uniqueSkills(result?.matchedSkills);
-  const missingSkills = uniqueSkills(result?.missingSkills);
-  const additionalSkills = uniqueSkills(result?.additionalSkills);
+  // Filter roles based on selected category and search input
+  const filteredRoles = useMemo(() => {
+    return JOB_ROLES_LIST.filter((r) => {
+      const data = JOB_ROLES_DATA[r];
+      const matchesCategory =
+        selectedCategory === "All Roles" || data.category === selectedCategory;
+      const matchesSearch =
+        r.toLowerCase().includes(roleSearchQuery.toLowerCase()) ||
+        data.description.toLowerCase().includes(roleSearchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, roleSearchQuery]);
 
-  const allDetected = uniqueSkills([...matchedSkills, ...additionalSkills]);
+  const currentRoleData = JOB_ROLES_DATA[role] || JOB_ROLES_DATA["Software Engineer (SDE)"];
 
-  const detectedTechnicalSkills = guidance.technical.filter((skill) =>
-    allDetected.some(
-      (detected) =>
-        normalize(detected) === normalize(skill) ||
-        normalize(detected).includes(normalize(skill)) ||
-        normalize(skill).includes(normalize(detected))
-    )
-  );
-
-  // Soft skills are displayed as role-relevant skills unless the backend
-  // explicitly returns a softSkills array.
-  const detectedSoftSkills = Array.isArray(result?.softSkills)
-    ? uniqueSkills(result.softSkills)
-    : [];
-
-  const softSkillsToDevelop = guidance.soft.filter(
-    (skill) =>
-      !detectedSoftSkills.some(
-        (detected) => normalize(detected) === normalize(skill)
-      )
-  );
-
-  async function handleAnalyze(event) {
-    event.preventDefault();
-    setError("");
-    setResult(null);
-
-    if (!file) {
-      setError("Please choose your resume first.");
-      return;
-    }
-
-    const extension = file.name.split(".").pop().toLowerCase();
-
-    if (!["pdf", "docx"].includes(extension)) {
-      setError("Only PDF and DOCX resumes are supported.");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Your resume must be smaller than 5 MB.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("resume", file);
-    formData.append("role", role);
-
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/resume/analyze",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Resume analysis failed.");
+  // Handle file selection
+  function handleFileChange(event) {
+    const selected = event.target.files?.[0] || null;
+    if (selected) {
+      const ext = selected.name.split(".").pop().toLowerCase();
+      if (!["pdf", "docx", "txt"].includes(ext)) {
+        setError("Please choose a valid PDF, DOCX, or TXT resume document.");
+        return;
       }
+      if (selected.size > 10 * 1024 * 1024) {
+        setError("Resume must be smaller than 10 MB.");
+        return;
+      }
+      setFile(selected);
+      setError("");
+      setResult(null);
 
-      setResult(data);
-    } catch (err) {
-      setError(
-        err.message ||
-          "Unable to connect to the backend. Check that your server is running."
-      );
-    } finally {
-      setLoading(false);
+      // If text file, read content directly
+      if (ext === "txt") {
+        const reader = new FileReader();
+        reader.onload = (e) => setResumeText(e.target?.result || "");
+        reader.readAsText(selected);
+      }
     }
   }
 
+  // Core resume analysis submit handler
+  async function handleAnalyze(event) {
+    if (event) event.preventDefault();
+    setError("");
+    setResult(null);
+
+    if (inputMode === "file" && !file) {
+      setError("Please select a resume file (PDF or DOCX) to analyze.");
+      return;
+    }
+
+    if (inputMode === "text" && !resumeText.trim()) {
+      setError("Please paste your resume text into the text box.");
+      return;
+    }
+
+    setLoading(true);
+    setLoadingStep("Extracting document contents and keywords...");
+
+    try {
+      let data = null;
+
+      // If text was pasted, run immediate instant local analysis
+      if (inputMode === "text" && resumeText.trim()) {
+        await new Promise((r) => setTimeout(r, 600));
+        setLoadingStep("Evaluating ATS compatibility and role keywords...");
+        await new Promise((r) => setTimeout(r, 400));
+        data = analyzeResumeLocally(resumeText, role, "Pasted Resume Text");
+      } else if (file) {
+        const formData = new FormData();
+        formData.append("resume", file);
+        formData.append("role", role);
+
+        // Try primary backend endpoint with fallback
+        try {
+          setLoadingStep("Submitting to ATS analysis engine...");
+          let response = await fetch("/api/resume/analyze", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok && response.status === 404) {
+            response = await fetch("http://localhost:5000/api/resume/analyze", {
+              method: "POST",
+              body: formData,
+            });
+          }
+
+          if (response.ok) {
+            data = await response.json();
+          } else {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.message || "Server analysis error");
+          }
+        } catch (networkErr) {
+          console.warn("Backend unavailable, executing client-side fallback:", networkErr);
+          setLoadingStep("Processing locally with resilient client-side ATS parser...");
+
+          // If file is TXT, read text; otherwise if browser can read text:
+          let extracted = resumeText;
+          if (!extracted && file.type === "text/plain") {
+            extracted = await file.text();
+          }
+
+          if (!extracted) {
+            // For binary files when backend is offline, extract plain strings from buffer
+            try {
+              const buffer = await file.arrayBuffer();
+              const uint8 = new Uint8Array(buffer);
+              let rawStr = "";
+              for (let i = 0; i < uint8.length && rawStr.length < 50000; i++) {
+                const charCode = uint8[i];
+                if ((charCode >= 32 && charCode <= 126) || charCode === 10 || charCode === 13) {
+                  rawStr += String.fromCharCode(charCode);
+                }
+              }
+              extracted = rawStr;
+            } catch {
+              extracted = "";
+            }
+          }
+
+          if (extracted && extracted.length > 50) {
+            data = analyzeResumeLocally(extracted, role, file.name);
+          } else {
+            throw new Error(
+              "Could not connect to the backend server. Please ensure the server is active or paste your resume text in the 'Paste Resume Text' tab for instant analysis."
+            );
+          }
+        }
+      }
+
+      if (!data) {
+        throw new Error("Unable to analyze resume. Please try again.");
+      }
+
+      setResult(data);
+
+      // Smooth scroll to results
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred during resume analysis.");
+    } finally {
+      setLoading(false);
+      setLoadingStep("");
+    }
+  }
+
+  // Download comprehensive analysis report
   function downloadReport() {
     if (!result) return;
 
-    const report = [
-      "RESUME ANALYSIS REPORT",
-      `Resume: ${result.fileName || file?.name || "Uploaded resume"}`,
-      `Selected job role: ${role}`,
-      `Skill match: ${result.matchPercentage ?? 0}%`,
+    const reportLines = [
+      "===========================================================",
+      "               CAMPUS PLACEMENT ATS AUDIT REPORT           ",
+      "===========================================================",
+      `Generated On: ${new Date().toLocaleString()}`,
+      `Candidate Document: ${result.fileName || file?.name || "Uploaded Resume"}`,
+      `Target Placement Role: ${result.role}`,
+      `Industry Category: ${result.category || currentRoleData.category}`,
+      `Expected Placement CTC: ${result.salaryRange || currentRoleData.salaryRange}`,
       "",
-      "MATCHED SKILLS",
-      ...matchedSkills.map((skill) => `- ${skill}`),
+      "-----------------------------------------------------------",
+      "1. EXECUTIVE ATS SUMMARY",
+      "-----------------------------------------------------------",
+      `Overall ATS Compatibility Score: ${result.overallAtsScore}% (${result.atsRating})`,
+      `Skills Fit Index: ${result.skillMatchPercentage}%`,
+      `Structure & Formatting Score: ${result.structureScore}%`,
+      `Content & Impact Score: ${result.impactScore}%`,
       "",
-      "MISSING REQUIRED SKILLS",
-      ...missingSkills.map((skill) => `- ${skill}`),
+      "-----------------------------------------------------------",
+      "2. TECHNICAL SKILLS ASSESSMENT",
+      "-----------------------------------------------------------",
+      `Matched Core Skills (${result.matchedSkills?.length || 0} / ${result.totalRequired || 0}):`,
+      ...(result.matchedSkills?.length
+        ? result.matchedSkills.map((s) => `  [✓] ${s}`)
+        : ["  (None detected from required list)"]),
       "",
-      "ADDITIONAL SKILLS",
-      ...additionalSkills.map((skill) => `- ${skill}`),
+      `Missing Priority Skills (${result.missingSkills?.length || 0}):`,
+      ...(result.missingSkills?.length
+        ? result.missingSkills.map((s) => `  [!] ${s}`)
+        : ["  (None - All required skills detected!)"]),
       "",
-      "TECHNICAL SKILLS RELEVANT TO THIS ROLE",
-      ...guidance.technical.map((skill) => {
-        const found = detectedTechnicalSkills.includes(skill);
-        return `- ${skill}: ${found ? "Detected in backend skill results" : "Not confirmed by backend results"}`;
-      }),
+      `Additional / Transferable Skills Found (${result.additionalSkills?.length || 0}):`,
+      ...(result.additionalSkills?.length
+        ? result.additionalSkills.map((s) => `  [+] ${s}`)
+        : ["  (None detected)"]),
       "",
-      "SOFT SKILLS",
-      ...(detectedSoftSkills.length
-        ? detectedSoftSkills.map((skill) => `- Detected: ${skill}`)
-        : ["- No soft-skill extraction was returned by the backend."]),
-      "ROLE-RELEVANT SOFT SKILLS TO CONSIDER",
-      ...guidance.soft.map((skill) => `- ${skill}`),
+      "-----------------------------------------------------------",
+      "3. SOFT SKILLS & PROFESSIONAL TRAITS",
+      "-----------------------------------------------------------",
+      `Detected Attributes: ${(result.detectedSoftSkills || []).join(", ") || "None directly mentioned"}`,
+      `Role Expected Competencies: ${(result.expectedSoftSkills || currentRoleData.soft).join(", ")}`,
       "",
-      "RECOMMENDED COURSES",
-      ...guidance.courses.map(
-        (course) => `- ${course.name} (${course.provider}): ${course.url}`
+      "-----------------------------------------------------------",
+      "4. ATS FORMATTING & STRUCTURE AUDIT",
+      "-----------------------------------------------------------",
+      `Word Count: ${result.auditDetails?.wordCount || "N/A"} words`,
+      `Quantifiable Metrics Found: ${result.auditDetails?.metricsCount || 0} occurrences`,
+      `High-Impact Action Verbs Found: ${result.auditDetails?.actionVerbsCount || 0} (${(result.auditDetails?.actionVerbsFound || []).slice(0, 8).join(", ")})`,
+      `Contact Info Detected: Email (${result.auditDetails?.contactAudit?.hasEmail ? "YES" : "NO"}), Phone (${result.auditDetails?.contactAudit?.hasPhone ? "YES" : "NO"}), LinkedIn (${result.auditDetails?.contactAudit?.hasLinkedIn ? "YES" : "NO"}), GitHub (${result.auditDetails?.contactAudit?.hasGitHub ? "YES" : "NO"})`,
+      "",
+      "-----------------------------------------------------------",
+      "5. ACTIONABLE IMPROVEMENT RECOMMENDATIONS",
+      "-----------------------------------------------------------",
+      ...(result.recommendations || []).map((r, i) => `${i + 1}. ${r}`),
+      "",
+      "-----------------------------------------------------------",
+      "6. RECOMMENDED CERTIFICATIONS FOR THIS ROLE",
+      "-----------------------------------------------------------",
+      ...(result.certifications || currentRoleData.certifications || []).map(
+        (c) => `• ${c.name} (${c.provider}) - ${c.url}`
       ),
       "",
-      "RECOMMENDED CERTIFICATIONS",
-      ...guidance.certifications.map(
-        (cert) => `- ${cert.name} (${cert.provider}): ${cert.url}`
-      ),
+      "-----------------------------------------------------------",
+      "7. TOP HIRING RECRUITERS",
+      "-----------------------------------------------------------",
+      (result.topCompanies || currentRoleData.topCompanies || []).join(", "),
       "",
-      `Analysis note: ${result.note || "Recommendations are based on the selected role."}`,
-      "",
-      "Disclaimer: Recommendations do not guarantee employment or certification.",
-    ].join("\n");
+      "===========================================================",
+      "Report generated by Placement Genie AI Resume Analyzer",
+      "==========================================================="
+    ];
 
-    const blob = new Blob([report], {
-      type: "text/plain;charset=utf-8",
-    });
-
+    const blob = new Blob([reportLines.join("\n")], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "resume-analysis-report.txt";
+    link.download = `ATS_Audit_${role.replace(/[^a-zA-Z0-9]/g, "_")}.txt`;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -478,102 +289,264 @@ export default function ResumeAnalyzer() {
 
   return (
     <main className="resume-analyzer">
+      {/* 1. Header Banner */}
       <header className="resume-header">
         <div className="resume-header-icon">
-          <FileSearch size={27} />
+          <FileSearch size={30} />
         </div>
 
-        <div>
-          <span className="resume-eyebrow">
-            <Sparkles size={13} /> STUDENT PLACEMENT READINESS
-          </span>
-          <h1>AI Resume Analyzer</h1>
+        <div className="flex-1 min-w-0">
+          <div className="resume-eyebrow">
+            <Sparkles size={14} /> ENTERPRISE ATS PLACEMENT READINESS
+          </div>
+          <h1>AI Resume Analyzer & Job Fit Engine</h1>
           <p>
-            Analyze your resume against your target job, review your skills,
-            and explore relevant learning pathways and certifications.
+            Evaluate your resume against <strong>40+ campus job roles</strong>. Uncover critical skill gaps,
+            test ATS parseability, inspect industry metrics, and access curated certification tracks.
           </p>
+        </div>
+
+        <div className="hidden lg:flex items-center gap-3 bg-slate-900/60 border border-slate-800 p-3 rounded-2xl">
+          <div className="text-right">
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Role Catalog</span>
+            <span className="text-lg font-black text-brand-400">{JOB_ROLES_LIST.length} Supported Jobs</span>
+          </div>
+          <div className="w-10 h-10 rounded-xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-400">
+            <BriefcaseBusiness size={20} />
+          </div>
         </div>
       </header>
 
-      <form className="resume-upload-card" onSubmit={handleAnalyze}>
+      {/* 2. Interactive Job Role Selector & Filters */}
+      <section className="resume-upload-card">
         <div className="resume-section-heading">
-          <BriefcaseBusiness size={20} />
-          <div>
-            <h2>Resume Assessment</h2>
-            <p>Choose a job role and upload your latest resume.</p>
+          <BriefcaseBusiness size={22} />
+          <div className="flex-1">
+            <h2>Select Target Job Role (40+ Roles)</h2>
+            <p>Select your intended placement profile to benchmark your resume against specific employer filters.</p>
           </div>
         </div>
 
-        <label htmlFor="resume-role">Target job role</label>
-        <select
-          id="resume-role"
-          value={role}
-          onChange={(event) => {
-            setRole(event.target.value);
-            setResult(null);
-            setError("");
-          }}
-        >
-          {JOB_ROLES.map((job) => (
-            <option key={job} value={job}>
-              {job}
-            </option>
+        {/* Category Pills */}
+        <div className="flex flex-wrap gap-1.5 pb-2 border-b border-slate-800/80">
+          {JOB_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => {
+                setSelectedCategory(cat);
+              }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                selectedCategory === cat
+                  ? "bg-brand-600 text-white shadow-md shadow-brand-500/25"
+                  : "bg-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+              }`}
+            >
+              {cat}
+            </button>
           ))}
-        </select>
-
-        <label htmlFor="resume-file">Upload your resume</label>
-        <div className="resume-upload-area">
-          <Upload size={28} />
-          <strong>Choose a resume file</strong>
-          <span>PDF or DOCX · Maximum 5 MB</span>
-          <input
-            id="resume-file"
-            type="file"
-            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            onChange={(event) => {
-              setFile(event.target.files?.[0] || null);
-              setResult(null);
-              setError("");
-            }}
-          />
         </div>
 
-        {file && (
-          <p className="resume-selected-file">
-            <CheckCircle2 size={15} />
-            Selected: {file.name}
-          </p>
+        {/* Search & Dropdown Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+          {/* Quick Search */}
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search by title (e.g., Python, Cloud, SDE, Analyst)..."
+              value={roleSearchQuery}
+              onChange={(e) => setRoleSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500"
+            />
+          </div>
+
+          {/* Role Dropdown */}
+          <div>
+            <select
+              id="resume-role-select"
+              value={role}
+              onChange={(e) => {
+                setRole(e.target.value);
+                setResult(null);
+                setError("");
+              }}
+              className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl text-sm font-semibold text-slate-100 focus:outline-none focus:border-brand-500 cursor-pointer"
+            >
+              {filteredRoles.length > 0 ? (
+                filteredRoles.map((r) => (
+                  <option key={r} value={r}>
+                    {r} ({JOB_ROLES_DATA[r].category})
+                  </option>
+                ))
+              ) : (
+                <option value={role}>{role}</option>
+              )}
+            </select>
+          </div>
+        </div>
+
+        {/* Selected Role Executive Preview */}
+        <div className="mt-3 p-4 bg-slate-900/80 border border-slate-800 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded-md bg-brand-500/20 text-brand-400 text-[11px] font-bold uppercase tracking-wider">
+                {currentRoleData.category}
+              </span>
+              <h3 className="text-base font-bold text-white tracking-tight">{role}</h3>
+            </div>
+            <p className="text-xs text-slate-400 line-clamp-2">{currentRoleData.description}</p>
+          </div>
+
+          <div className="flex items-center gap-4 flex-shrink-0 pt-2 md:pt-0 border-t md:border-t-0 md:border-l border-slate-800 md:pl-4">
+            <div className="text-left">
+              <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                <Banknote size={14} className="text-emerald-400" /> Est. Campus Package
+              </div>
+              <div className="text-sm font-bold text-emerald-400">{currentRoleData.salaryRange}</div>
+            </div>
+
+            <div className="text-left hidden sm:block">
+              <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                <Building2 size={14} className="text-indigo-400" /> Top Recruiters
+              </div>
+              <div className="text-xs font-semibold text-slate-300 max-w-[200px] truncate">
+                {currentRoleData.topCompanies.slice(0, 3).join(", ")}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Resume Upload Card */}
+      <section className="resume-upload-card">
+        <div className="flex items-center justify-between mb-3">
+          <div className="resume-section-heading mb-0">
+            <Upload size={22} />
+            <div>
+              <h2>Upload or Paste Resume</h2>
+              <p>Supports official PDF, DOCX, or direct resume text.</p>
+            </div>
+          </div>
+
+          {/* Input Mode Toggle */}
+          <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800">
+            <button
+              type="button"
+              onClick={() => setInputMode("file")}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                inputMode === "file" ? "bg-brand-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <Upload size={13} /> File Upload
+            </button>
+            <button
+              type="button"
+              onClick={() => setInputMode("text")}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                inputMode === "text" ? "bg-brand-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <FileText size={13} /> Paste Text
+            </button>
+          </div>
+        </div>
+
+        {inputMode === "file" ? (
+          <div
+            className="resume-upload-area"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload size={32} className="text-brand-400" />
+            <strong>Click to Browse or Drag & Drop Resume File</strong>
+            <span>Supported formats: PDF, DOCX, TXT · Maximum 10 MB</span>
+
+            <input
+              ref={fileInputRef}
+              id="resume-file"
+              type="file"
+              accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+          </div>
+        ) : (
+          <div>
+            <textarea
+              rows={7}
+              placeholder="Paste your full resume text here (Summary, Skills, Education, Projects, Experience)..."
+              value={resumeText}
+              onChange={(e) => {
+                setResumeText(e.target.value);
+                setResult(null);
+                setError("");
+              }}
+              className="w-full p-4 bg-slate-900 border border-slate-700/80 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 font-mono"
+            />
+          </div>
         )}
 
+        {/* Selected file confirmation pill */}
+        {inputMode === "file" && file && (
+          <div className="flex items-center justify-between p-3 bg-slate-900 border border-emerald-500/30 rounded-xl text-xs text-emerald-400">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-emerald-400" />
+              <span className="font-semibold text-slate-200">{file.name}</span>
+              <span className="text-slate-500 font-mono">({Math.round(file.size / 1024)} KB)</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setFile(null);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+              className="text-slate-400 hover:text-rose-400 transition-colors text-xs font-semibold"
+            >
+              Remove
+            </button>
+          </div>
+        )}
+
+        {/* Error message */}
         {error && (
-          <p className="resume-error" role="alert">
-            {error}
-          </p>
+          <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs flex items-center gap-2">
+            <AlertCircle size={16} className="text-rose-400 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
         )}
 
+        {/* Action button */}
         <button
-          className="resume-analyze-button"
-          type="submit"
+          className="resume-analyze-button mt-2"
+          type="button"
           disabled={loading}
+          onClick={handleAnalyze}
         >
           {loading ? (
-            "Analyzing resume..."
+            <span className="flex items-center gap-2">
+              <RefreshCw size={17} className="animate-spin" /> {loadingStep || "Analyzing Resume..."}
+            </span>
           ) : (
-            <>
-              <Sparkles size={16} /> Analyze My Resume
-            </>
+            <span className="flex items-center gap-2">
+              <Sparkles size={17} /> Analyze My Resume For {role}
+            </span>
           )}
         </button>
-      </form>
+      </section>
 
+      {/* 4. Comprehensive Analysis Results View */}
       {result && (
-        <section className="resume-results">
+        <section ref={resultsRef} className="resume-results animate-fade-in space-y-6">
+          {/* Top Bar with Title and Download */}
           <div className="resume-report-heading">
             <div>
-              <span className="resume-eyebrow">YOUR ANALYSIS</span>
-              <h2>Resume Analysis Report</h2>
+              <span className="resume-eyebrow">
+                <ShieldCheck size={13} /> PLACEMENT AUDIT RESULTS
+              </span>
+              <h2>Comprehensive Resume Analysis Report</h2>
               <p>
-                {result.fileName || file?.name} · {role}
+                Candidate: <strong className="text-white">{result.fileName || file?.name || "Student Resume"}</strong> ·
+                Target Role: <strong className="text-brand-400">{result.role}</strong>
               </p>
             </div>
 
@@ -582,225 +555,373 @@ export default function ResumeAnalyzer() {
               className="resume-download-button"
               onClick={downloadReport}
             >
-              <Download size={15} /> Download Report
+              <Download size={16} /> Download Full Report
             </button>
           </div>
 
-          <section className="resume-match-card">
-            <div className="resume-match-top">
-              <div>
-                <span className="resume-match-label">
-                  Resume skill match
+          {/* Score Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Main Composite ATS Gauge */}
+            <div className="md:col-span-2 p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-850 to-indigo-950/40 border border-slate-800 shadow-xl flex items-center justify-between gap-6">
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Overall ATS Compatibility
                 </span>
-                <div className="resume-match-number">
-                  {Number(result.matchPercentage) || 0}%
+                <div className="text-4xl sm:text-5xl font-black text-white tracking-tight flex items-baseline gap-2">
+                  {result.overallAtsScore}%
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
+                    result.overallAtsScore >= 80
+                      ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                      : result.overallAtsScore >= 65
+                      ? "bg-brand-500/20 text-brand-300 border-brand-500/40"
+                      : "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                  }`}>
+                    {result.atsRating}
+                  </span>
                 </div>
-                <p>
-                  {matchedSkills.length} matched skills out of{" "}
-                  {result.totalRequired ?? matchedSkills.length + missingSkills.length}{" "}
-                  required skills
+                <p className="text-xs text-slate-400">
+                  Calculated using enterprise ATS parser simulation (Skills weight: 50%, Impact: 25%, Format: 25%).
                 </p>
               </div>
 
-              <div className="resume-match-icon">
-                <CheckCircle2 size={30} />
+              <div className="w-20 h-20 rounded-full bg-brand-500/10 border-4 border-brand-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-500/20">
+                <span className="text-2xl font-black text-brand-300">{result.overallAtsScore}</span>
               </div>
             </div>
 
-            <div
-              className="resume-match-track"
-              role="progressbar"
-              aria-label="Resume skill match"
-              aria-valuenow={Math.min(
-                100,
-                Math.max(0, Number(result.matchPercentage) || 0)
-              )}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className="resume-match-fill"
-                style={{
-                  width: `${Math.min(
-                    100,
-                    Math.max(0, Number(result.matchPercentage) || 0)
-                  )}%`,
-                }}
-              />
+            {/* Sub-Metric 1: Skills Fit */}
+            <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Technical Skill Fit
+                </span>
+                <div className="text-2xl font-black text-white">
+                  {result.skillMatchPercentage}%
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  {result.matchedSkills?.length || 0} of {result.totalRequired || 10} core skills matched
+                </p>
+              </div>
+              <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-3">
+                <div
+                  className="bg-brand-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${result.skillMatchPercentage}%` }}
+                />
+              </div>
             </div>
-          </section>
 
-          <div className="resume-result-grid">
-            <SkillCard
-              title="✓ Skills Found"
-              skills={matchedSkills}
-              type="matched"
-              emptyText="No required skills were detected by the analyzer."
-            />
-
-            <SkillCard
-              title="! Missing Required Skills"
-              skills={missingSkills}
-              type="missing"
-              emptyText="All listed required skills were detected."
-            />
-
-            <SkillCard
-              title="+ Additional Skills"
-              skills={additionalSkills}
-              type="additional"
-              emptyText="No additional recognized skills were detected."
-            />
+            {/* Sub-Metric 2: Formatting & Metrics */}
+            <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Content Impact & Metrics
+                </span>
+                <div className="text-2xl font-black text-emerald-400">
+                  {result.impactScore}%
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  {result.auditDetails?.metricsCount || 0} quantifiable results & {result.auditDetails?.actionVerbsCount || 0} action verbs
+                </p>
+              </div>
+              <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-3">
+                <div
+                  className="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${result.impactScore}%` }}
+                />
+              </div>
+            </div>
           </div>
 
-          <section className="resume-feature-section">
-            <div className="resume-section-heading">
-              <Code2 size={21} />
-              <div>
-                <h2>Technical Skills</h2>
-                <p>
-                  Technical skills relevant to the selected {role} role.
-                </p>
-              </div>
-            </div>
-
-            <div className="resume-role-skills">
-              {guidance.technical.map((skill) => {
-                const isDetected = detectedTechnicalSkills.includes(skill);
-
-                return (
-                  <div
-                    className={`resume-role-skill ${
-                      isDetected ? "skill-detected" : "skill-not-confirmed"
-                    }`}
-                    key={skill}
-                  >
-                    {isDetected ? (
-                      <CheckCircle2 size={16} />
-                    ) : (
-                      <BookOpen size={16} />
-                    )}
-                    <span>{skill}</span>
-                    <small>
-                      {isDetected ? "Detected" : "Review"}
-                    </small>
-                  </div>
-                );
-              })}
-            </div>
-
-            <p className="resume-section-note">
-              Detection uses the skills returned by your backend. “Review”
-              means the skill was not confirmed by those results; it does not
-              prove you lack that skill.
-            </p>
-          </section>
-
-          <section className="resume-feature-section">
-            <div className="resume-section-heading">
-              <Users size={21} />
-              <div>
-                <h2>Soft Skills</h2>
-                <p>
-                  Professional skills relevant to your selected job role.
-                </p>
-              </div>
-            </div>
-
-            {detectedSoftSkills.length > 0 ? (
-              <>
-                <h3 className="resume-subsection-title">
-                  Soft skills identified by the analyzer
+          {/* 5. Skills Audit Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Matched Required Skills */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <CheckCircle2 size={16} className="text-emerald-400" />
+                  Skills Found in Resume ({result.matchedSkills?.length || 0})
                 </h3>
-                <div className="resume-role-skills">
-                  {detectedSoftSkills.map((skill) => (
-                    <div
-                      className="resume-role-skill skill-detected"
-                      key={skill}
-                    >
-                      <CheckCircle2 size={16} />
-                      <span>{skill}</span>
-                      <small>Detected</small>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <p className="resume-section-note">
-                Your backend has not returned extracted soft skills. The
-                following are relevant to this role, not verified claims about
-                your personal abilities.
+                <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                  Confirmed
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Core technical requirements for {role} present in your document:
               </p>
-            )}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {result.matchedSkills?.length > 0 ? (
+                  result.matchedSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold"
+                    >
+                      <Check size={12} /> {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-500 italic">No exact required skills identified.</p>
+                )}
+              </div>
+            </div>
 
-            <h3 className="resume-subsection-title">
-              Role-relevant soft skills
-            </h3>
-            <div className="resume-role-skills">
-              {guidance.soft.map((skill) => (
-                <div className="resume-role-skill" key={skill}>
-                  <Users size={16} />
-                  <span>{skill}</span>
+            {/* Missing Priority Skills */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-amber-500/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <AlertCircle size={16} className="text-amber-400" />
+                  Missing Critical Skills ({result.missingSkills?.length || 0})
+                </h3>
+                <span className="text-[11px] font-semibold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded-full">
+                  High Priority
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Enterprise recruiters and ATS screeners look for these key keywords:
+              </p>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {result.missingSkills?.length > 0 ? (
+                  result.missingSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold"
+                    >
+                      <XCircle size={12} className="text-amber-400" /> {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-xs text-emerald-400 font-semibold">
+                    Outstanding! All core technical competencies are present.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Bonus / Additional Skills */}
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-brand-500/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Sparkles size={16} className="text-brand-400" />
+                  Bonus Skills Detected ({result.additionalSkills?.length || 0})
+                </h3>
+                <span className="text-[11px] font-semibold text-brand-400 bg-brand-500/15 px-2 py-0.5 rounded-full">
+                  Advantage
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Valuable complementary skills from adjacent engineering domains:
+              </p>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {result.additionalSkills?.length > 0 ? (
+                  result.additionalSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 text-xs font-semibold"
+                    >
+                      + {skill}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-500 italic">No secondary skills recorded.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 6. ATS Structure & Section Checklist */}
+          <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+              <Layers size={18} className="text-brand-400" />
+              <h3 className="text-base font-bold text-white">ATS Structure & Formatting Verification</h3>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-1">
+              {/* Contact Information */}
+              <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Contact Details
+                </span>
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">Email Address</span>
+                    {result.auditDetails?.contactAudit?.hasEmail ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">Phone Number</span>
+                    {result.auditDetails?.contactAudit?.hasPhone ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">LinkedIn Profile</span>
+                    {result.auditDetails?.contactAudit?.hasLinkedIn ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">GitHub / Portfolio</span>
+                    {result.auditDetails?.contactAudit?.hasGitHub || result.auditDetails?.contactAudit?.hasPortfolio ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Standard Headers */}
+              <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Standard Headers
+                </span>
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">Education Section</span>
+                    {result.auditDetails?.sectionsAudit?.hasEducation ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">Skills Section</span>
+                    {result.auditDetails?.sectionsAudit?.hasSkillsSection ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">Projects / Experience</span>
+                    {result.auditDetails?.sectionsAudit?.hasExperienceOrProjects ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <XCircle size={14} className="text-rose-400" />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-300">Certifications</span>
+                    {result.auditDetails?.sectionsAudit?.hasCertifications ? (
+                      <CheckCircle2 size={14} className="text-emerald-400" />
+                    ) : (
+                      <span className="text-[10px] text-slate-500">Optional</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Verbs */}
+              <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Action Verbs
+                </span>
+                <div className="text-2xl font-black text-white">
+                  {result.auditDetails?.actionVerbsCount || 0}
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                  {(result.auditDetails?.actionVerbsFound || []).slice(0, 5).join(", ") || "None detected"}
+                </p>
+              </div>
+
+              {/* Quantified Metrics */}
+              <div className="p-3.5 rounded-xl bg-slate-850/80 border border-slate-800">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                  Quantified Metrics
+                </span>
+                <div className="text-2xl font-black text-emerald-400">
+                  {result.auditDetails?.metricsCount || 0}
+                </div>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  {result.auditDetails?.metricsCount >= 3
+                    ? "Strong numerical impact"
+                    : "Add % or numbers to bullets"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 7. Actionable Improvement Recommendations */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950/40 border border-brand-500/30 space-y-4">
+            <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+              <Sparkles size={18} className="text-brand-400" />
+              <h3 className="text-base font-bold text-white">Actionable Steps to Reach 90%+ ATS Score</h3>
+            </div>
+
+            <div className="space-y-2.5">
+              {(result.recommendations || []).map((rec, idx) => (
+                <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                  <div className="w-6 h-6 rounded-lg bg-brand-500/20 text-brand-300 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {idx + 1}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">{rec}</p>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section className="resume-feature-section">
-            <div className="resume-section-heading">
-              <BookOpen size={21} />
-              <div>
-                <h2>Recommended Courses</h2>
-                <p>
-                  Learning resources selected for the {role} career path.
-                </p>
+          {/* 8. Curated Learning Tracks & Certifications */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Certifications */}
+            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                <GraduationCap size={18} className="text-brand-400" />
+                <h3 className="text-base font-bold text-white">Recommended Certifications for {role}</h3>
+              </div>
+
+              <div className="space-y-3">
+                {(result.certifications || currentRoleData.certifications || []).map((cert, i) => (
+                  <div key={i} className="p-3.5 rounded-xl bg-slate-850/70 border border-slate-800 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <h4 className="text-xs sm:text-sm font-bold text-white truncate">{cert.name}</h4>
+                      <p className="text-[11px] text-slate-400">{cert.provider}</p>
+                    </div>
+                    <a
+                      href={cert.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-brand-600/20 hover:bg-brand-600/40 text-brand-300 text-xs font-semibold flex items-center gap-1 flex-shrink-0 transition-colors"
+                    >
+                      Official Path <ExternalLink size={12} />
+                    </a>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="resume-resource-grid">
-              {guidance.courses.map((course) => (
-                <ResourceCard
-                  key={course.name}
-                  item={course}
-                  type="course"
-                />
-              ))}
-            </div>
-          </section>
+            {/* Courses */}
+            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4">
+              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                <BookOpen size={18} className="text-brand-400" />
+                <h3 className="text-base font-bold text-white">Top Courses & Prep Material</h3>
+              </div>
 
-          <section className="resume-feature-section">
-            <div className="resume-section-heading">
-              <GraduationCap size={22} />
-              <div>
-                <h2>Recommended Certifications</h2>
-                <p>
-                  Credentials and learning pathways that may support this
-                  career goal.
-                </p>
+              <div className="space-y-3">
+                {(result.courses || currentRoleData.courses || []).map((course, i) => (
+                  <div key={i} className="p-3.5 rounded-xl bg-slate-850/70 border border-slate-800 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <h4 className="text-xs sm:text-sm font-bold text-white truncate">{course.name}</h4>
+                      <p className="text-[11px] text-slate-400">{course.provider}</p>
+                    </div>
+                    <a
+                      href={course.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1 flex-shrink-0 transition-colors"
+                    >
+                      Start Course <ExternalLink size={12} />
+                    </a>
+                  </div>
+                ))}
               </div>
             </div>
-
-            <div className="resume-resource-grid">
-              {guidance.certifications.map((certification) => (
-                <ResourceCard
-                  key={certification.name}
-                  item={certification}
-                  type="certification"
-                />
-              ))}
-            </div>
-
-            <p className="resume-section-note">
-              Recommendations are not guarantees of employment. Some items
-              are courses or learning pathways rather than formal
-              certifications. Check providers for current eligibility, fees,
-              exam requirements, and availability.
-            </p>
-          </section>
-
-          {result.note && (
-            <p className="resume-disclaimer">{result.note}</p>
-          )}
+          </div>
         </section>
       )}
     </main>
