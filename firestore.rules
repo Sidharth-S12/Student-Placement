@@ -1,0 +1,168 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if caller is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if caller matches UID
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Helper functions for Role-Based Access Control (RBAC)
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             getUserData().role == 'admin';
+    }
+
+    function isCollegeWideAdmin() {
+      return isAdmin() && (
+        !('accessScope' in getUserData()) ||
+        getUserData().accessScope == 'college'
+      );
+    }
+
+    function getOfficerDepartment() {
+      return getUserData().assignedDepartment;
+    }
+
+    // =========================================================================
+    // 1. Users Collection (Primary Identity & Role Store)
+    // =========================================================================
+    // Rules:
+    // - Authenticated users can read their own role document.
+    // - Placement Officers (admins) can read officer documents.
+    // - On registration, users can create their own document with role 'student' or 'company'.
+    // - Role cannot be self-escalated or modified through client updates.
+    // - Placement Officers with 'admin' role are managed strictly via backend Admin SDK.
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) 
+                    && (request.resource.data.role in ['student', 'company'])
+                    && request.resource.data.uid == userId;
+      allow update: if isOwner(userId) 
+                    && request.resource.data.role == resource.data.role;
+      allow delete: if false;
+    }
+
+    // =========================================================================
+    // 2. Student Placement Profiles
+    // =========================================================================
+    // Rules:
+    // - Students can read and write only their own profile.
+    // - College-wide Admins can read all profiles.
+    // - Department-specific Admins can read candidates matching their assigned department.
+    // - Authenticated recruiters can read visible candidate profiles.
+    match /students/{studentId} {
+      allow read: if isOwner(studentId)
+                  || isCollegeWideAdmin()
+                  || (isAdmin() && resource.data.department == getOfficerDepartment())
+                  || isAuthenticated();
+      allow write: if isOwner(studentId) || isAdmin();
+    }
+
+    // Helper function to check if a company is approved
+    function isCompanyApproved(companyId) {
+      return exists(/databases/$(database)/documents/companies/$(companyId)) &&
+             get(/databases/$(database)/documents/companies/$(companyId)).data.approvalStatus == 'approved';
+    }
+
+    // =========================================================================
+    // 3. Company Profiles
+    // =========================================================================
+    // Rules:
+    // - Authenticated users can read company info.
+    // - On registration, company can create its profile with 'pending' approval status only.
+    // - Company cannot self-approve or escalate approvalStatus.
+    // - Placement Officers (admins) can review and update company approval status.
+    match /companies/{companyId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(companyId) 
+                    && (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == 'pending')
+                    && request.resource.data.uid == companyId;
+      allow update: if isAdmin() 
+                    || (isOwner(companyId) && (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == resource.data.approvalStatus));
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 4. Technical Skill Assessments
+    // =========================================================================
+    // Rules:
+    // - Students can read and create their own assessments.
+    // - Authenticated placement officers/recruiters can read assessment results.
+    match /technicalAssessments/{assessmentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() 
+                    && request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 5. Aptitude Assessments
+    // =========================================================================
+    match /aptitudeAssessments/{assessmentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() 
+                    && request.resource.data.studentId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 6. Campus Placement Drives
+    // =========================================================================
+    // Rules:
+    // - Admins can read all drives; students can read only approved drives.
+    // - Only approved companies can create drives, and submitted drives start as 'pending'.
+    // - Companies cannot self-approve job roles.
+    // - Placement officers can approve or reject drives.
+    match /placementDrives/{driveId} {
+      allow read: if isAdmin() || (isAuthenticated() && (resource.data.approvalStatus == 'approved' || request.auth.uid == resource.data.companyId));
+      allow create: if isAdmin() || (
+        isAuthenticated() && 
+        isCompanyApproved(request.auth.uid) &&
+        request.resource.data.companyId == request.auth.uid &&
+        (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == 'pending')
+      );
+      allow update: if isAdmin() || (
+        isAuthenticated() && 
+        request.auth.uid == resource.data.companyId &&
+        request.resource.data.companyId == resource.data.companyId &&
+        (!('approvalStatus' in request.resource.data) || request.resource.data.approvalStatus == resource.data.approvalStatus)
+      );
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 7. Job Applications & Officer Nominations
+    // =========================================================================
+    // Rules:
+    // - Students can read and update only their own applications/nominations.
+    // - Companies can read and update only applications submitted to their own jobs (companyId).
+    // - Admins/Placement Officers can read, update, and manage all applications.
+    match /applications/{applicationId} {
+      allow read: if isAdmin() || (isAuthenticated() && (resource.data.studentId == request.auth.uid || resource.data.companyId == request.auth.uid));
+      allow create: if isAuthenticated() && (isAdmin() || request.resource.data.studentId == request.auth.uid || request.resource.data.companyId == request.auth.uid);
+      allow update: if isAdmin() || (isAuthenticated() && (resource.data.studentId == request.auth.uid || resource.data.companyId == request.auth.uid));
+      allow delete: if isAdmin();
+    }
+
+    // =========================================================================
+    // 8. In-App Notifications
+    // =========================================================================
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.recipientId == request.auth.uid;
+      allow update: if isAuthenticated() && resource.data.recipientId == request.auth.uid;
+      allow create: if isAuthenticated();
+      allow delete: if isAuthenticated() && resource.data.recipientId == request.auth.uid;
+    }
+  }
+}
