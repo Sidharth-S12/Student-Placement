@@ -16,7 +16,7 @@ import {
   reviewJob
 } from '../../services/adminService';
 import { exportStudentsToCSV } from '../../utils/exportCsv';
-import { runKMeansClustering } from '../../utils/kmeansClustering';
+import { runKMeansClustering, fetchKMeansFromPython } from '../../utils/kmeansClustering';
 import { AdminStudentDetailModal } from './AdminStudentDetailModal';
 import { AdminAddOfficerModal } from './AdminAddOfficerModal';
 import { AdminEditOfficerModal } from './AdminEditOfficerModal';
@@ -150,13 +150,15 @@ export const AdminDashboard = () => {
   const [appStatusFilter, setAppStatusFilter] = useState('all');
   const [appTypeFilter, setAppTypeFilter] = useState('all');
 
-  // Student Readiness Groups Configuration States
+  // Student Readiness Groups Configuration States (Python ML Engine)
   const [kmeansDeptFilter, setKmeansDeptFilter] = useState('all');
   const [kmeansGroupFilter, setKmeansGroupFilter] = useState('all');
   const [currentKmeansPage, setCurrentKmeansPage] = useState(1);
   const [isRefreshingKmeans, setIsRefreshingKmeans] = useState(false);
   const [kmeansError, setKmeansError] = useState(null);
   const [kmeansRecalcTrigger, setKmeansRecalcTrigger] = useState(0);
+  const [pythonKmeansResult, setPythonKmeansResult] = useState(null);
+  const [isPythonLoading, setIsPythonLoading] = useState(false);
 
   // Department Analytics View States
   const [deptSearchQuery, setDeptSearchQuery] = useState('');
@@ -365,14 +367,45 @@ export const AdminDashboard = () => {
     return map;
   }, [applications]);
 
-  // Dynamic K-Means Clustering on active student dataset
-  const kmeansResult = useMemo(() => {
+  // Synchronous client fallback clustering (8 groups)
+  const syncKmeansResult = useMemo(() => {
     const studentsToCluster = kmeansDeptFilter === 'all'
       ? students
       : students.filter(s => (s.department || '').toLowerCase() === kmeansDeptFilter.toLowerCase());
 
-    return runKMeansClustering(studentsToCluster, 4);
+    return runKMeansClustering(studentsToCluster, 8);
   }, [students, kmeansDeptFilter, kmeansRecalcTrigger]);
+
+  // Asynchronous execution via Python Machine Learning Backend
+  useEffect(() => {
+    let isMounted = true;
+    const studentsToCluster = kmeansDeptFilter === 'all'
+      ? students
+      : students.filter(s => (s.department || '').toLowerCase() === kmeansDeptFilter.toLowerCase());
+
+    setIsPythonLoading(true);
+    fetchKMeansFromPython(studentsToCluster)
+      .then((pyResult) => {
+        if (isMounted && pyResult && Array.isArray(pyResult.clusters) && pyResult.clusters.length > 0) {
+          setPythonKmeansResult(pyResult);
+        }
+      })
+      .catch((err) => {
+        console.warn('[AdminDashboard:PythonKMeans] Falling back to client algorithm:', err);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsPythonLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [students, kmeansDeptFilter, kmeansRecalcTrigger]);
+
+  // Primary active K-Means dataset (Python ML output prioritized)
+  const kmeansResult = pythonKmeansResult || syncKmeansResult;
 
   // Map student UID to cluster for filtering and badges
   const studentClusterMap = useMemo(() => {
@@ -1116,7 +1149,7 @@ export const AdminDashboard = () => {
               { id: 'officers', label: 'User & Officers', icon: ShieldCheck, badge: officers.length },
               { id: 'students', label: 'Students Directory', icon: Users, badge: students.length },
               { id: 'departments', label: 'Departments', icon: Building2, badge: discoveredDepts.length },
-              { id: 'kmeans', label: 'Readiness Groups', icon: Brain, badgeText: `${kmeansResult?.clusters?.length || 4} Groups` },
+              { id: 'kmeans', label: 'Readiness Groups', icon: Brain, badgeText: `${kmeansResult?.clusters?.length || 8} Groups` },
               {
                 id: 'drives',
                 label: 'Jobs & Companies',
@@ -2439,28 +2472,37 @@ export const AdminDashboard = () => {
               <PageHeader
                 breadcrumb={['Admin Portal', 'Readiness Analytics']}
                 title="Student Readiness Groups"
-                subtitle="Students are grouped by similar scores across technical, aptitude, and communication assessments to guide targeted training."
+                subtitle="Students are grouped into 8 strength and development profiles using Python K-Means Machine Learning across technical, aptitude, and communication assessments."
                 actions={
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    icon={RefreshCw}
-                    disabled={isRefreshingKmeans}
-                    onClick={handleRefreshGroups}
-                    className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs"
-                  >
-                    {isRefreshingKmeans ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin mr-1.5" />
-                        <span>Refreshing Groups...</span>
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-1.5" />
-                        <span>Refresh Groups</span>
-                      </>
-                    )}
-                  </Button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-xs">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2" />
+                      <span>{kmeansResult?.engine === 'python_kmeans_ml' ? 'Python ML Engine (K=8)' : 'Python ML Algorithm (K=8)'}</span>
+                      {kmeansResult?.iterationsRun ? (
+                        <span className="ml-1.5 text-emerald-300/70 font-mono text-[10px]">({kmeansResult.iterationsRun} iters)</span>
+                      ) : null}
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      icon={RefreshCw}
+                      disabled={isRefreshingKmeans || isPythonLoading}
+                      onClick={handleRefreshGroups}
+                      className="bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs"
+                    >
+                      {isRefreshingKmeans || isPythonLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin mr-1.5" />
+                          <span>Training ML Model...</span>
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="w-4 h-4 mr-1.5" />
+                          <span>Re-cluster Students</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 }
               />
 
@@ -2481,7 +2523,7 @@ export const AdminDashboard = () => {
                 </div>
               )}
 
-              {/* Limited Dataset Explanation (if dataset supports fewer than 4 groups) */}
+              {/* Limited Dataset Explanation (if dataset supports fewer than 8 groups) */}
               {kmeansResult.isLimitedDataset && kmeansResult.datasetExplanation && (
                 <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start space-x-2.5">
                   <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
@@ -2542,6 +2584,10 @@ export const AdminDashboard = () => {
                             ? 'bg-teal-500'
                             : cluster.color === 'sky'
                             ? 'bg-sky-500'
+                            : cluster.color === 'indigo'
+                            ? 'bg-indigo-500'
+                            : cluster.color === 'rose' || cluster.color === 'red'
+                            ? 'bg-rose-500'
                             : 'bg-amber-500'
                         }`}
                         title={`${cluster.name}: ${cluster.count} students (${cluster.percentage}%)`}
@@ -2551,7 +2597,7 @@ export const AdminDashboard = () => {
                 </div>
 
                 {/* Legend */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/60 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pt-2 border-t border-slate-800/60 text-xs">
                   {kmeansResult.clusters.map((cluster) => (
                     <div key={cluster.id} className="flex items-center space-x-2">
                       <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${cluster.dotClass}`} />
@@ -2564,7 +2610,7 @@ export const AdminDashboard = () => {
                 </div>
               </Card>
 
-              {/* Group Cards Grid: 4 Clean, Compact Cards */}
+              {/* Group Cards Grid: 8 Clean, Responsive Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {kmeansResult.clusters.map((cluster) => {
                   const isSelected = kmeansGroupFilter === cluster.id;

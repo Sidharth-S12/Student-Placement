@@ -16,7 +16,8 @@ import {
   reviewJobAdmin,
   getCampusSummary,
   listApplications,
-  updateApplicationStatus
+  updateApplicationStatus,
+  runKMeansPython
 } from '../controllers/adminController.js';
 
 const router = express.Router();
@@ -48,6 +49,10 @@ router.patch('/applications/:id/status', updateApplicationStatus);
 
 // Campus Institutional Analytics
 router.get('/analytics/summary', getCampusSummary);
+
+// Python Machine Learning K-Means Clustering
+router.post('/kmeans', runKMeansPython);
+router.get('/kmeans', runKMeansPython);
 
 export default router;
 

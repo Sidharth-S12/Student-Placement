@@ -1,3 +1,6 @@
+import { spawn } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   getAllPlacementOfficers,
   addPlacementOfficer,
@@ -18,6 +21,9 @@ import {
   saveApplication,
   verifyAuthToken
 } from '../config/firebaseAdmin.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Middleware: Requires caller to be an authenticated Administrator/Placement Officer.
@@ -851,4 +857,74 @@ export async function getCampusSummary(req, res) {
     return res.status(500).json({ error: 'Failed to generate campus summary.' });
   }
 }
+
+/**
+ * POST /api/admin/kmeans
+ * Executes K-Means Clustering Machine Learning Algorithm in Python.
+ * Groups students into the exact 8 strength-based clusters:
+ * 1. Technical strong
+ * 2. Communication strong
+ * 3. Aptitude strong
+ * 4. Technical and Aptitude strong
+ * 5. Technical and Communication strong
+ * 6. Communication and Aptitude strong
+ * 7. Technical, Aptitude and Communication strong
+ * 8. Weak in technical aptitude and communication
+ */
+export async function runKMeansPython(req, res) {
+  try {
+    let students = req.body?.students;
+    if (!students || !Array.isArray(students) || students.length === 0) {
+      students = await getAllStudentsFromFirestore();
+    }
+
+    const scriptPath = path.join(__dirname, '../scripts/kmeans_clustering.py');
+    const pythonProc = spawn('python', [scriptPath], {
+      env: { ...process.env, PYTHONIOENCODING: 'utf-8' }
+    });
+
+    let outputData = '';
+    let errorData = '';
+
+    pythonProc.stdout.on('data', (data) => {
+      outputData += data.toString('utf-8');
+    });
+
+    pythonProc.stderr.on('data', (data) => {
+      errorData += data.toString('utf-8');
+    });
+
+    pythonProc.on('close', (code) => {
+      if (code !== 0) {
+        console.error(`[AdminController:runKMeansPython] Python exited with code ${code}:`, errorData);
+        return res.status(500).json({
+          error: 'Python K-Means machine learning script failed.',
+          details: errorData
+        });
+      }
+
+      try {
+        const parsed = JSON.parse(outputData);
+        return res.status(200).json({
+          success: true,
+          ...parsed
+        });
+      } catch (parseErr) {
+        console.error('[AdminController:runKMeansPython] Parse error:', parseErr, outputData);
+        return res.status(500).json({
+          error: 'Failed to parse Python ML output.',
+          raw: outputData
+        });
+      }
+    });
+
+    pythonProc.stdin.write(JSON.stringify({ students }));
+    pythonProc.stdin.end();
+
+  } catch (err) {
+    console.error('[AdminController:runKMeansPython] Error:', err);
+    return res.status(500).json({ error: 'Failed to execute Python K-Means clustering.' });
+  }
+}
+
 

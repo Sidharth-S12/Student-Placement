@@ -64,7 +64,6 @@ export default function ResumeAnalyzer() {
 
   const currentRoleData = JOB_ROLES_DATA[role] || JOB_ROLES_DATA["Software Engineer (SDE)"];
 
-<<<<<<< HEAD
   // Handle file selection
   function handleFileChange(event) {
     const selected = event.target.files?.[0] || null;
@@ -73,76 +72,6 @@ export default function ResumeAnalyzer() {
       if (!["pdf", "docx", "txt"].includes(ext)) {
         setError("Please choose a valid PDF, DOCX, or TXT resume document.");
         return;
-=======
-  const detectedTechnicalSkills = guidance.technical.filter((skill) =>
-    allDetected.some(
-      (detected) =>
-        normalize(detected) === normalize(skill) ||
-        normalize(detected).includes(normalize(skill)) ||
-        normalize(skill).includes(normalize(detected))
-    )
-  );
-
-  // Soft skills are displayed as role-relevant skills unless the backend
-  // explicitly returns a softSkills array.
-  const detectedSoftSkills = Array.isArray(result?.softSkills)
-    ? uniqueSkills(result.softSkills)
-    : [];
-
-  const softSkillsToDevelop = guidance.soft.filter(
-    (skill) =>
-      !detectedSoftSkills.some(
-        (detected) => normalize(detected) === normalize(skill)
-      )
-  );
-
-  async function handleAnalyze(event) {
-    event.preventDefault();
-    setError("");
-    setResult(null);
-
-    if (!file) {
-      setError("Please choose your resume first.");
-      return;
-    }
-
-    const extension = file.name.split(".").pop().toLowerCase();
-
-    if (!["pdf", "docx"].includes(extension)) {
-      setError("Only PDF and DOCX resumes are supported.");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Your resume must be smaller than 5 MB.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("resume", file);
-    formData.append("role", role);
-
-    setLoading(true);
-
-    try {
-      let response;
-      try {
-        response = await fetch("/api/resume/analyze", {
-          method: "POST",
-          body: formData,
-        });
-      } catch {
-        response = await fetch("http://localhost:5000/api/resume/analyze", {
-          method: "POST",
-          body: formData,
-        });
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Resume analysis failed.");
->>>>>>> 14da4213 (commited)
       }
       if (selected.size > 10 * 1024 * 1024) {
         setError("Resume must be smaller than 10 MB.");

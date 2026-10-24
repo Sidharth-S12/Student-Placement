@@ -1595,11 +1595,11 @@ export const SinglePageDashboard = () => {
         onStartTechnical={() => setIsAssessmentModalOpen(true)}
         onStartAptitude={() => setIsAptitudeModalOpen(true)}
         onStartCommunication={() => setIsCommunicationModalOpen(true)}
-        onSignOut={() => {
+        onSignOut={async () => {
           if (logout) {
-            logout();
+            await logout();
           } else {
-            localStorage.clear();
+            localStorage.removeItem('placement_genie_active_session');
             window.location.reload();
           }
         }}
@@ -1680,11 +1680,11 @@ export const SinglePageDashboard = () => {
               />
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   if (logout) {
-                    logout();
+                    await logout();
                   } else {
-                    localStorage.clear();
+                    localStorage.removeItem('placement_genie_active_session');
                     window.location.reload();
                   }
                 }}

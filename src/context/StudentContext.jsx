@@ -213,6 +213,25 @@ export const StudentProvider = ({ children }) => {
     showToast("Profile updated successfully!");
   };
 
+  // Silently persist roadmap progress to student profile and Firestore
+  const updateRoadmapProgress = async (languageId, updatedTasks, preferences = {}) => {
+    if (!studentData) return;
+    const currentRoadmap = studentData.roadmapProgress || {};
+    const updated = {
+      ...studentData,
+      roadmapProgress: {
+        ...currentRoadmap,
+        [languageId]: updatedTasks,
+        preferences: {
+          ...(currentRoadmap.preferences || {}),
+          ...preferences,
+          lastUpdated: new Date().toISOString()
+        }
+      }
+    };
+    saveStudentData(updated);
+  };
+
   const setFullStudentData = (newProfile) => {
     saveStudentData(newProfile);
     showToast("Placement profile saved successfully!");
@@ -416,6 +435,8 @@ export const StudentProvider = ({ children }) => {
         openCommunicationModal,
         handleCommunicationCompleted,
         latestCommunicationAssessment,
+        updateRoadmapProgress,
+        saveStudentData,
         toastMessage,
         showToast
       }}
