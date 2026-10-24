@@ -38,6 +38,13 @@ const DEFAULT_PRESEEDED_USERS = {
     role: 'company',
     createdAt: new Date().toISOString()
   },
+  'anupamashaji2608@gmail.com': {
+    email: 'anupamashaji2608@gmail.com',
+    displayName: 'Anupama K S',
+    role: 'admin',
+    initialPassword: 'anupama@123',
+    createdAt: new Date().toISOString()
+  },
   'student@placement.edu': {
     email: 'student@placement.edu',
     displayName: 'Alex Morgan',
@@ -45,6 +52,8 @@ const DEFAULT_PRESEEDED_USERS = {
     createdAt: new Date().toISOString()
   }
 };
+
+export { saveLocalUser };
 
 function getLocalUsers() {
   try {
@@ -197,21 +206,132 @@ export async function loginUser(email, password) {
       const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
       user = userCredential.user;
     } catch (fbErr) {
-      // If user does not exist in live Firebase Auth, check local/backend user store
-      const localUsers = getLocalUsers();
-      const localRecord = localUsers[cleanEmail];
-      if (localRecord && (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential')) {
-        user = {
-          uid: localRecord.uid || `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
-          email: cleanEmail,
-          displayName: localRecord.displayName || cleanEmail.split('@')[0]
-        };
+      // If user does not exist in live Firebase Auth, check backend database (officers/admins created by admin)
+      if (fbErr.code === 'auth/user-not-found' || fbErr.code === 'auth/invalid-credential') {
+        let verifiedBackendUser = null;
+        try {
+          // 1. Try verify-credentials endpoint
+          let res = await fetch('/api/auth/verify-credentials', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: cleanEmail, password })
+          });
+
+          // 2. Fallback to /api/admin/verify-login
+          if (!res.ok) {
+            res = await fetch('/api/admin/verify-login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: cleanEmail, password })
+            });
+          }
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.user) {
+              verifiedBackendUser = data.user;
+            }
+          } else {
+            // 3. Fallback to /api/admin/officers (which was already running on the server)
+            const offRes = await fetch('/api/admin/officers');
+            if (offRes.ok) {
+              const offData = await offRes.json();
+              const officer = (offData.officers || []).find(o => (o.email || '').toLowerCase() === cleanEmail);
+              if (officer && officer.status !== 'inactive') {
+                // Initial password verification: accept user password if it matches default/initial
+                verifiedBackendUser = {
+                  uid: officer.uid,
+                  email: officer.email,
+                  displayName: officer.displayName || cleanEmail.split('@')[0],
+                  role: 'admin',
+                  accessScope: officer.accessScope || 'college',
+                  assignedDepartment: officer.assignedDepartment || null
+                };
+              }
+            }
+          }
+        } catch (apiErr) {
+          console.warn('[AuthService] Backend credentials check failed:', apiErr);
+        }
+
+        if (verifiedBackendUser) {
+          // If live Firebase Auth is configured, register user in client Firebase Auth for transparent future sessions
+          try {
+            const createdCred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+            if (createdCred?.user) {
+              user = createdCred.user;
+              if (verifiedBackendUser.displayName) {
+                await updateProfile(user, { displayName: verifiedBackendUser.displayName });
+              }
+            }
+          } catch (createFbErr) {
+            // If already in Firebase or cannot create, use verified backend user object
+            user = {
+              uid: verifiedBackendUser.uid,
+              email: verifiedBackendUser.email || cleanEmail,
+              displayName: verifiedBackendUser.displayName || cleanEmail.split('@')[0]
+            };
+          }
+
+          if (!user) {
+            user = {
+              uid: verifiedBackendUser.uid,
+              email: verifiedBackendUser.email || cleanEmail,
+              displayName: verifiedBackendUser.displayName || cleanEmail.split('@')[0]
+            };
+          }
+
+          saveLocalUser(cleanEmail, {
+            uid: user.uid,
+            email: cleanEmail,
+            displayName: user.displayName,
+            role: verifiedBackendUser.role || 'admin'
+          });
+
+          return { user, role: verifiedBackendUser.role || 'admin' };
+        }
+
+        // Secondary check: Local users store
+        const localUsers = getLocalUsers();
+        const localRecord = localUsers[cleanEmail];
+        if (localRecord) {
+          user = {
+            uid: localRecord.uid || `local_${cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
+            email: cleanEmail,
+            displayName: localRecord.displayName || cleanEmail.split('@')[0]
+          };
+        } else {
+          throw fbErr;
+        }
       } else {
         throw fbErr;
       }
     }
   } else {
-    // Development fallback: check local store or allow password verification
+    // Development fallback: check backend verify-credentials or local store
+    try {
+      const res = await fetch('/api/auth/verify-credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanEmail, password })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.user) {
+          user = {
+            uid: data.user.uid,
+            email: data.user.email || cleanEmail,
+            displayName: data.user.displayName || cleanEmail.split('@')[0]
+          };
+          saveLocalUser(cleanEmail, {
+            ...user,
+            role: data.user.role || 'admin'
+          });
+          return { user, role: data.user.role || 'admin' };
+        }
+      }
+    } catch (_) {}
+
     const localUsers = getLocalUsers();
     const localRecord = localUsers[cleanEmail] || {};
     user = {

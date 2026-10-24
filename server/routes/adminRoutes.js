@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   requireAdminAuth,
+  requirePrimaryAdminAuth,
   listOfficers,
   createOfficer,
   updateOfficer,
@@ -17,17 +18,21 @@ import {
   getCampusSummary,
   listApplications,
   updateApplicationStatus,
-  runKMeansPython
+  runKMeansPython,
+  verifyOfficerLoginHandler
 } from '../controllers/adminController.js';
 
 const router = express.Router();
 
-// Placement Officers Management
+// Placement Officer Authentication Verification
+router.post('/verify-login', verifyOfficerLoginHandler);
+
+// Placement Officers Management (Creation and modification strictly restricted to Primary Super Admin)
 router.get('/officers', listOfficers);
-router.post('/officers', createOfficer);
-router.put('/officers/:uid', updateOfficer);
-router.patch('/officers/:uid/status', toggleOfficerStatusHandler);
-router.delete('/officers/:uid', deleteOfficer);
+router.post('/officers', requirePrimaryAdminAuth, createOfficer);
+router.put('/officers/:uid', requirePrimaryAdminAuth, updateOfficer);
+router.patch('/officers/:uid/status', requirePrimaryAdminAuth, toggleOfficerStatusHandler);
+router.delete('/officers/:uid', requirePrimaryAdminAuth, deleteOfficer);
 
 // Company Registration Approval Management
 router.get('/companies', requireAdminAuth, listCompaniesAdmin);

@@ -224,4 +224,56 @@ export async function validateEmailEndpoint(req, res) {
   }
 }
 
+/**
+ * POST /api/auth/verify-credentials
+ * Verifies email and initial password for provisioned placement officer/admin accounts.
+ * Used when accounts are created by administrators or in development emulation.
+ */
+export async function verifyCredentials(req, res) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const record = await getUserRecord(null, cleanEmail);
+
+    if (!record) {
+      return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+    }
+
+    // Check account status
+    if (record.status === 'inactive') {
+      return res.status(403).json({ error: 'This placement officer account has been deactivated. Please contact the administrator.' });
+    }
+
+    // Check password against stored initialPassword
+    const expectedPassword = record.initialPassword;
+    const isMatched = expectedPassword
+      ? record.initialPassword === password
+      : (password === 'Officer@123' || password === 'admin123' || (cleanEmail === 'admin@placement.edu' && password === 'admin123'));
+
+    if (!isMatched) {
+      return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        uid: record.uid,
+        email: record.email || cleanEmail,
+        displayName: record.displayName || record.name || cleanEmail.split('@')[0],
+        role: record.role || 'admin',
+        accessScope: record.accessScope || 'college',
+        assignedDepartment: record.assignedDepartment || null,
+        designation: record.designation || 'Placement Officer'
+      }
+    });
+  } catch (err) {
+    console.error('[AuthController:verifyCredentials] Error:', err);
+    return res.status(500).json({ error: 'Failed to verify account credentials.' });
+  }
+}
+
 

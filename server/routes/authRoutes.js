@@ -5,7 +5,8 @@ import {
   syncRole,
   sendVerificationCode,
   verifyCode,
-  validateEmailEndpoint
+  validateEmailEndpoint,
+  verifyCredentials
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -27,6 +28,9 @@ router.post('/verify-code', verifyCode);
 
 // POST /api/auth/validate-email (Strict email syntax check)
 router.post('/validate-email', validateEmailEndpoint);
+
+// POST /api/auth/verify-credentials (Placement officer credential verification)
+router.post('/verify-credentials', verifyCredentials);
 
 export default router;
 

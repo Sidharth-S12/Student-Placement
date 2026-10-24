@@ -183,6 +183,19 @@ export const AdminDashboard = () => {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
+  // Super Admin Authorization: Only the original creator/admin can create & manage officers
+  const PRIMARY_ADMIN_EMAILS = useMemo(() => [
+    'sidharths4669@gmail.com',
+    'admin@placement.edu',
+    (import.meta.env?.VITE_PRIMARY_ADMIN_EMAIL || '').toLowerCase().trim()
+  ].filter(Boolean), []);
+
+  const isSuperAdmin = useMemo(() => {
+    if (!currentUser?.email) return false;
+    const email = currentUser.email.toLowerCase().trim();
+    return PRIMARY_ADMIN_EMAILS.includes(email);
+  }, [currentUser, PRIMARY_ADMIN_EMAILS]);
+
   // Determine current logged-in officer access scope
   const currentOfficerRecord = useMemo(() => {
     if (!currentUser) return null;
@@ -1148,7 +1161,9 @@ export const AdminDashboard = () => {
               <h1 className="font-extrabold text-white text-sm sm:text-base leading-none font-display">
                 Placement Genie
               </h1>
-              <Badge variant="amber">Admin Portal</Badge>
+              <Badge variant={isSuperAdmin ? "amber" : "indigo"}>
+                {isSuperAdmin ? "Primary Admin" : "Placement Officer"}
+              </Badge>
               {officerScope === 'department' && (
                 <Badge variant="indigo" size="sm">
                   {officerAssignedDept || 'Dept Scoped'}
@@ -1160,23 +1175,25 @@ export const AdminDashboard = () => {
         </div>
 
         <div className="flex items-center space-x-2.5">
-          <Button
-            variant="primary"
-            size="sm"
-            icon={UserPlus}
-            onClick={() => setIsAddOfficerModalOpen(true)}
-            className="hidden sm:inline-flex"
-          >
-            Add Officer
-          </Button>
+          {isSuperAdmin && (
+            <Button
+              variant="primary"
+              size="sm"
+              icon={UserPlus}
+              onClick={() => setIsAddOfficerModalOpen(true)}
+              className="hidden sm:inline-flex"
+            >
+              Add Officer
+            </Button>
+          )}
 
           <div className="hidden sm:block text-right px-2">
             <div className="text-xs font-bold text-white flex items-center justify-end space-x-1.5">
-              <span>{currentOfficerRecord?.displayName || 'Real Administrator'}</span>
-              <span className={`w-2 h-2 rounded-full ${officerScope === 'college' ? 'bg-emerald-400' : 'bg-indigo-400'}`} />
+              <span>{currentOfficerRecord?.displayName || (isSuperAdmin ? 'Primary Administrator' : 'Placement Officer')}</span>
+              <span className={`w-2 h-2 rounded-full ${isSuperAdmin ? 'bg-amber-400' : (officerScope === 'college' ? 'bg-emerald-400' : 'bg-indigo-400')}`} />
             </div>
             <div className="text-[11px] text-slate-400">
-              {currentUser?.email} • {officerScope === 'college' ? 'College-Wide' : officerAssignedDept}
+              {currentUser?.email} • {isSuperAdmin ? 'Full Privileges' : (officerScope === 'college' ? 'College-Wide' : officerAssignedDept)}
             </div>
           </div>
 
@@ -1252,15 +1269,17 @@ export const AdminDashboard = () => {
               <span className="text-xs font-bold uppercase tracking-wider text-slate-300">Quick Actions</span>
             </div>
             <div className="space-y-1.5">
-              <Button
-                variant="secondary"
-                size="sm"
-                icon={UserPlus}
-                onClick={() => setIsAddOfficerModalOpen(true)}
-                className="w-full justify-between"
-              >
-                Add Placement Officer
-              </Button>
+              {isSuperAdmin && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={UserPlus}
+                  onClick={() => setIsAddOfficerModalOpen(true)}
+                  className="w-full justify-between"
+                >
+                  Add Placement Officer
+                </Button>
+              )}
               <Button
                 variant="secondary"
                 size="sm"
@@ -1316,9 +1335,11 @@ export const AdminDashboard = () => {
                     <Button variant="secondary" size="sm" icon={Download} onClick={handleExportRoster}>
                       Export CSV
                     </Button>
-                    <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
-                      Add Officer
-                    </Button>
+                    {isSuperAdmin && (
+                      <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
+                        Add Officer
+                      </Button>
+                    )}
                   </div>
                 }
               />
@@ -1545,9 +1566,16 @@ export const AdminDashboard = () => {
                 title="Placement Officers & Access Management"
                 subtitle="Configure authorized coordinators, establish role assignments, and enforce College-wide or Department-specific access boundaries."
                 actions={
-                  <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
-                    Add Placement Officer
-                  </Button>
+                  isSuperAdmin ? (
+                    <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
+                      Add Placement Officer
+                    </Button>
+                  ) : (
+                    <div className="flex items-center space-x-2 text-xs text-slate-400 bg-slate-850 px-3 py-1.5 rounded-xl border border-slate-700/60">
+                      <Lock className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Officer registration restricted to Primary Admin</span>
+                    </div>
+                  )
                 }
               />
 
@@ -1649,41 +1677,50 @@ export const AdminDashboard = () => {
                             </div>
                           </div>
 
-                          {/* Officer Action Buttons */}
+                          {/* Officer Action Buttons (Restricted to Super Admin) */}
                           <div className="flex items-center space-x-2 self-end md:self-center">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              icon={Edit}
-                              onClick={() => {
-                                setSelectedOfficerForEdit(officer);
-                                setIsEditOfficerModalOpen(true);
-                              }}
-                            >
-                              Edit
-                            </Button>
+                            {isSuperAdmin ? (
+                              <>
+                                <Button
+                                  variant="secondary"
+                                  size="sm"
+                                  icon={Edit}
+                                  onClick={() => {
+                                    setSelectedOfficerForEdit(officer);
+                                    setIsEditOfficerModalOpen(true);
+                                  }}
+                                >
+                                  Edit
+                                </Button>
 
-                            <Button
-                              variant={isActive ? 'ghost' : 'secondary'}
-                              size="sm"
-                              icon={Power}
-                              onClick={() => handleToggleOfficer(officer)}
-                              disabled={isSelf && isActive}
-                              title={isSelf ? 'Cannot deactivate your own active session' : `${isActive ? 'Deactivate' : 'Activate'} officer`}
-                            >
-                              {isActive ? 'Deactivate' : 'Activate'}
-                            </Button>
+                                <Button
+                                  variant={isActive ? 'ghost' : 'secondary'}
+                                  size="sm"
+                                  icon={Power}
+                                  onClick={() => handleToggleOfficer(officer)}
+                                  disabled={isSelf && isActive}
+                                  title={isSelf ? 'Cannot deactivate your own active session' : `${isActive ? 'Deactivate' : 'Activate'} officer`}
+                                >
+                                  {isActive ? 'Deactivate' : 'Activate'}
+                                </Button>
 
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              icon={Trash2}
-                              onClick={() => handleRemoveOfficer(officer.uid, officer.displayName || officer.email)}
-                              disabled={isSelf}
-                              title={isSelf ? 'Cannot delete your own active account' : 'Revoke officer privileges'}
-                            >
-                              Revoke
-                            </Button>
+                                <Button
+                                  variant="danger"
+                                  size="sm"
+                                  icon={Trash2}
+                                  onClick={() => handleRemoveOfficer(officer.uid, officer.displayName || officer.email)}
+                                  disabled={isSelf}
+                                  title={isSelf ? 'Cannot delete your own active account' : 'Revoke officer privileges'}
+                                >
+                                  Revoke
+                                </Button>
+                              </>
+                            ) : (
+                              <span className="text-[11px] text-slate-500 font-mono flex items-center space-x-1.5 py-1 px-2.5 rounded-lg bg-slate-850 border border-slate-800">
+                                <Lock className="w-3 h-3 text-slate-500" />
+                                <span>Managed by Primary Admin</span>
+                              </span>
+                            )}
                           </div>
                         </div>
                       );
@@ -1693,9 +1730,13 @@ export const AdminDashboard = () => {
               ) : (
                 <div className="p-12 text-center text-xs text-slate-400 bg-slate-900 rounded-2xl border border-dashed border-slate-800 space-y-3">
                   <p>No placement officers match the active filter criteria.</p>
-                  <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
-                    Add New Officer
-                  </Button>
+                  {isSuperAdmin ? (
+                    <Button variant="primary" size="sm" icon={UserPlus} onClick={() => setIsAddOfficerModalOpen(true)}>
+                      Add New Officer
+                    </Button>
+                  ) : (
+                    <p className="text-slate-500 text-[11px]">Officer creation is restricted to the primary administrator.</p>
+                  )}
                 </div>
               )}
             </div>

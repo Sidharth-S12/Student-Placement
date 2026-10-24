@@ -26,6 +26,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /**
+ * Authorized Super Administrator emails permitted to create and manage placement officers.
+ */
+export const PRIMARY_ADMIN_EMAILS = [
+  'sidharths4669@gmail.com',
+  'admin@placement.edu',
+  (process.env.PRIMARY_ADMIN_EMAIL || '').toLowerCase().trim()
+].filter(Boolean);
+
+/**
  * Middleware: Requires caller to be an authenticated Administrator/Placement Officer.
  */
 export async function requireAdminAuth(req, res, next) {
@@ -33,6 +42,29 @@ export async function requireAdminAuth(req, res, next) {
     const user = await verifyAuthToken(req);
     if (!user || user.role !== 'admin') {
       return res.status(403).json({ error: 'Access denied: Administrator privileges required.' });
+    }
+    req.adminUser = user;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired authentication credentials.' });
+  }
+}
+
+/**
+ * Middleware: Requires caller to be the Original Primary Super Administrator.
+ * Only the original admin account created can register or modify placement officers.
+ */
+export async function requirePrimaryAdminAuth(req, res, next) {
+  try {
+    const user = await verifyAuthToken(req);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied: Administrator privileges required.' });
+    }
+    const cleanEmail = (user.email || req.headers['x-user-email'] || '').toLowerCase().trim();
+    if (!PRIMARY_ADMIN_EMAILS.includes(cleanEmail)) {
+      return res.status(403).json({
+        error: 'Access denied: Only the original primary administrator is authorized to create or manage officer accounts.'
+      });
     }
     req.adminUser = user;
     next();
@@ -363,6 +395,14 @@ export async function listOfficers(req, res) {
  */
 export async function createOfficer(req, res) {
   try {
+    // Defense-in-depth: Ensure caller is the original primary super administrator
+    const callerEmail = (req.adminUser?.email || req.headers['x-user-email'] || '').toLowerCase().trim();
+    if (callerEmail && !PRIMARY_ADMIN_EMAILS.includes(callerEmail)) {
+      return res.status(403).json({
+        error: 'Access denied: Only the original primary administrator is authorized to register new placement officers.'
+      });
+    }
+
     const {
       name,
       email,
@@ -926,5 +966,59 @@ export async function runKMeansPython(req, res) {
     return res.status(500).json({ error: 'Failed to execute Python K-Means clustering.' });
   }
 }
+
+/**
+ * POST /api/admin/verify-login
+ * Direct officer login authentication check.
+ * Verifies officer email, password against initialPassword or default officer credentials,
+ * and checks account status.
+ */
+export async function verifyOfficerLoginHandler(req, res) {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const officers = await getAllPlacementOfficers();
+    const officer = officers.find(o => (o.email || '').toLowerCase() === cleanEmail);
+
+    if (!officer) {
+      return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+    }
+
+    if (officer.status === 'inactive') {
+      return res.status(403).json({ error: 'This placement officer account has been deactivated. Please contact the administrator.' });
+    }
+
+    // Check credentials: check stored officer initialPassword or default officer passwords
+    const expectedPassword = officer.initialPassword;
+    const isMatched = expectedPassword
+      ? expectedPassword === password
+      : (password === 'Officer@123' || password === 'admin123' || (cleanEmail === 'admin@placement.edu' && password === 'admin123'));
+
+    if (!isMatched) {
+      return res.status(401).json({ error: 'Invalid email or password. Please verify your credentials.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        uid: officer.uid,
+        email: officer.email || cleanEmail,
+        displayName: officer.displayName || officer.name || cleanEmail.split('@')[0],
+        role: 'admin',
+        accessScope: officer.accessScope || 'college',
+        assignedDepartment: officer.assignedDepartment || null,
+        designation: officer.designation || 'Placement Officer'
+      }
+    });
+  } catch (err) {
+    console.error('[AdminController:verifyOfficerLoginHandler] Error:', err);
+    return res.status(500).json({ error: 'Failed to verify officer credentials.' });
+  }
+}
+
 
 

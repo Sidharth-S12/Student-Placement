@@ -18,6 +18,8 @@ import {
   EyeOff
 } from 'lucide-react';
 import { addOfficer } from '../../services/adminService';
+import { useAuth } from '../../context/AuthContext';
+import { saveLocalUser } from '../../services/authService';
 
 const COMMON_DESIGNATIONS = [
   'Head Placement Officer',
@@ -41,6 +43,16 @@ const DEPARTMENTS = [
 ];
 
 export const AdminAddOfficerModal = ({ isOpen, onClose, onOfficerAdded }) => {
+  const { currentUser } = useAuth();
+
+  const PRIMARY_ADMIN_EMAILS = [
+    'sidharths4669@gmail.com',
+    'admin@placement.edu',
+    (import.meta.env?.VITE_PRIMARY_ADMIN_EMAIL || '').toLowerCase().trim()
+  ].filter(Boolean);
+
+  const isSuperAdmin = currentUser?.email && PRIMARY_ADMIN_EMAILS.includes(currentUser.email.toLowerCase().trim());
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -69,6 +81,11 @@ export const AdminAddOfficerModal = ({ isOpen, onClose, onOfficerAdded }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLoading) return;
+
+    if (!isSuperAdmin) {
+      setErrorMessage('Access Denied: Only the original primary administrator is authorized to create new placement officers.');
+      return;
+    }
 
     if (!formData.name.trim()) {
       setErrorMessage('Please enter officer full name.');
@@ -106,6 +123,19 @@ export const AdminAddOfficerModal = ({ isOpen, onClose, onOfficerAdded }) => {
         initialPassword: formData.initialPassword || 'Officer@123',
         phone: formData.phone.trim()
       });
+
+      // Synchronize to local user store for immediate login recognition
+      if (created && created.email) {
+        saveLocalUser(created.email.toLowerCase().trim(), {
+          uid: created.uid,
+          email: created.email.toLowerCase().trim(),
+          displayName: created.displayName,
+          role: 'admin',
+          initialPassword: formData.initialPassword || 'Officer@123',
+          accessScope: created.accessScope,
+          assignedDepartment: created.assignedDepartment
+        });
+      }
 
       setSuccessMessage(`Officer ${created.displayName} successfully created with ${created.accessScope === 'college' ? 'College-Wide' : created.assignedDepartment} privileges.`);
       setTimeout(() => {
