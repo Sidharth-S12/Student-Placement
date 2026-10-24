@@ -81,7 +81,7 @@ export const CompanyStudentDetailModal = ({
         return;
       }
       generateATSResumePDF(student);
-      setFeedbackMsg(`ATS Resume for ${personal.fullName || 'student'} downloaded.`);
+      setFeedbackMsg(`Resume for ${personal.fullName || 'student'} downloaded.`);
       setTimeout(() => setFeedbackMsg(null), 3000);
     } catch (err) {
       console.error('Failed to generate resume for company:', err);

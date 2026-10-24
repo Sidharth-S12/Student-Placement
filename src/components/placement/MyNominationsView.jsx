@@ -184,7 +184,7 @@ export const MyNominationsView = ({
                         <span>Student Consent Required</span>
                       </div>
                       <p className="text-xs text-amber-100 max-w-xl">
-                        Accepting this nomination will submit your candidate profile and ATS resume directly to {nom.companyName}'s hiring pipeline.
+                        Accepting this nomination will submit your candidate profile and resume directly to {nom.companyName}'s hiring pipeline.
                       </p>
                     </div>
 

@@ -60,7 +60,7 @@ export const AdminStudentDetailModal = ({ student, isOpen, onClose }) => {
         return;
       }
       generateATSResumePDF(student);
-      setFeedbackMsg('ATS Resume generated & downloaded successfully.');
+      setFeedbackMsg('Resume generated & downloaded successfully.');
       setTimeout(() => setFeedbackMsg(null), 3000);
     } catch (err) {
       console.error('Failed to generate resume:', err);

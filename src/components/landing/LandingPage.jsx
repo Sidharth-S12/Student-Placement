@@ -21,18 +21,13 @@ import {
   BarChart3,
   Check,
   Mail,
-  Phone,
-  Send,
-  Calendar,
   X,
   HelpCircle,
   Briefcase,
-  School,
   ClipboardCheck,
   LineChart,
   Lock,
-  UserCheck,
-  AlertCircle
+  UserCheck
 } from 'lucide-react';
 
 export const LandingPage = ({ onGetStarted, onSignIn }) => {
@@ -40,19 +35,6 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
   const [activeWalkthroughTab, setActiveWalkthroughTab] = useState('student');
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [legalModalType, setLegalModalType] = useState(null); // 'privacy' | 'terms' | null
-
-  // Institutional Demo Form State
-  const [demoForm, setDemoForm] = useState({
-    officerName: '',
-    institutionName: '',
-    email: '',
-    phone: '',
-    cohortSize: '500-1000',
-    notes: ''
-  });
-  const [demoFormErrors, setDemoFormErrors] = useState({});
-  const [demoSubmitted, setDemoSubmitted] = useState(false);
-  const [demoRefId, setDemoRefId] = useState('');
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -63,51 +45,6 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
 
   const toggleFaq = (index) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
-
-  // Demo form validation & submit handler
-  const handleDemoSubmit = (e) => {
-    e.preventDefault();
-    const errors = {};
-
-    if (!demoForm.officerName.trim()) {
-      errors.officerName = 'Placement Officer or Coordinator name is required.';
-    }
-    if (!demoForm.institutionName.trim()) {
-      errors.institutionName = 'College or University name is required.';
-    }
-    if (!demoForm.email.trim()) {
-      errors.email = 'Official institutional email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(demoForm.email.trim())) {
-      errors.email = 'Please provide a valid institutional email address.';
-    }
-    if (!demoForm.notes.trim()) {
-      errors.notes = 'Please outline your campus placement objectives.';
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setDemoFormErrors(errors);
-      return;
-    }
-
-    setDemoFormErrors({});
-    const referenceId = `PG-PILOT-${Date.now().toString().slice(-6)}`;
-    setDemoRefId(referenceId);
-
-    // Safely persist to localStorage for audit trail
-    try {
-      const existing = JSON.parse(localStorage.getItem('placement_genie_demo_inquiries') || '[]');
-      existing.push({
-        ...demoForm,
-        referenceId,
-        submittedAt: new Date().toISOString()
-      });
-      localStorage.setItem('placement_genie_demo_inquiries', JSON.stringify(existing));
-    } catch (err) {
-      console.warn('Could not cache demo inquiry:', err);
-    }
-
-    setDemoSubmitted(true);
   };
 
   return (
@@ -165,12 +102,6 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               className="hover:text-white transition-colors"
             >
               Product Walkthrough
-            </button>
-            <button
-              onClick={() => scrollToSection('institutional-demo')}
-              className="hover:text-white transition-colors"
-            >
-              Institutional Demo
             </button>
             <button
               onClick={() => scrollToSection('faq')}
@@ -231,7 +162,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
             {/* Concise Value Proposition */}
             <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
               An integrated campus placement suite connecting students, verified recruiters, and placement officers.
-              Prepare through adaptive technical challenges, speech-evaluated mock interviews, and automated ATS single-page resumes.
+              Prepare through adaptive technical challenges, speech-evaluated mock interviews, and automated single-page resumes.
             </p>
 
             {/* Exactly One Primary CTA and One Secondary CTA */}
@@ -264,7 +195,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </div>
               <div className="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-xl border border-slate-700/60">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>1-Click Single-Page ATS Resume PDF</span>
+                <span>1-Click Single-Page Resume PDF</span>
               </div>
               <div className="flex items-center space-x-1.5 bg-slate-800/60 px-3 py-1.5 rounded-xl border border-slate-700/60">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -469,9 +400,9 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 </span>
                 <FileText className="w-5 h-5 text-slate-500 group-hover:text-purple-400 transition-colors" />
               </div>
-              <h3 className="text-base font-bold text-white">ATS Resume & Readiness</h3>
+              <h3 className="text-base font-bold text-white">Resume & Readiness</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Generate a clean, single-page ATS-formatted PDF resume and review your weighted 0–100% readiness score with tailored improvement suggestions.
+                Generate a clean, single-page PDF resume and review your weighted 0–100% readiness score with tailored improvement suggestions.
               </p>
               <div className="pt-2 text-[11px] font-semibold text-purple-400 flex items-center space-x-1">
                 <span>Standard 1-Page PDF Export</span>
@@ -622,7 +553,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </ul>
             </div>
 
-            {/* Feature 4: ATS Resume Studio */}
+            {/* Feature 4: Resume Studio */}
             <div className="bg-slate-900 border border-slate-800 hover:border-emerald-500/50 p-8 rounded-3xl space-y-5 transition-all group">
               <div className="flex items-center justify-between">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -634,7 +565,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors">
-                  ATS Resume Studio
+                  Resume Studio
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                   Automatically renders student profile data into an industry-standard, single-column, single-page Times New Roman PDF resume engineered for machine readability.
@@ -706,7 +637,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                    <span>1-click ATS single-page resume PDF generator</span>
+                    <span>1-click single-page resume PDF generator</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -750,7 +681,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-indigo-400 flex-shrink-0" />
-                    <span>Instant candidate ATS resume preview & download</span>
+                    <span>Instant candidate resume preview & download</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-indigo-400 flex-shrink-0" />
@@ -902,7 +833,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
-                  <div className="text-xs font-bold text-emerald-400">Step C: 1-Click ATS Resume</div>
+                  <div className="text-xs font-bold text-emerald-400">Step C: 1-Click Resume</div>
                   <p className="text-xs text-slate-400 leading-relaxed">
                     Platform synthesizes education, verified skills, and projects into a machine-readable Times New Roman 1-page PDF.
                   </p>
@@ -952,7 +883,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                   <p className="text-xs text-slate-400 leading-relaxed">
                     Filter candidate directory by specific technical skills (e.g., Python, React), coding percentiles, and academic standing.
                   </p>
-                  <div className="text-[10px] text-slate-500 font-mono">View: Instant ATS Resume Preview</div>
+                  <div className="text-[10px] text-slate-500 font-mono">View: Instant Resume Preview</div>
                 </div>
 
                 <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
@@ -1037,251 +968,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
       </section>
 
       {/* =====================================================================
-          8. INSTITUTIONAL PILOT / DEMO REQUEST & CONTACT SECTION
-          (Factual contact route; working validated inquiry form)
-         ===================================================================== */}
-      <section id="institutional-demo" className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-            {/* Left Column: Institutional Value & Genuine Contact Route */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-brand-400">
-                  Institutional Pilot Program
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-black text-white font-display tracking-tight">
-                  Request an Institutional Demo & Placement Cell Pilot
-                </h2>
-                <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-                  Colleges and engineering institutions can deploy Placement Genie to modernize their placement cell operations, automate candidate readiness benchmarks, and securely connect with recruitment partners.
-                </p>
-              </div>
-
-              <div className="space-y-4 text-xs text-slate-300">
-                <div className="flex items-start space-x-3 bg-slate-800/40 p-4 rounded-2xl border border-slate-800">
-                  <div className="w-8 h-8 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <School className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Full Placement Cell Governance</h4>
-                    <p className="text-slate-400 mt-1">
-                      Delegate officer accounts, review company drive requests, and oversee department placement statistics from a unified administrative console.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3 bg-slate-800/40 p-4 rounded-2xl border border-slate-800">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Verified Institutional Contact</h4>
-                    <p className="text-slate-400 mt-1">
-                      Direct inquiries to the Central Placement Cell desk at <strong className="text-slate-200">admin@placement.edu</strong>.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs text-slate-400">
-                <div className="font-bold text-white flex items-center space-x-2">
-                  <Calendar className="w-4 h-4 text-brand-400" />
-                  <span>Administrative Onboarding & Pilot Setup</span>
-                </div>
-                <p>
-                  Pilot installations include fast-fill demo credentials for immediate testing and customized role onboarding for training placement coordinators.
-                </p>
-              </div>
-            </div>
-
-            {/* Right Column: Working Validated Request Form */}
-            <div className="bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl">
-              {demoSubmitted ? (
-                <div className="text-center py-8 space-y-4 animate-fade-in">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-white">Demo Request Received</h3>
-                    <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                      Thank you, <strong className="text-slate-200">{demoForm.officerName}</strong>. Our institutional onboarding team will review your request for <strong className="text-slate-200">{demoForm.institutionName}</strong>.
-                    </p>
-                  </div>
-                  <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs font-mono text-emerald-400 max-w-xs mx-auto">
-                    Reference: {demoRefId}
-                  </div>
-                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a
-                      href={`mailto:admin@placement.edu?subject=Demo Inquiry Reference ${demoRefId} - ${demoForm.institutionName}&body=Hello Placement Genie Team,%0D%0A%0D%0AI have submitted an institutional demo request with Reference ID ${demoRefId}.%0D%0A%0D%0AInstitution: ${encodeURIComponent(demoForm.institutionName)}%0D%0ACoordinator: ${encodeURIComponent(demoForm.officerName)}%0D%0APhone: ${encodeURIComponent(demoForm.phone)}%0D%0AObjectives: ${encodeURIComponent(demoForm.notes)}`}
-                      className="px-4 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs transition-colors flex items-center space-x-1.5"
-                    >
-                      <Mail className="w-4 h-4" />
-                      <span>Send Direct Email Copy</span>
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setDemoSubmitted(false);
-                        setDemoForm({
-                          officerName: '',
-                          institutionName: '',
-                          email: '',
-                          phone: '',
-                          cohortSize: '500-1000',
-                          notes: ''
-                        });
-                      }}
-                      className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
-                    >
-                      Submit Another Inquiry
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <form onSubmit={handleDemoSubmit} className="space-y-4">
-                  <div className="border-b border-slate-800 pb-3">
-                    <h3 className="text-lg font-bold text-white">Schedule Campus Demonstration</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Submit institutional details for personalized placement platform walkthrough.
-                    </p>
-                  </div>
-
-                  {/* Officer Name */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Placement Officer / Coordinator Name <span className="text-rose-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={demoForm.officerName}
-                      onChange={(e) => setDemoForm({ ...demoForm, officerName: e.target.value })}
-                      placeholder="e.g., Dr. Rajesh Varma"
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
-                    />
-                    {demoFormErrors.officerName && (
-                      <p className="text-[11px] text-rose-400 flex items-center space-x-1">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>{demoFormErrors.officerName}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Institution Name */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-300">
-                      College / University Name <span className="text-rose-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={demoForm.institutionName}
-                      onChange={(e) => setDemoForm({ ...demoForm, institutionName: e.target.value })}
-                      placeholder="e.g., National Institute of Technology"
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
-                    />
-                    {demoFormErrors.institutionName && (
-                      <p className="text-[11px] text-rose-400 flex items-center space-x-1">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>{demoFormErrors.institutionName}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Official Email */}
-                    <div className="space-y-1">
-                      <label className="block text-xs font-bold text-slate-300">
-                        Institutional Email <span className="text-rose-400">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={demoForm.email}
-                        onChange={(e) => setDemoForm({ ...demoForm, email: e.target.value })}
-                        placeholder="officer@college.edu"
-                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
-                      />
-                      {demoFormErrors.email && (
-                        <p className="text-[11px] text-rose-400 flex items-center space-x-1">
-                          <AlertCircle className="w-3.5 h-3.5" />
-                          <span>{demoFormErrors.email}</span>
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Contact Phone */}
-                    <div className="space-y-1">
-                      <label className="block text-xs font-bold text-slate-300">
-                        Contact Phone
-                      </label>
-                      <input
-                        type="tel"
-                        value={demoForm.phone}
-                        onChange={(e) => setDemoForm({ ...demoForm, phone: e.target.value })}
-                        placeholder="+91 98765 43210"
-                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Student Cohort Size */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Estimated Student Cohort Size
-                    </label>
-                    <select
-                      value={demoForm.cohortSize}
-                      onChange={(e) => setDemoForm({ ...demoForm, cohortSize: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-brand-500 transition-colors"
-                    >
-                      <option value="100-500">100 - 500 Students (Single Department)</option>
-                      <option value="500-1000">500 - 1,000 Students (Mid-size College)</option>
-                      <option value="1000-3000">1,000 - 3,000 Students (Large Campus)</option>
-                      <option value="3000+">3,000+ Students (Multi-Campus University)</option>
-                    </select>
-                  </div>
-
-                  {/* Objectives & Notes */}
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-slate-300">
-                      Placement Cell Objectives & Questions <span className="text-rose-400">*</span>
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={demoForm.notes}
-                      onChange={(e) => setDemoForm({ ...demoForm, notes: e.target.value })}
-                      placeholder="Outline your target recruitment drives, assessment timelines, or specific department needs..."
-                      className="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors resize-none"
-                    />
-                    {demoFormErrors.notes && (
-                      <p className="text-[11px] text-rose-400 flex items-center space-x-1">
-                        <AlertCircle className="w-3.5 h-3.5" />
-                        <span>{demoFormErrors.notes}</span>
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Form Submission Button */}
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-indigo-600 hover:from-brand-600 hover:to-indigo-700 text-white font-extrabold text-xs shadow-lg shadow-brand-500/25 transition-all flex items-center justify-center space-x-2"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Submit Institutional Request</span>
-                  </button>
-
-                  <p className="text-[11px] text-slate-500 text-center">
-                    Direct inquiries: <span className="text-slate-400 font-mono">admin@placement.edu</span>
-                  </p>
-                </form>
-              )}
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================================
-          9. FREQUENTLY ASKED QUESTIONS (FAQ) SECTION
+          8. FREQUENTLY ASKED QUESTIONS (FAQ) SECTION
          ===================================================================== */}
       <section id="faq" className="py-20 bg-slate-950/70 border-y border-slate-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -1313,7 +1000,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 a: 'All new corporate registrations are initially placed into a restricted "Pending Approval" state. Company recruiters cannot discover candidate profiles, access contact details, or publish drives until an institutional placement cell administrator verifies official corporate credentials and approved domains.'
               },
               {
-                q: 'What makes the ATS Resume generator compliant with industry standards?',
+                q: 'What makes the Resume generator compliant with industry standards?',
                 a: 'The resume generator produces a standard single-column, single-page PDF formatted in Times New Roman with clean typography, clear section delimiters, and machine-readable text blocks, avoiding non-standard multi-column tables or graphics that commonly fail automated ATS parsers.'
               },
               {
@@ -1321,8 +1008,8 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 a: 'Yes. All coding tests, aptitude assessments, and AI mock interview sessions run directly inside modern web browsers (Chrome, Edge, Firefox, Safari). Voice evaluation uses the standard HTML5 Web Audio and Speech APIs with no third-party desktop client required.'
               },
               {
-                q: 'How can an institution schedule a campus pilot or onboarding demonstration?',
-                a: 'Academic directors and placement cell coordinators can complete the institutional demo request form above or reach out directly to the central placement administration desk at admin@placement.edu.'
+                q: 'How can an institution connect for a campus pilot or placement onboarding?',
+                a: 'Academic directors and placement cell coordinators can reach out directly to the central placement administration desk at admin@placement.edu.'
               }
             ].map((faq, index) => (
               <div
@@ -1353,7 +1040,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
       </section>
 
       {/* =====================================================================
-          10. FINAL CALL TO ACTION (CTA)
+          9. FINAL CALL TO ACTION (CTA)
          ===================================================================== */}
       <section className="py-20 relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1365,7 +1052,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
                 Accelerate Your Campus Placement Journey
               </h2>
               <p className="text-sm sm:text-base text-brand-100 font-normal">
-                Prepare with calibrated assessments, speech-evaluated interviews, and ATS-formatted resumes, or manage recruitment drives with institutional governance.
+                Prepare with calibrated assessments, speech-evaluated interviews, and single-page resumes, or manage recruitment drives with institutional governance.
               </p>
 
               {/* Exactly One Visually Dominant Primary CTA and One Secondary CTA */}
@@ -1389,7 +1076,7 @@ export const LandingPage = ({ onGetStarted, onSignIn }) => {
       </section>
 
       {/* =====================================================================
-          11. FOOTER
+          10. FOOTER
           (Legitimate contacts, Privacy Policy & Terms modals, tech-stack text removed)
          ===================================================================== */}
       <footer className="border-t border-slate-800 bg-slate-950 py-12 text-slate-400 text-xs">

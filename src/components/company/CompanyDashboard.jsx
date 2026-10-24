@@ -193,7 +193,7 @@ export const CompanyDashboard = ({ companyProfile: initialProfile = null }) => {
         return;
       }
       generateATSResumePDF(student);
-      showToast(`Downloaded ATS resume for ${personal.fullName || 'student'}`);
+      showToast(`Downloaded resume for ${personal.fullName || 'student'}`);
     } catch (err) {
       console.error('Resume download error:', err);
       showToast('Resume not available.');

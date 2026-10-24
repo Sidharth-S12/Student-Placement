@@ -380,6 +380,6 @@ export const generateATSResumePDF = (studentData) => {
   }
 
   // Save the vector PDF file
-  const fileName = `${personalInfo.fullName ? personalInfo.fullName.replace(/\s+/g, '_') : 'Student'}_ATS_Resume.pdf`;
+  const fileName = `${personalInfo.fullName ? personalInfo.fullName.replace(/\s+/g, '_') : 'Student'}_Resume.pdf`;
   doc.save(fileName);
 };

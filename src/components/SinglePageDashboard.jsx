@@ -130,9 +130,9 @@ export const SinglePageDashboard = () => {
 
   const handleQuickDownloadPDF = () => {
     try {
-      showToast("Generating ATS PDF Resume...");
+      showToast("Generating Resume PDF...");
       generateATSResumePDF(studentData);
-      showToast("ATS PDF downloaded successfully!");
+      showToast("Resume downloaded successfully!");
     } catch (err) {
       console.error("PDF download error", err);
       setIsResumeModalOpen(true);
@@ -296,7 +296,7 @@ export const SinglePageDashboard = () => {
               icon={Download}
               onClick={handleQuickDownloadPDF}
             >
-              Download ATS Resume
+              Download Resume
             </Button>
           </div>
 
@@ -459,7 +459,7 @@ export const SinglePageDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Tool 1: ATS Resume Studio */}
+        {/* Tool 1: Resume Studio */}
         <Card
           hover
           className="p-5 flex flex-col justify-between space-y-3 cursor-pointer card-hover-lift group hover:border-emerald-500/50"
@@ -469,9 +469,9 @@ export const SinglePageDashboard = () => {
             <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center group-hover:scale-110 transition-transform">
               <FileText className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">ATS Resume Studio</h4>
+            <h4 className="font-bold text-white text-sm group-hover:text-emerald-400 transition-colors">Resume Studio</h4>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Format and preview your ATS-ready single-page resume with clean recruiter templates.
+              Format and preview your single-page resume with clean recruiter templates.
             </p>
           </div>
           <Button
@@ -1127,16 +1127,16 @@ export const SinglePageDashboard = () => {
   );
 
   // =========================================================================
-  // 13. ATS RESUME BUILDER VIEW
+  // 13. RESUME BUILDER VIEW
   // =========================================================================
   const renderResumeBuilder = () => (
     <div className="space-y-6 animate-fade-in">
       <Card className="p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-xl">
-          <Badge variant="emerald" dot>ATS Resume Studio</Badge>
-          <h2 className="text-2xl font-black tracking-tight font-display">Automated ATS Resume Generator</h2>
+          <Badge variant="emerald" dot>Resume Studio</Badge>
+          <h2 className="text-2xl font-black tracking-tight font-display">Automated Resume Generator</h2>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Generate high-scoring single-page ATS resumes formatted specifically for campus recruitment drives.
+            Generate high-scoring single-page resumes formatted specifically for campus recruitment drives.
           </p>
         </div>
 
@@ -1146,7 +1146,7 @@ export const SinglePageDashboard = () => {
             icon={Download}
             onClick={handleQuickDownloadPDF}
           >
-            Download ATS PDF
+            Download Resume PDF
           </Button>
           <Button
             variant="secondary"
@@ -1171,9 +1171,9 @@ export const SinglePageDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-navy-900 to-indigo-950 text-white border border-slate-800 shadow-xl">
           <div className="space-y-1.5 max-w-xl">
             <Badge variant="emerald" dot>Resume Studio</Badge>
-            <h2 className="text-xl sm:text-2xl font-black tracking-tight font-display">ATS Resume & Keyword Studio</h2>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight font-display">Resume & Keyword Studio</h2>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Generate standardized 1-page ATS resumes formatted specifically for campus recruitment, or scan your existing document for missing job keywords.
+              Generate standardized 1-page resumes formatted specifically for campus recruitment, or scan your existing document for missing job keywords.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1182,7 +1182,7 @@ export const SinglePageDashboard = () => {
               icon={Download}
               onClick={handleQuickDownloadPDF}
             >
-              Download ATS PDF
+              Download Resume PDF
             </Button>
           </div>
         </div>
@@ -1199,7 +1199,7 @@ export const SinglePageDashboard = () => {
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>ATS Resume Generator</span>
+            <span>Resume Generator</span>
           </button>
           <button
             type="button"
@@ -1554,7 +1554,7 @@ export const SinglePageDashboard = () => {
       case 'aptitude': return 'Aptitude & Reasoning Test';
       case 'interview': return 'AI Mock Interview Studio';
       case 'resume':
-      case 'resume-builder': return 'ATS Resume Studio';
+      case 'resume-builder': return 'Resume Studio';
       case 'resume-analyzer': return 'AI Resume Keyword Gap Scanner';
       case 'roadmap': return 'Career Learning Roadmap';
       case 'jobs': return 'Campus Placement Drives & Jobs';
@@ -1714,7 +1714,7 @@ export const SinglePageDashboard = () => {
                     <Badge variant="amber" size="sm">Action Required</Badge>
                   </div>
                   <p className="text-xs text-slate-400 max-w-xl">
-                    Add academics, skills, and projects to start taking assessments, unlock recruiter searches, and export your ATS resume.
+                    Add academics, skills, and projects to start taking assessments, unlock recruiter searches, and export your resume.
                   </p>
                 </div>
               </div>

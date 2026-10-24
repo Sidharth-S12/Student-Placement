@@ -13,11 +13,11 @@ export const ATSResumeModal = () => {
   const handleDownloadPDF = () => {
     try {
       setIsGenerating(true);
-      showToast("Generating native vector ATS PDF Resume...");
+      showToast("Generating Resume PDF...");
 
       generateATSResumePDF(studentData);
 
-      showToast("ATS PDF Resume downloaded successfully!");
+      showToast("Resume downloaded successfully!");
     } catch (err) {
       console.error("Failed to generate vector PDF", err);
       showToast("Error generating PDF. Opening print dialog...");
@@ -39,7 +39,7 @@ export const ATSResumeModal = () => {
         <div className="p-4 sm:p-5 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-lg font-bold text-white">ATS-Friendly Resume Preview</h2>
+              <h2 className="text-lg font-bold text-white">Resume Preview</h2>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold bg-emerald-950/40 text-emerald-300 border border-emerald-800/40">
                 Native Vector PDF • Selectable Text
               </span>
@@ -82,7 +82,7 @@ export const ATSResumeModal = () => {
               ) : (
                 <>
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download ATS PDF</span>
+                  <span>Download Resume PDF</span>
                 </>
               )}
             </button>

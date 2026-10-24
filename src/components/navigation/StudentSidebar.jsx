@@ -462,7 +462,7 @@ export const StudentSidebar = ({
                   className={subNavItemClass(activeTab === 'resume-builder' || (activeTab === 'resume' && resumeSubTab === 'builder'))}
                 >
                   <FileText className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="flex-1 text-left truncate">ATS Resume PDF</span>
+                  <span className="flex-1 text-left truncate">Resume PDF</span>
                 </button>
 
                 <button

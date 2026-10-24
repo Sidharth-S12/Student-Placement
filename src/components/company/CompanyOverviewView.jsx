@@ -338,7 +338,7 @@ export const CompanyOverviewView = ({
                           type="button"
                           onClick={(e) => onDownloadResume(e, student)}
                           className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-brand-300 border border-slate-700 text-xs font-semibold flex items-center space-x-1"
-                          title="Download ATS Resume"
+                          title="Download Resume"
                         >
                           <Download className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">Resume</span>

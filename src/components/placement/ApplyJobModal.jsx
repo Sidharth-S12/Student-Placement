@@ -155,7 +155,7 @@ export const ApplyJobModal = ({
             <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
               <span className="flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5 text-brand-400" />
-                <span>Standard ATS Resume attached automatically</span>
+                <span>Standard Resume attached automatically</span>
               </span>
               <span className="text-brand-300 font-semibold">100% Ready</span>
             </div>
@@ -175,7 +175,7 @@ export const ApplyJobModal = ({
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-700 bg-slate-850 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all resize-none"
             />
             <p className="text-[10px] text-slate-500">
-              The hiring team will review your verified coding percentile, placement readiness, and attached ATS resume.
+              The hiring team will review your verified coding percentile, placement readiness, and attached resume.
             </p>
           </div>
 
