@@ -1,0 +1,1509 @@
+{
+  "test_assess_1789745365465": {
+    "assessmentId": "test_assess_1789745365465",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-18T15:29:25.465Z",
+    "savedAt": "2026-09-18T15:29:25.467Z"
+  },
+  "assess_1789746392002_8d2jf": {
+    "assessmentId": "assess_1789746392002_8d2jf",
+    "studentId": "uid_sidharth_1789924912811",
+    "startedAt": "2026-09-18T15:46:33.459Z",
+    "completedAt": "2026-09-18T15:49:42.323Z",
+    "totalQuestions": 15,
+    "correctAnswers": 7,
+    "incorrectAnswers": 8,
+    "technicalScore": 46.67,
+    "skillsAssessed": [
+      "Python",
+      "HTML",
+      "C++",
+      "Firebase",
+      "GitHub",
+      "VScode",
+      "vercel"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 33,
+        "questionsAttempted": 3,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "HTML": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "C++": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "Firebase": {
+        "score": 0,
+        "questionsAttempted": 2,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "VScode": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "vercel": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      }
+    },
+    "topicPerformance": {
+      "String Slicing": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "HTML Elements": {
+        "skill": "HTML",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Data Types and Arithmetic": {
+        "skill": "C++",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Authentication": {
+        "skill": "Firebase",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Repository Initialization": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Keyboard Shortcuts": {
+        "skill": "VScode",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Vercel CLI Deployment Command": {
+        "skill": "vercel",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Longest Subarray with Given Sum": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Document Encoding": {
+        "skill": "HTML",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Function Overloading and const correctness": {
+        "skill": "C++",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Realtime Database Basics": {
+        "skill": "Firebase",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Protected Branches": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Configuration Files": {
+        "skill": "VScode",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Preview Deployments": {
+        "skill": "vercel",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Dictionary Access": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      }
+    },
+    "highestDifficulty": "MEDIUM",
+    "strengths": [
+      "GitHub (100% proficiency achieved)",
+      "String Slicing in Python (Consistent correctness)",
+      "HTML Elements in HTML (Consistent correctness)",
+      "Data Types and Arithmetic in C++ (Consistent correctness)",
+      "Repository Initialization in GitHub (Consistent correctness)",
+      "Protected Branches in GitHub (Consistent correctness)",
+      "Configuration Files in VScode (Consistent correctness)",
+      "Preview Deployments in vercel (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Python (33% accuracy - practice EASY fundamentals)",
+      "HTML (50% accuracy - practice EASY fundamentals)",
+      "C++ (50% accuracy - practice EASY fundamentals)",
+      "Firebase (0% accuracy - practice EASY fundamentals)",
+      "VScode (50% accuracy - practice EASY fundamentals)",
+      "vercel (50% accuracy - practice MEDIUM fundamentals)",
+      "Authentication in Firebase (Review concepts)",
+      "Keyboard Shortcuts in VScode (Review concepts)",
+      "Vercel CLI Deployment Command in vercel (Review concepts)",
+      "Longest Subarray with Given Sum in Python (Review concepts)",
+      "Document Encoding in HTML (Review concepts)",
+      "Function Overloading and const correctness in C++ (Review concepts)",
+      "Realtime Database Basics in Firebase (Review concepts)",
+      "Dictionary Access in Python (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-09-18T15:49:42.325Z"
+  },
+  "test_assess_1789746981902": {
+    "assessmentId": "test_assess_1789746981902",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-18T15:56:21.902Z",
+    "savedAt": "2026-09-18T15:56:21.903Z"
+  },
+  "assess_1789789135125_7f3o4": {
+    "assessmentId": "assess_1789789135125_7f3o4",
+    "studentId": "uid_sidharth_1789924912811",
+    "startedAt": "2026-09-19T03:38:56.526Z",
+    "completedAt": "2026-09-19T03:41:54.644Z",
+    "totalQuestions": 15,
+    "correctAnswers": 6,
+    "incorrectAnswers": 9,
+    "technicalScore": 40,
+    "skillsAssessed": [
+      "Python",
+      "HTML",
+      "C++",
+      "Firebase",
+      "GitHub",
+      "VScode",
+      "vercel"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 33,
+        "questionsAttempted": 3,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "HTML": {
+        "score": 0,
+        "questionsAttempted": 2,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "C++": {
+        "score": 0,
+        "questionsAttempted": 2,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Firebase": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "GitHub": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "VScode": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "vercel": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      }
+    },
+    "topicPerformance": {
+      "Operators": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Headings": {
+        "skill": "HTML",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Variable Declaration and Initialization": {
+        "skill": "C++",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Initializing Firebase in a web app": {
+        "skill": "Firebase",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Repository Creation": {
+        "skill": "GitHub",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Keyboard Shortcuts": {
+        "skill": "VScode",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Deployment Commands": {
+        "skill": "vercel",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "String Reversal": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Images": {
+        "skill": "HTML",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Increment Operators": {
+        "skill": "C++",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Realtime Database vs Firestore": {
+        "skill": "Firebase",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Forking": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Debugging Configuration": {
+        "skill": "VScode",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Configuration File": {
+        "skill": "vercel",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Conditional Statements": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "MEDIUM",
+    "strengths": [
+      "VScode (100% proficiency achieved)",
+      "Initializing Firebase in a web app in Firebase (Consistent correctness)",
+      "Keyboard Shortcuts in VScode (Consistent correctness)",
+      "Forking in GitHub (Consistent correctness)",
+      "Debugging Configuration in VScode (Consistent correctness)",
+      "Configuration File in vercel (Consistent correctness)",
+      "Conditional Statements in Python (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Python (33% accuracy - practice EASY fundamentals)",
+      "HTML (0% accuracy - practice EASY fundamentals)",
+      "C++ (0% accuracy - practice EASY fundamentals)",
+      "Firebase (50% accuracy - practice EASY fundamentals)",
+      "GitHub (50% accuracy - practice EASY fundamentals)",
+      "vercel (50% accuracy - practice MEDIUM fundamentals)",
+      "Operators in Python (Review concepts)",
+      "Headings in HTML (Review concepts)",
+      "Variable Declaration and Initialization in C++ (Review concepts)",
+      "Repository Creation in GitHub (Review concepts)",
+      "Deployment Commands in vercel (Review concepts)",
+      "String Reversal in Python (Review concepts)",
+      "Images in HTML (Review concepts)",
+      "Increment Operators in C++ (Review concepts)",
+      "Realtime Database vs Firestore in Firebase (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-09-19T03:41:54.656Z"
+  },
+  "test_assess_1789922571076": {
+    "assessmentId": "test_assess_1789922571076",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T16:42:51.076Z",
+    "savedAt": "2026-09-20T16:42:51.078Z"
+  },
+  "test_assess_1789922889482": {
+    "assessmentId": "test_assess_1789922889482",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T16:48:09.482Z",
+    "savedAt": "2026-09-20T16:48:09.484Z"
+  },
+  "test_assess_1789924014003": {
+    "assessmentId": "test_assess_1789924014003",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:06:54.003Z",
+    "savedAt": "2026-09-20T17:06:54.004Z"
+  },
+  "assess_a_1789924912780": {
+    "assessmentId": "assess_a_1789924912780",
+    "studentId": "test_user_a_1789924912755",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:21:52.780Z",
+    "savedAt": "2026-09-20T17:21:52.780Z"
+  },
+  "assess_b_1789924912792": {
+    "assessmentId": "assess_b_1789924912792",
+    "studentId": "test_user_b_1789924912768",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:21:52.792Z",
+    "savedAt": "2026-09-20T17:21:52.792Z"
+  },
+  "test_assess_1789924935156": {
+    "assessmentId": "test_assess_1789924935156",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:22:15.156Z",
+    "savedAt": "2026-09-20T17:22:15.159Z"
+  },
+  "assess_a_1789926150235": {
+    "assessmentId": "assess_a_1789926150235",
+    "studentId": "test_user_a_1789926150208",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:42:30.235Z",
+    "savedAt": "2026-09-20T17:42:30.235Z"
+  },
+  "assess_b_1789926150247": {
+    "assessmentId": "assess_b_1789926150247",
+    "studentId": "test_user_b_1789926150221",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:42:30.247Z",
+    "savedAt": "2026-09-20T17:42:30.247Z"
+  },
+  "test_assess_1789926162678": {
+    "assessmentId": "test_assess_1789926162678",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T17:42:42.678Z",
+    "savedAt": "2026-09-20T17:42:42.681Z"
+  },
+  "assess_a_1789927250772": {
+    "assessmentId": "assess_a_1789927250772",
+    "studentId": "test_user_a_1789927250745",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:00:50.772Z",
+    "savedAt": "2026-09-20T18:00:50.772Z"
+  },
+  "assess_b_1789927250785": {
+    "assessmentId": "assess_b_1789927250785",
+    "studentId": "test_user_b_1789927250757",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:00:50.785Z",
+    "savedAt": "2026-09-20T18:00:50.785Z"
+  },
+  "test_assess_1789927262984": {
+    "assessmentId": "test_assess_1789927262984",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:01:02.984Z",
+    "savedAt": "2026-09-20T18:01:02.986Z"
+  },
+  "assess_a_1789929055982": {
+    "assessmentId": "assess_a_1789929055982",
+    "studentId": "test_user_a_1789929055954",
+    "technicalScore": 95,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:30:55.982Z",
+    "savedAt": "2026-09-20T18:30:55.982Z"
+  },
+  "assess_b_1789929055995": {
+    "assessmentId": "assess_b_1789929055995",
+    "studentId": "test_user_b_1789929055968",
+    "technicalScore": 60,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:30:55.995Z",
+    "savedAt": "2026-09-20T18:30:55.995Z"
+  },
+  "test_assess_1789929063975": {
+    "assessmentId": "test_assess_1789929063975",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-09-20T18:31:03.975Z",
+    "savedAt": "2026-09-20T18:31:03.977Z"
+  },
+  "assess_1792660476416_ai4y2": {
+    "assessmentId": "assess_1792660476416_ai4y2",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T09:14:38.159Z",
+    "completedAt": "2026-10-22T09:21:37.665Z",
+    "totalQuestions": 15,
+    "correctAnswers": 10,
+    "incorrectAnswers": 5,
+    "technicalScore": 66.67,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "EASY",
+        "status": "Average"
+      },
+      "JavaScript": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "SQL": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Linux": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      }
+    },
+    "topicPerformance": {
+      "List Comprehensions": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Core OOP & Inheritance": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Closures & Scope": {
+        "skill": "JavaScript",
+        "accuracy": 50,
+        "attempts": 2,
+        "correct": 1
+      },
+      "Joins & Queries": {
+        "skill": "SQL",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Event Loop & Concurrency": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "MongoDB",
+        "accuracy": 0,
+        "attempts": 2,
+        "correct": 0
+      },
+      "Promises & Async/Await": {
+        "skill": "Git",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Prototypes & Memory": {
+        "skill": "GitHub",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Generators & Memory": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "JavaScript (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "List Comprehensions in Python (Consistent correctness)",
+      "Core OOP & Inheritance in Java (Consistent correctness)",
+      "Event Loop & Concurrency in MySQL (Consistent correctness)",
+      "Promises & Async/Await in Git (Consistent correctness)",
+      "Prototypes & Memory in GitHub (Consistent correctness)",
+      "Generators & Memory in Python (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Java (50% accuracy - practice EASY fundamentals)",
+      "SQL (50% accuracy - practice MEDIUM fundamentals)",
+      "MongoDB (0% accuracy - practice EASY fundamentals)",
+      "Postman (0% accuracy - practice EASY fundamentals)",
+      "Linux (0% accuracy - practice EASY fundamentals)",
+      "Joins & Queries in SQL (Review concepts)",
+      "Array Methods in MongoDB (Review concepts)",
+      "Memory Management in Java (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T09:21:37.680Z"
+  },
+  "test_assess_1792667671748": {
+    "assessmentId": "test_assess_1792667671748",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-10-22T11:14:31.748Z",
+    "savedAt": "2026-10-22T11:14:31.750Z"
+  },
+  "assess_1792668111287_lmzrx": {
+    "assessmentId": "assess_1792668111287_lmzrx",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:21:52.977Z",
+    "completedAt": "2026-10-22T11:26:12.568Z",
+    "totalQuestions": 15,
+    "correctAnswers": 11,
+    "incorrectAnswers": 4,
+    "technicalScore": 73.33,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "MongoDB": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Git": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Linux": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      }
+    },
+    "topicPerformance": {
+      "GIL & Multithreading": {
+        "skill": "Python",
+        "accuracy": 0,
+        "attempts": 1,
+        "correct": 0
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Promises & Async/Await": {
+        "skill": "JavaScript",
+        "accuracy": 25,
+        "attempts": 4,
+        "correct": 1
+      },
+      "Indexing & Transactions": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Event Loop & Concurrency": {
+        "skill": "MongoDB",
+        "accuracy": 100,
+        "attempts": 3,
+        "correct": 3
+      },
+      "Prototypes & Memory": {
+        "skill": "VS Code",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "String Manipulation": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Core OOP & Inheritance": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Java (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MongoDB (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "Postman (100% proficiency achieved)",
+      "Linux (100% proficiency achieved)",
+      "Memory Management in Java (Consistent correctness)",
+      "Indexing & Transactions in SQL (Consistent correctness)",
+      "Event Loop & Concurrency in MongoDB (Consistent correctness)",
+      "Prototypes & Memory in VS Code (Consistent correctness)",
+      "String Manipulation in Python (Consistent correctness)",
+      "Core OOP & Inheritance in Java (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Python (50% accuracy - practice MEDIUM fundamentals)",
+      "JavaScript (50% accuracy - practice MEDIUM fundamentals)",
+      "MySQL (0% accuracy - practice EASY fundamentals)",
+      "Git (0% accuracy - practice EASY fundamentals)",
+      "GIL & Multithreading in Python (Review concepts)",
+      "Promises & Async/Await in JavaScript (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:26:12.594Z"
+  },
+  "assess_1792668401595_7algk": {
+    "assessmentId": "assess_1792668401595_7algk",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:26:43.108Z",
+    "completedAt": "2026-10-22T11:30:54.967Z",
+    "totalQuestions": 15,
+    "correctAnswers": 14,
+    "incorrectAnswers": 1,
+    "technicalScore": 93.33,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Linux": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      }
+    },
+    "topicPerformance": {
+      "Data Types & Mutability": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Core OOP & Inheritance": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Closures & Scope": {
+        "skill": "JavaScript",
+        "accuracy": 50,
+        "attempts": 2,
+        "correct": 1
+      },
+      "Joins & Queries": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 3,
+        "correct": 3
+      },
+      "Event Loop & Concurrency": {
+        "skill": "VS Code",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Prototypes & Memory": {
+        "skill": "Postman",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "List Comprehensions": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Promises & Async/Await": {
+        "skill": "JavaScript",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "Java (100% proficiency achieved)",
+      "JavaScript (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "Postman (100% proficiency achieved)",
+      "Linux (100% proficiency achieved)",
+      "Data Types & Mutability in Python (Consistent correctness)",
+      "Core OOP & Inheritance in Java (Consistent correctness)",
+      "Joins & Queries in SQL (Consistent correctness)",
+      "Array Methods in MySQL (Consistent correctness)",
+      "Event Loop & Concurrency in VS Code (Consistent correctness)",
+      "Prototypes & Memory in Postman (Consistent correctness)",
+      "List Comprehensions in Python (Consistent correctness)",
+      "Memory Management in Java (Consistent correctness)",
+      "Promises & Async/Await in JavaScript (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "MongoDB (0% accuracy - practice EASY fundamentals)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:30:54.996Z"
+  },
+  "assess_1792668693166_mik1f": {
+    "assessmentId": "assess_1792668693166_mik1f",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:31:34.679Z",
+    "completedAt": "2026-10-22T11:33:49.394Z",
+    "totalQuestions": 15,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "technicalScore": 80,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 50,
+        "questionsAttempted": 2,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Average"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      },
+      "Linux": {
+        "score": 0,
+        "questionsAttempted": 1,
+        "correctAnswers": 0,
+        "currentDifficulty": "EASY",
+        "status": "Needs Improvement"
+      }
+    },
+    "topicPerformance": {
+      "String Manipulation": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Generics & Type Erasure": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Promises & Async/Await": {
+        "skill": "JavaScript",
+        "accuracy": 0,
+        "attempts": 2,
+        "correct": 0
+      },
+      "Joins & Queries": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Closures & Scope": {
+        "skill": "MongoDB",
+        "accuracy": 67,
+        "attempts": 3,
+        "correct": 2
+      },
+      "Event Loop & Concurrency": {
+        "skill": "Git",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "GIL & Multithreading": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "Java (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "MongoDB (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "String Manipulation in Python (Consistent correctness)",
+      "Generics & Type Erasure in Java (Consistent correctness)",
+      "Joins & Queries in SQL (Consistent correctness)",
+      "Array Methods in MySQL (Consistent correctness)",
+      "Event Loop & Concurrency in Git (Consistent correctness)",
+      "GIL & Multithreading in Python (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "JavaScript (50% accuracy - practice MEDIUM fundamentals)",
+      "Postman (0% accuracy - practice EASY fundamentals)",
+      "Linux (0% accuracy - practice EASY fundamentals)",
+      "Promises & Async/Await in JavaScript (Review concepts)"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:33:49.416Z"
+  },
+  "test_assess_1792669242260": {
+    "assessmentId": "test_assess_1792669242260",
+    "studentId": "test_student@placement.edu",
+    "technicalScore": 80,
+    "correctAnswers": 12,
+    "incorrectAnswers": 3,
+    "status": "Completed",
+    "completedAt": "2026-10-22T11:40:42.260Z",
+    "savedAt": "2026-10-22T11:40:42.262Z"
+  },
+  "assess_1792669366204_p42us": {
+    "assessmentId": "assess_1792669366204_p42us",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startedAt": "2026-10-22T11:42:47.797Z",
+    "completedAt": "2026-10-22T11:47:23.746Z",
+    "totalQuestions": 15,
+    "correctAnswers": 15,
+    "incorrectAnswers": 0,
+    "technicalScore": 100,
+    "skillsAssessed": [
+      "Python",
+      "Java",
+      "JavaScript",
+      "SQL",
+      "MySQL",
+      "MongoDB",
+      "Git",
+      "GitHub",
+      "VS Code",
+      "Postman",
+      "Linux"
+    ],
+    "skillPerformance": {
+      "Python": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "Java": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "JavaScript": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "SQL": {
+        "score": 100,
+        "questionsAttempted": 2,
+        "correctAnswers": 2,
+        "currentDifficulty": "HARD",
+        "status": "Strong"
+      },
+      "MySQL": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "MongoDB": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Git": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "GitHub": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "VS Code": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Postman": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      },
+      "Linux": {
+        "score": 100,
+        "questionsAttempted": 1,
+        "correctAnswers": 1,
+        "currentDifficulty": "MEDIUM",
+        "status": "Strong"
+      }
+    },
+    "topicPerformance": {
+      "List Comprehensions": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Memory Management": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Event Loop & Concurrency": {
+        "skill": "JavaScript",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Aggregation & Filtering": {
+        "skill": "SQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Closures & Scope": {
+        "skill": "MySQL",
+        "accuracy": 100,
+        "attempts": 2,
+        "correct": 2
+      },
+      "Prototypes & Memory": {
+        "skill": "MongoDB",
+        "accuracy": 100,
+        "attempts": 3,
+        "correct": 3
+      },
+      "Promises & Async/Await": {
+        "skill": "Git",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Array Methods": {
+        "skill": "Linux",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Generators & Memory": {
+        "skill": "Python",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      },
+      "Generics & Type Erasure": {
+        "skill": "Java",
+        "accuracy": 100,
+        "attempts": 1,
+        "correct": 1
+      }
+    },
+    "highestDifficulty": "HARD",
+    "strengths": [
+      "Python (100% proficiency achieved)",
+      "Java (100% proficiency achieved)",
+      "JavaScript (100% proficiency achieved)",
+      "SQL (100% proficiency achieved)",
+      "MySQL (100% proficiency achieved)",
+      "MongoDB (100% proficiency achieved)",
+      "Git (100% proficiency achieved)",
+      "GitHub (100% proficiency achieved)",
+      "VS Code (100% proficiency achieved)",
+      "Postman (100% proficiency achieved)",
+      "Linux (100% proficiency achieved)",
+      "List Comprehensions in Python (Consistent correctness)",
+      "Memory Management in Java (Consistent correctness)",
+      "Event Loop & Concurrency in JavaScript (Consistent correctness)",
+      "Aggregation & Filtering in SQL (Consistent correctness)",
+      "Closures & Scope in MySQL (Consistent correctness)",
+      "Prototypes & Memory in MongoDB (Consistent correctness)",
+      "Promises & Async/Await in Git (Consistent correctness)",
+      "Array Methods in Linux (Consistent correctness)",
+      "Generators & Memory in Python (Consistent correctness)",
+      "Generics & Type Erasure in Java (Consistent correctness)"
+    ],
+    "areasForImprovement": [
+      "Continue tackling HARD tier algorithmic and system design challenges"
+    ],
+    "status": "Completed",
+    "savedAt": "2026-10-22T11:47:23.783Z"
+  }
+}

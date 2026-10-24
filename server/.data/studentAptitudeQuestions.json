@@ -1,0 +1,288 @@
+{
+  "test_student_apt_01": [
+    {
+      "id": "groq-apt-1789747588767-hgyv4",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A student scores 78, 85, 92 and 88 marks in four successive exams. What is the average marks obtained?",
+      "recordedAt": "2026-09-18T16:06:31.185Z"
+    }
+  ],
+  "crsid542@gmail.com": [
+    {
+      "id": "groq-apt-1789747917033-4n9up",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A shopkeeper gives a 10% discount on an article and the selling price after discount is $540. What was the marked price of the article?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789747972656-s887w",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "What is the next number in the series: 2, 5, 9, 14, 20, ?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789748002618-xyuxj",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Select the word that is most nearly opposite in meaning to the word \"mitigate\".",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789748017885-ywo7w",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Which of the following statements about method overriding in object-oriented programming is FALSE?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    },
+    {
+      "id": "groq-apt-1789748028701-g7o4r",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A shopkeeper sells an article for $540, making a profit of 20%. What was the cost price of the article?",
+      "recordedAt": "2026-09-18T16:14:35.886Z"
+    }
+  ],
+  "Q6KNHVdMnGOUFbcScmxX872rV8c2": [
+    {
+      "id": "apt-q-1792660961528-afd5b",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "A student scored 75% in an examination with a total of 600 marks. How many marks did the student obtain?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792660971706-540ou",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "What is the next number in the series: 4, 9, 16, 25, 36, ?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792660983101-nm3tp",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "The committee could not reach an agreement because the members held ________ viewpoints.",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792660996462-si97c",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Which SQL constraint uniquely identifies each record in a database table and cannot contain NULL values?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661011124-r977v",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "The average age of 5 students in a team is 20 years. If a new student aged 26 joins the team, what is the new average age?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661024140-pgdl3",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "Architect is to Building as Sculptor is to:",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661034723-ceht7",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "What is the meaning of the common phrase: 'To burn the midnight oil'?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661049380-9jdrb",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Which of the following is NOT one of the four necessary Coffman conditions required for a deadlock to occur?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661056895-beg8z",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "An electronic component is purchased for $400 and sold for $480. What is the profit percentage?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661063725-yq7rc",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "A delivery drone flies 6 km North, turns right and flies 8 km East. What is the straight-line distance from its starting point?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661071220-2fkeg",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "Choose the antonym of the word: EXPAND",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661079355-rvu5e",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "What is the worst-case time complexity of QuickSort when the chosen pivot is consistently the minimum or maximum element?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661087091-ok1dg",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "In a campus drive of 250 registered students, 40% qualified for the coding round. How many students qualified?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661094480-hbwp5",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "In a code language, if COMPUTER is coded as DPNQVUFS, how is LAPTOP coded in that same system?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661101964-0m8bi",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Identify the grammatically incorrect part in this sentence: 'Neither of the applicants have submitted their official transcript on time.'",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661113315-75kcd",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "Which data structure is most naturally used by compilers and operating systems to manage function calls, return addresses, and local variables?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661119326-bbbr7",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "The ratio of salaries of two software engineers A and B is 4:5. If engineer A earns $60,000, what is the salary of engineer B?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661127021-wb9et",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Pointing to a photograph, John says: 'She is the daughter of the only son of my grandfather.' How is the girl related to John?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661133154-q82fr",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "Select the grammatically correct version of the sentence:",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792661145037-uee0h",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "What is the worst-case time complexity of searching for an element in an unsorted array of size N using Linear Search?",
+      "recordedAt": "2026-10-22T09:25:49.869Z"
+    },
+    {
+      "id": "apt-q-1792669664240-5mycq",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Worker A can complete a software module in 12 days, while Worker B can complete it in 24 days. Working together, in how many days can they complete the module?",
+      "recordedAt": "2026-10-22T11:50:56.292Z"
+    },
+    {
+      "id": "apt-q-1792669673177-pjs8t",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "Five developers A, B, C, D, and E are seated in a row facing North. C is immediately to the right of B. A is seated between E and B. If E is at the leftmost position, who sits at the extreme left?",
+      "recordedAt": "2026-10-22T11:50:56.292Z"
+    },
+    {
+      "id": "apt-q-1792669679881-9znhl",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "Arrange the following sentences in logical sequence:\nA. This system dramatically improves student placement readiness.\nB. Modern universities are adopting automated placement engines.\nC. Consequently, recruiters can discover top talent faster.\nD. They combine algorithmic skill evaluation with resume generation.",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    },
+    {
+      "id": "apt-q-1792669686625-b89dw",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Medium",
+      "questionText": "Which transport layer protocol provides reliable, ordered, and error-checked delivery of a stream of data packets?",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    },
+    {
+      "id": "apt-q-1792669695547-8k4dy",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "Two standard six-sided dice are rolled simultaneously. What is the probability that the sum of the numbers rolled is equal to 8?",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    },
+    {
+      "id": "apt-q-1792669703650-5uob1",
+      "category": "Logical Reasoning",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "Statements:\n1. All engineers are problem solvers.\n2. Some problem solvers are musicians.\nConclusions:\nI. Some engineers are musicians.\nII. Some problem solvers are engineers.\nWhich conclusion logically follows?",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    },
+    {
+      "id": "apt-q-1792669714937-hai4x",
+      "category": "Verbal Ability",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "Choose the synonym of the word: DILIGENT",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    },
+    {
+      "id": "apt-q-1792669722167-qyshs",
+      "category": "Basic Technical Aptitude",
+      "subtopic": "General",
+      "difficulty": "Easy",
+      "questionText": "In object-oriented programming, which concept refers to bundling data and methods while restricting direct access to internal state?",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    },
+    {
+      "id": "apt-q-1792669730812-y2vdh",
+      "category": "Quantitative Aptitude",
+      "subtopic": "General",
+      "difficulty": "Hard",
+      "questionText": "A train 180 meters long is traveling at a constant speed of 72 km/h. How many seconds will it take to completely pass a stationary signal post?",
+      "recordedAt": "2026-10-22T11:50:56.293Z"
+    }
+  ]
+}

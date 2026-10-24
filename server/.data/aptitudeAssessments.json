@@ -1,0 +1,1029 @@
+{
+  "apt_1789747586629_h8day": {
+    "id": "apt_1789747586629_h8day",
+    "assessmentId": "apt_1789747586629_h8day",
+    "studentId": "test_student_apt_01",
+    "startTime": "2026-09-18T16:06:26.629Z",
+    "completedAt": "2026-09-18T16:06:31.183Z",
+    "totalQuestions": 20,
+    "answeredQuestions": 1,
+    "correctAnswers": 1,
+    "finalScore": 5,
+    "score": 5,
+    "categoryBreakdown": {
+      "Quantitative Aptitude": {
+        "correct": 1,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "1/5",
+        "accuracy": 20,
+        "status": "Needs Improvement"
+      },
+      "Logical Reasoning": {
+        "correct": 0,
+        "attempted": 0,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      },
+      "Verbal Ability": {
+        "correct": 0,
+        "attempted": 0,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      },
+      "Basic Technical Aptitude": {
+        "correct": 0,
+        "attempted": 0,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      }
+    },
+    "strengths": [
+      "Completed comprehensive 20-question placement aptitude evaluation under timed conditions"
+    ],
+    "improvements": [
+      "Quantitative Aptitude (1/5 correct - Focus on core shortcuts and drills)",
+      "Logical Reasoning (0/5 correct - Focus on core shortcuts and drills)",
+      "Verbal Ability (0/5 correct - Focus on core shortcuts and drills)",
+      "Basic Technical Aptitude (0/5 correct - Focus on core shortcuts and drills)"
+    ],
+    "summaryFeedback": "Student achieved an Aptitude Score of 5%, answering 1 of 20 questions correctly. Requires targeted practice on fundamental quantitative shortcuts, syllogisms, and comprehension drills.",
+    "totalTimeSpentSeconds": 5,
+    "status": "Completed",
+    "finishReason": "EarlySubmission",
+    "responses": [
+      {
+        "questionIndex": 1,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A student scores 78, 85, 92 and 88 marks in four successive exams. What is the average marks obtained?",
+        "options": [
+          "85.75",
+          "86",
+          "85.5",
+          "86.5"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 0,
+        "isCorrect": true,
+        "explanation": "Sum of the marks = 78+85+92+88 = 343. Average = Total/Number of exams = 343/4 = 85.75. Hence option A (index 0) is correct.",
+        "answeredAt": "2026-09-18T16:06:28.774Z"
+      }
+    ],
+    "updatedAt": "2026-09-18T16:06:31.189Z"
+  },
+  "apt_1789747915307_zz5du": {
+    "id": "apt_1789747915307_zz5du",
+    "assessmentId": "apt_1789747915307_zz5du",
+    "studentId": "uid_sidharth_1789924912811",
+    "startTime": "2026-09-18T16:11:55.307Z",
+    "completedAt": "2026-09-18T16:14:35.882Z",
+    "totalQuestions": 20,
+    "answeredQuestions": 5,
+    "correctAnswers": 2,
+    "finalScore": 10,
+    "score": 10,
+    "categoryBreakdown": {
+      "Quantitative Aptitude": {
+        "correct": 1,
+        "attempted": 2,
+        "total": 5,
+        "scoreText": "1/5",
+        "accuracy": 20,
+        "status": "Needs Improvement"
+      },
+      "Logical Reasoning": {
+        "correct": 1,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "1/5",
+        "accuracy": 20,
+        "status": "Needs Improvement"
+      },
+      "Verbal Ability": {
+        "correct": 0,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      },
+      "Basic Technical Aptitude": {
+        "correct": 0,
+        "attempted": 1,
+        "total": 5,
+        "scoreText": "0/5",
+        "accuracy": 0,
+        "status": "Needs Improvement"
+      }
+    },
+    "strengths": [
+      "Completed comprehensive 20-question placement aptitude evaluation under timed conditions"
+    ],
+    "improvements": [
+      "Quantitative Aptitude (1/5 correct - Focus on core shortcuts and drills)",
+      "Logical Reasoning (1/5 correct - Focus on core shortcuts and drills)",
+      "Verbal Ability (0/5 correct - Focus on core shortcuts and drills)",
+      "Basic Technical Aptitude (0/5 correct - Focus on core shortcuts and drills)"
+    ],
+    "summaryFeedback": "Student achieved an Aptitude Score of 10%, answering 2 of 20 questions correctly. Requires targeted practice on fundamental quantitative shortcuts, syllogisms, and comprehension drills.",
+    "totalTimeSpentSeconds": 161,
+    "status": "Completed",
+    "finishReason": "EarlySubmission",
+    "responses": [
+      {
+        "questionIndex": 1,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A shopkeeper gives a 10% discount on an article and the selling price after discount is $540. What was the marked price of the article?",
+        "options": [
+          "$600",
+          "$590",
+          "$560",
+          "$550"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 0,
+        "isCorrect": false,
+        "explanation": "Let the marked price be x. After a 10% discount the price becomes 0.90x = 540. Solving gives x = 540/0.90 = 600. Therefore the marked price is $600, which corresponds to option A.",
+        "answeredAt": "2026-09-18T16:12:50.759Z"
+      },
+      {
+        "questionIndex": 2,
+        "category": "Logical Reasoning",
+        "difficulty": "Easy",
+        "question": "What is the next number in the series: 2, 5, 9, 14, 20, ?",
+        "options": [
+          "25",
+          "26",
+          "27",
+          "28"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "The differences between consecutive terms are 3, 4, 5, 6, ... increasing by 1 each time. The next difference is 7, so 20 + 7 = 27, which is option C (index 2).",
+        "answeredAt": "2026-09-18T16:13:20.551Z"
+      },
+      {
+        "questionIndex": 3,
+        "category": "Verbal Ability",
+        "difficulty": "Medium",
+        "question": "Select the word that is most nearly opposite in meaning to the word \"mitigate\".",
+        "options": [
+          "Alleviate",
+          "Exacerbate",
+          "Moderate",
+          "Temper"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "\"Mitigate\" means to make less severe or to lessen. The opposite is to make more severe, which is expressed by \"exacerbate\". The other options (alleviate, moderate, temper) all imply reduction or softening, not the opposite.",
+        "answeredAt": "2026-09-18T16:13:36.104Z"
+      },
+      {
+        "questionIndex": 4,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which of the following statements about method overriding in object-oriented programming is FALSE?",
+        "options": [
+          "The overriding method must have the same name and parameter list as the method in the superclass.",
+          "The overriding method can have a more restrictive access modifier than the method in the superclass.",
+          "The overriding method can return a subtype (covariant return) of the return type declared in the superclass method.",
+          "The overriding method cannot be declared static."
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "For a method to correctly override a superclass method, it must have the same name and parameter list (option A is true). The access level of the overriding method cannot be more restrictive than that of the overridden method; it must be the same or less restrictive, so option B is false. Covariant return types are allowed, making option C true. Static methods are not subject to overriding; they are hidden, so stating that an overriding method cannot be static is also true (option D). Hence, the false statement is option B, which corresponds to index 1.",
+        "answeredAt": "2026-09-18T16:13:46.562Z"
+      },
+      {
+        "questionIndex": 5,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A shopkeeper sells an article for $540, making a profit of 20%. What was the cost price of the article?",
+        "options": [
+          "$450",
+          "$440",
+          "$460",
+          "$420"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 0,
+        "isCorrect": true,
+        "explanation": "Profit% = (Selling Price - Cost Price)/Cost Price *100. Here 20 = (540 - CP)/CP *100 => (540 - CP)/CP = 0.20 => 540 - CP = 0.20 CP => 540 = 1.20 CP => CP = 540/1.20 = 450. Hence the cost price is $450, which is option 0.",
+        "answeredAt": "2026-09-18T16:14:21.112Z"
+      }
+    ],
+    "updatedAt": "2026-09-18T16:14:35.892Z"
+  },
+  "apt_1792660959841_27oxr": {
+    "id": "apt_1792660959841_27oxr",
+    "assessmentId": "apt_1792660959841_27oxr",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startTime": "2026-10-22T09:22:39.841Z",
+    "completedAt": "2026-10-22T09:25:49.865Z",
+    "totalQuestions": 20,
+    "answeredQuestions": 20,
+    "correctAnswers": 8,
+    "finalScore": 40,
+    "score": 40,
+    "categoryBreakdown": {
+      "Quantitative Aptitude": {
+        "correct": 2,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "2/5",
+        "accuracy": 40,
+        "status": "Average"
+      },
+      "Logical Reasoning": {
+        "correct": 2,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "2/5",
+        "accuracy": 40,
+        "status": "Average"
+      },
+      "Verbal Ability": {
+        "correct": 2,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "2/5",
+        "accuracy": 40,
+        "status": "Average"
+      },
+      "Basic Technical Aptitude": {
+        "correct": 2,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "2/5",
+        "accuracy": 40,
+        "status": "Average"
+      }
+    },
+    "strengths": [
+      "Completed comprehensive 20-question placement aptitude evaluation under timed conditions"
+    ],
+    "improvements": [
+      "Quantitative Aptitude (2/5 correct - Focus on core shortcuts and drills)",
+      "Logical Reasoning (2/5 correct - Focus on core shortcuts and drills)",
+      "Verbal Ability (2/5 correct - Focus on core shortcuts and drills)",
+      "Basic Technical Aptitude (2/5 correct - Focus on core shortcuts and drills)"
+    ],
+    "summaryFeedback": "Student achieved an Aptitude Score of 40%, answering 8 of 20 questions correctly. Requires targeted practice on fundamental quantitative shortcuts, syllogisms, and comprehension drills.",
+    "totalTimeSpentSeconds": 190,
+    "status": "Completed",
+    "finishReason": "AllQuestionsCompleted",
+    "responses": [
+      {
+        "questionIndex": 1,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "A student scored 75% in an examination with a total of 600 marks. How many marks did the student obtain?",
+        "options": [
+          "420 marks",
+          "450 marks",
+          "460 marks",
+          "480 marks"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Marks obtained = (75 / 100) * 600 = 450 marks.",
+        "answeredAt": "2026-10-22T09:22:50.096Z"
+      },
+      {
+        "questionIndex": 2,
+        "category": "Logical Reasoning",
+        "difficulty": "Easy",
+        "question": "What is the next number in the series: 4, 9, 16, 25, 36, ?",
+        "options": [
+          "42",
+          "45",
+          "49",
+          "54"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "The sequence consists of consecutive squares: 2^2, 3^2, 4^2, 5^2, 6^2. The next term is 7^2 = 49.",
+        "answeredAt": "2026-10-22T09:23:01.469Z"
+      },
+      {
+        "questionIndex": 3,
+        "category": "Verbal Ability",
+        "difficulty": "Medium",
+        "question": "The committee could not reach an agreement because the members held ________ viewpoints.",
+        "options": [
+          "harmonious",
+          "divergent",
+          "monotonous",
+          "redundant"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "'Divergent' viewpoints means conflicting or differing opinions, explaining why agreement was not reached.",
+        "answeredAt": "2026-10-22T09:23:14.790Z"
+      },
+      {
+        "questionIndex": 4,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which SQL constraint uniquely identifies each record in a database table and cannot contain NULL values?",
+        "options": [
+          "UNIQUE",
+          "PRIMARY KEY",
+          "FOREIGN KEY",
+          "CHECK"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "A PRIMARY KEY uniquely identifies every record in a table and strictly forbids NULL values.",
+        "answeredAt": "2026-10-22T09:23:29.452Z"
+      },
+      {
+        "questionIndex": 5,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "The average age of 5 students in a team is 20 years. If a new student aged 26 joins the team, what is the new average age?",
+        "options": [
+          "20.5 years",
+          "21 years",
+          "21.5 years",
+          "22 years"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "Total age of 5 students = 5 * 20 = 100. Adding new student: 100 + 26 = 126. New average = 126 / 6 = 21 years.",
+        "answeredAt": "2026-10-22T09:23:42.558Z"
+      },
+      {
+        "questionIndex": 6,
+        "category": "Logical Reasoning",
+        "difficulty": "Easy",
+        "question": "Architect is to Building as Sculptor is to:",
+        "options": [
+          "Canvas",
+          "Statue",
+          "Museum",
+          "Stone"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "An architect creates a building; similarly, a sculptor creates a statue.",
+        "answeredAt": "2026-10-22T09:23:53.085Z"
+      },
+      {
+        "questionIndex": 7,
+        "category": "Verbal Ability",
+        "difficulty": "Medium",
+        "question": "What is the meaning of the common phrase: 'To burn the midnight oil'?",
+        "options": [
+          "To waste resources carelessly",
+          "To work or study late into the night",
+          "To start a dangerous enterprise",
+          "To ignite an engine"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "'To burn the midnight oil' is an established idiom meaning to work or study late into the night.",
+        "answeredAt": "2026-10-22T09:24:07.745Z"
+      },
+      {
+        "questionIndex": 8,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which of the following is NOT one of the four necessary Coffman conditions required for a deadlock to occur?",
+        "options": [
+          "Mutual Exclusion",
+          "Hold and Wait",
+          "Preemption Allowed",
+          "Circular Wait"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "The four Coffman conditions are Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. If preemption is allowed, deadlock is prevented.",
+        "answeredAt": "2026-10-22T09:24:15.223Z"
+      },
+      {
+        "questionIndex": 9,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Medium",
+        "question": "An electronic component is purchased for $400 and sold for $480. What is the profit percentage?",
+        "options": [
+          "15%",
+          "18%",
+          "20%",
+          "25%"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "Profit = $480 - $400 = $80. Profit percentage = (80 / 400) * 100 = 20%.",
+        "answeredAt": "2026-10-22T09:24:21.537Z"
+      },
+      {
+        "questionIndex": 10,
+        "category": "Logical Reasoning",
+        "difficulty": "Medium",
+        "question": "A delivery drone flies 6 km North, turns right and flies 8 km East. What is the straight-line distance from its starting point?",
+        "options": [
+          "10 km",
+          "12 km",
+          "14 km",
+          "15 km"
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 0,
+        "isCorrect": false,
+        "explanation": "By the Pythagorean theorem: Distance = sqrt(6^2 + 8^2) = sqrt(36 + 64) = sqrt(100) = 10 km.",
+        "answeredAt": "2026-10-22T09:24:29.569Z"
+      },
+      {
+        "questionIndex": 11,
+        "category": "Verbal Ability",
+        "difficulty": "Easy",
+        "question": "Choose the antonym of the word: EXPAND",
+        "options": [
+          "Extend",
+          "Contract",
+          "Broaden",
+          "Enlarge"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "'Expand' means to increase in size or volume; 'Contract' means to shrink or reduce, making it the antonym.",
+        "answeredAt": "2026-10-22T09:24:37.630Z"
+      },
+      {
+        "questionIndex": 12,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Hard",
+        "question": "What is the worst-case time complexity of QuickSort when the chosen pivot is consistently the minimum or maximum element?",
+        "options": [
+          "O(N)",
+          "O(N log N)",
+          "O(N^2)",
+          "O(2^N)"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "Unbalanced partitions of size 0 and N-1 result in a recursion tree of depth N, producing O(N^2) total comparisons.",
+        "answeredAt": "2026-10-22T09:24:45.404Z"
+      },
+      {
+        "questionIndex": 13,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Easy",
+        "question": "In a campus drive of 250 registered students, 40% qualified for the coding round. How many students qualified?",
+        "options": [
+          "90 students",
+          "100 students",
+          "110 students",
+          "125 students"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "40% of 250 = (40 / 100) * 250 = 100 students.",
+        "answeredAt": "2026-10-22T09:24:52.863Z"
+      },
+      {
+        "questionIndex": 14,
+        "category": "Logical Reasoning",
+        "difficulty": "Medium",
+        "question": "In a code language, if COMPUTER is coded as DPNQVUFS, how is LAPTOP coded in that same system?",
+        "options": [
+          "MBQUPO",
+          "MBQUQP",
+          "NBQUPQ",
+          "MCQVQO"
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Each letter is shifted forward by +1: L->M, A->B, P->Q, T->U, O->P, P->Q. Thus LAPTOP becomes MBQUQP.",
+        "answeredAt": "2026-10-22T09:25:00.288Z"
+      },
+      {
+        "questionIndex": 15,
+        "category": "Verbal Ability",
+        "difficulty": "Medium",
+        "question": "Identify the grammatically incorrect part in this sentence: 'Neither of the applicants have submitted their official transcript on time.'",
+        "options": [
+          "'Neither of'",
+          "'applicants'",
+          "'have submitted'",
+          "'on time'"
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "'Neither' is a singular distributive pronoun and requires the singular verb 'has submitted'.",
+        "answeredAt": "2026-10-22T09:25:11.703Z"
+      },
+      {
+        "questionIndex": 16,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Hard",
+        "question": "Which data structure is most naturally used by compilers and operating systems to manage function calls, return addresses, and local variables?",
+        "options": [
+          "Queue",
+          "Stack",
+          "Binary Tree",
+          "Hash Map"
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "A Stack follows Last-In-First-Out (LIFO), perfectly mirroring the nested invocation and return sequence of function calls.",
+        "answeredAt": "2026-10-22T09:25:17.705Z"
+      },
+      {
+        "questionIndex": 17,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Medium",
+        "question": "The ratio of salaries of two software engineers A and B is 4:5. If engineer A earns $60,000, what is the salary of engineer B?",
+        "options": [
+          "$70,000",
+          "$72,000",
+          "$75,000",
+          "$80,000"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "Salary of B = (5 / 4) * $60,000 = $75,000.",
+        "answeredAt": "2026-10-22T09:25:24.420Z"
+      },
+      {
+        "questionIndex": 18,
+        "category": "Logical Reasoning",
+        "difficulty": "Medium",
+        "question": "Pointing to a photograph, John says: 'She is the daughter of the only son of my grandfather.' How is the girl related to John?",
+        "options": [
+          "Aunt",
+          "Mother",
+          "Sister",
+          "Cousin"
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "The only son of John's grandfather is John's father. The daughter of John's father is John's sister.",
+        "answeredAt": "2026-10-22T09:25:31.488Z"
+      },
+      {
+        "questionIndex": 19,
+        "category": "Verbal Ability",
+        "difficulty": "Hard",
+        "question": "Select the grammatically correct version of the sentence:",
+        "options": [
+          "If he had worked hard, he would have pass the technical interview.",
+          "If he had worked hard, he would have passed the technical interview.",
+          "If he had worked hard, he will have passed the technical interview.",
+          "If he worked hard, he would have pass the technical interview."
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Third conditional sentences require: 'If + past perfect (had worked), would have + past participle (passed)'.",
+        "answeredAt": "2026-10-22T09:25:43.202Z"
+      },
+      {
+        "questionIndex": 20,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Easy",
+        "question": "What is the worst-case time complexity of searching for an element in an unsorted array of size N using Linear Search?",
+        "options": [
+          "O(1)",
+          "O(log N)",
+          "O(N)",
+          "O(N log N)"
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "Linear search must examine every element in the worst case (when the item is at the end or absent), requiring O(N) operations.",
+        "answeredAt": "2026-10-22T09:25:49.863Z"
+      }
+    ],
+    "updatedAt": "2026-10-22T09:25:49.878Z"
+  },
+  "apt_1792669662590_8yv22": {
+    "id": "apt_1792669662590_8yv22",
+    "assessmentId": "apt_1792669662590_8yv22",
+    "studentId": "Q6KNHVdMnGOUFbcScmxX872rV8c2",
+    "startTime": "2026-10-22T11:47:42.590Z",
+    "completedAt": "2026-10-22T11:50:56.274Z",
+    "totalQuestions": 20,
+    "answeredQuestions": 20,
+    "correctAnswers": 11,
+    "finalScore": 55,
+    "score": 55,
+    "categoryBreakdown": {
+      "Quantitative Aptitude": {
+        "correct": 3,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "3/5",
+        "accuracy": 60,
+        "status": "Good"
+      },
+      "Logical Reasoning": {
+        "correct": 2,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "2/5",
+        "accuracy": 40,
+        "status": "Average"
+      },
+      "Verbal Ability": {
+        "correct": 3,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "3/5",
+        "accuracy": 60,
+        "status": "Good"
+      },
+      "Basic Technical Aptitude": {
+        "correct": 3,
+        "attempted": 5,
+        "total": 5,
+        "scoreText": "3/5",
+        "accuracy": 60,
+        "status": "Good"
+      }
+    },
+    "strengths": [
+      "Completed comprehensive 20-question placement aptitude evaluation under timed conditions"
+    ],
+    "improvements": [
+      "Logical Reasoning (2/5 correct - Focus on core shortcuts and drills)"
+    ],
+    "summaryFeedback": "Student achieved an Aptitude Score of 55%, answering 11 of 20 questions correctly. Requires targeted practice on fundamental quantitative shortcuts, syllogisms, and comprehension drills.",
+    "totalTimeSpentSeconds": 194,
+    "status": "Completed",
+    "finishReason": "AllQuestionsCompleted",
+    "responses": [
+      {
+        "questionIndex": 1,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Medium",
+        "question": "Worker A can complete a software module in 12 days, while Worker B can complete it in 24 days. Working together, in how many days can they complete the module?",
+        "options": [
+          "6 days",
+          "8 days",
+          "9 days",
+          "10 days"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "Combined work rate = (1/12) + (1/24) = 3/24 = 1/8 module per day. Therefore, they need 8 days together.",
+        "answeredAt": "2026-10-22T11:47:51.515Z"
+      },
+      {
+        "questionIndex": 2,
+        "category": "Logical Reasoning",
+        "difficulty": "Hard",
+        "question": "Five developers A, B, C, D, and E are seated in a row facing North. C is immediately to the right of B. A is seated between E and B. If E is at the leftmost position, who sits at the extreme left?",
+        "options": [
+          "A",
+          "B",
+          "C",
+          "E"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 3,
+        "isCorrect": false,
+        "explanation": "The order from left to right is E - A - B - C - D. Therefore, E sits at the extreme left position.",
+        "answeredAt": "2026-10-22T11:47:58.276Z"
+      },
+      {
+        "questionIndex": 3,
+        "category": "Verbal Ability",
+        "difficulty": "Hard",
+        "question": "Arrange the following sentences in logical sequence:\nA. This system dramatically improves student placement readiness.\nB. Modern universities are adopting automated placement engines.\nC. Consequently, recruiters can discover top talent faster.\nD. They combine algorithmic skill evaluation with resume generation.",
+        "options": [
+          "B - D - A - C",
+          "A - C - B - D",
+          "B - A - C - D",
+          "D - B - A - C"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 0,
+        "isCorrect": false,
+        "explanation": "B introduces universities adopting engines, D describes what they do, A states the improvement, and C concludes with recruiter benefits.",
+        "answeredAt": "2026-10-22T11:48:04.942Z"
+      },
+      {
+        "questionIndex": 4,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which transport layer protocol provides reliable, ordered, and error-checked delivery of a stream of data packets?",
+        "options": [
+          "UDP",
+          "IP",
+          "TCP",
+          "ICMP"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "TCP (Transmission Control Protocol) is connection-oriented and guarantees reliable, ordered byte-stream delivery with acknowledgments.",
+        "answeredAt": "2026-10-22T11:48:13.824Z"
+      },
+      {
+        "questionIndex": 5,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Hard",
+        "question": "Two standard six-sided dice are rolled simultaneously. What is the probability that the sum of the numbers rolled is equal to 8?",
+        "options": [
+          "1/9",
+          "5/36",
+          "7/36",
+          "1/6"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Total outcomes = 36. Favorable outcomes resulting in sum 8 are (2,6), (3,5), (4,4), (5,3), (6,2), which is 5 outcomes. Probability = 5/36.",
+        "answeredAt": "2026-10-22T11:48:22.009Z"
+      },
+      {
+        "questionIndex": 6,
+        "category": "Logical Reasoning",
+        "difficulty": "Hard",
+        "question": "Statements:\n1. All engineers are problem solvers.\n2. Some problem solvers are musicians.\nConclusions:\nI. Some engineers are musicians.\nII. Some problem solvers are engineers.\nWhich conclusion logically follows?",
+        "options": [
+          "Only conclusion I follows",
+          "Only conclusion II follows",
+          "Both conclusions follow",
+          "Neither conclusion follows"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Since all engineers are problem solvers, the converse 'some problem solvers are engineers' is guaranteed to follow (Conclusion II).",
+        "answeredAt": "2026-10-22T11:48:33.326Z"
+      },
+      {
+        "questionIndex": 7,
+        "category": "Verbal Ability",
+        "difficulty": "Easy",
+        "question": "Choose the synonym of the word: DILIGENT",
+        "options": [
+          "Careless",
+          "Industrious",
+          "Sluggish",
+          "Hesitant"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "'Diligent' means hardworking and conscientious; 'Industrious' is its direct synonym.",
+        "answeredAt": "2026-10-22T11:48:40.536Z"
+      },
+      {
+        "questionIndex": 8,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Easy",
+        "question": "In object-oriented programming, which concept refers to bundling data and methods while restricting direct access to internal state?",
+        "options": [
+          "Inheritance",
+          "Polymorphism",
+          "Encapsulation",
+          "Abstraction"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 2,
+        "isCorrect": false,
+        "explanation": "Encapsulation hides internal object details and protects integrity by preventing outside code from directly altering internal data.",
+        "answeredAt": "2026-10-22T11:48:49.111Z"
+      },
+      {
+        "questionIndex": 9,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Hard",
+        "question": "A train 180 meters long is traveling at a constant speed of 72 km/h. How many seconds will it take to completely pass a stationary signal post?",
+        "options": [
+          "7 seconds",
+          "8 seconds",
+          "9 seconds",
+          "10 seconds"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "Speed in m/s = 72 * (5/18) = 20 m/s. Time = Distance / Speed = 180 / 20 = 9 seconds.",
+        "answeredAt": "2026-10-22T11:48:56.094Z"
+      },
+      {
+        "questionIndex": 10,
+        "category": "Logical Reasoning",
+        "difficulty": "Easy",
+        "question": "What is the next number in the series: 4, 9, 16, 25, 36, ?",
+        "options": [
+          "42",
+          "45",
+          "49",
+          "54"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "The sequence consists of consecutive squares: 2^2, 3^2, 4^2, 5^2, 6^2. The next term is 7^2 = 49.",
+        "answeredAt": "2026-10-22T11:49:04.242Z"
+      },
+      {
+        "questionIndex": 11,
+        "category": "Verbal Ability",
+        "difficulty": "Hard",
+        "question": "Select the grammatically correct version of the sentence:",
+        "options": [
+          "If he had worked hard, he would have pass the technical interview.",
+          "If he had worked hard, he would have passed the technical interview.",
+          "If he had worked hard, he will have passed the technical interview.",
+          "If he worked hard, he would have pass the technical interview."
+        ],
+        "studentAnswer": 0,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Third conditional sentences require: 'If + past perfect (had worked), would have + past participle (passed)'.",
+        "answeredAt": "2026-10-22T11:49:13.446Z"
+      },
+      {
+        "questionIndex": 12,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which transport layer protocol provides reliable, ordered, and error-checked delivery of a stream of data packets?",
+        "options": [
+          "UDP",
+          "IP",
+          "TCP",
+          "ICMP"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "TCP (Transmission Control Protocol) is connection-oriented and guarantees reliable, ordered byte-stream delivery with acknowledgments.",
+        "answeredAt": "2026-10-22T11:49:24.370Z"
+      },
+      {
+        "questionIndex": 13,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Hard",
+        "question": "A train 180 meters long is traveling at a constant speed of 72 km/h. How many seconds will it take to completely pass a stationary signal post?",
+        "options": [
+          "7 seconds",
+          "8 seconds",
+          "9 seconds",
+          "10 seconds"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "Speed in m/s = 72 * (5/18) = 20 m/s. Time = Distance / Speed = 180 / 20 = 9 seconds.",
+        "answeredAt": "2026-10-22T11:49:30.861Z"
+      },
+      {
+        "questionIndex": 14,
+        "category": "Logical Reasoning",
+        "difficulty": "Medium",
+        "question": "A delivery drone flies 6 km North, turns right and flies 8 km East. What is the straight-line distance from its starting point?",
+        "options": [
+          "10 km",
+          "12 km",
+          "14 km",
+          "15 km"
+        ],
+        "studentAnswer": 3,
+        "correctAnswer": 0,
+        "isCorrect": false,
+        "explanation": "By the Pythagorean theorem: Distance = sqrt(6^2 + 8^2) = sqrt(36 + 64) = sqrt(100) = 10 km.",
+        "answeredAt": "2026-10-22T11:49:40.915Z"
+      },
+      {
+        "questionIndex": 15,
+        "category": "Verbal Ability",
+        "difficulty": "Medium",
+        "question": "What is the meaning of the common phrase: 'To burn the midnight oil'?",
+        "options": [
+          "To waste resources carelessly",
+          "To work or study late into the night",
+          "To start a dangerous enterprise",
+          "To ignite an engine"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "'To burn the midnight oil' is an established idiom meaning to work or study late into the night.",
+        "answeredAt": "2026-10-22T11:49:48.926Z"
+      },
+      {
+        "questionIndex": 16,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Medium",
+        "question": "Which of the following is NOT one of the four necessary Coffman conditions required for a deadlock to occur?",
+        "options": [
+          "Mutual Exclusion",
+          "Hold and Wait",
+          "Preemption Allowed",
+          "Circular Wait"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 2,
+        "isCorrect": true,
+        "explanation": "The four Coffman conditions are Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. If preemption is allowed, deadlock is prevented.",
+        "answeredAt": "2026-10-22T11:49:56.228Z"
+      },
+      {
+        "questionIndex": 17,
+        "category": "Quantitative Aptitude",
+        "difficulty": "Medium",
+        "question": "Worker A can complete a software module in 12 days, while Worker B can complete it in 24 days. Working together, in how many days can they complete the module?",
+        "options": [
+          "6 days",
+          "8 days",
+          "9 days",
+          "10 days"
+        ],
+        "studentAnswer": 2,
+        "correctAnswer": 1,
+        "isCorrect": false,
+        "explanation": "Combined work rate = (1/12) + (1/24) = 3/24 = 1/8 module per day. Therefore, they need 8 days together.",
+        "answeredAt": "2026-10-22T11:50:05.163Z"
+      },
+      {
+        "questionIndex": 18,
+        "category": "Logical Reasoning",
+        "difficulty": "Medium",
+        "question": "In a code language, if COMPUTER is coded as DPNQVUFS, how is LAPTOP coded in that same system?",
+        "options": [
+          "MBQUPO",
+          "MBQUQP",
+          "NBQUPQ",
+          "MCQVQO"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "Each letter is shifted forward by +1: L->M, A->B, P->Q, T->U, O->P, P->Q. Thus LAPTOP becomes MBQUQP.",
+        "answeredAt": "2026-10-22T11:50:37.762Z"
+      },
+      {
+        "questionIndex": 19,
+        "category": "Verbal Ability",
+        "difficulty": "Hard",
+        "question": "Select the grammatically correct version of the sentence:",
+        "options": [
+          "If he had worked hard, he would have pass the technical interview.",
+          "If he had worked hard, he would have passed the technical interview.",
+          "If he had worked hard, he will have passed the technical interview.",
+          "If he worked hard, he would have pass the technical interview."
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "Third conditional sentences require: 'If + past perfect (had worked), would have + past participle (passed)'.",
+        "answeredAt": "2026-10-22T11:50:45.532Z"
+      },
+      {
+        "questionIndex": 20,
+        "category": "Basic Technical Aptitude",
+        "difficulty": "Hard",
+        "question": "Which data structure is most naturally used by compilers and operating systems to manage function calls, return addresses, and local variables?",
+        "options": [
+          "Queue",
+          "Stack",
+          "Binary Tree",
+          "Hash Map"
+        ],
+        "studentAnswer": 1,
+        "correctAnswer": 1,
+        "isCorrect": true,
+        "explanation": "A Stack follows Last-In-First-Out (LIFO), perfectly mirroring the nested invocation and return sequence of function calls.",
+        "answeredAt": "2026-10-22T11:50:56.269Z"
+      }
+    ],
+    "updatedAt": "2026-10-22T11:50:56.306Z"
+  }
+}

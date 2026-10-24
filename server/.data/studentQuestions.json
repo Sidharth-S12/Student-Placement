@@ -1,0 +1,456 @@
+{
+  "student_repeat_test": [
+    {
+      "id": "groq-1789747002168-09j4ly",
+      "skill": "Python",
+      "topic": "Lists",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following Python code?\n\nmy_list = [10, 20, 30, 40]\nprint(my_list[2])",
+      "recordedAt": "2026-09-18T15:56:42.169Z"
+    },
+    {
+      "id": "groq-1789747009363-69r9js",
+      "skill": "Python",
+      "topic": "String Manipulation",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following code?\n\ns = \"Graduate\"\nprint(s[2:5])",
+      "recordedAt": "2026-09-18T15:56:49.365Z"
+    }
+  ],
+  "crsid542@gmail.com": [
+    {
+      "id": "groq-1789789052048-7q7eb9",
+      "skill": "Python",
+      "topic": "Data Types",
+      "difficulty": "EASY",
+      "questionText": "What is the result of evaluating len([1, 2, 3, 4]) in Python?",
+      "recordedAt": "2026-09-19T03:37:32.052Z"
+    },
+    {
+      "id": "groq-1789789136516-85nt3o",
+      "skill": "Python",
+      "topic": "Operators",
+      "difficulty": "EASY",
+      "questionText": "What is the result of evaluating the expression 5 // 2 in Python?",
+      "recordedAt": "2026-09-19T03:38:56.519Z"
+    },
+    {
+      "id": "groq-1789789149159-24fyp7",
+      "skill": "HTML",
+      "topic": "Headings",
+      "difficulty": "EASY",
+      "questionText": "Which HTML element is used to define the most important heading on a page?",
+      "recordedAt": "2026-09-19T03:39:09.162Z"
+    },
+    {
+      "id": "groq-1789789164383-psbzyb",
+      "skill": "C++",
+      "topic": "Variable Declaration and Initialization",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following C++ code?\n\nint main(){\n    int a = 5;\n    int b = 2;\n    std::cout << a / b;\n    return 0;\n}",
+      "recordedAt": "2026-09-19T03:39:24.387Z"
+    },
+    {
+      "id": "groq-1789789174917-am9pr4",
+      "skill": "Firebase",
+      "topic": "Initializing Firebase in a web app",
+      "difficulty": "EASY",
+      "questionText": "Which of the following code snippets correctly initializes a Firebase app in a JavaScript web project using the Firebase SDK v9 modular syntax?",
+      "recordedAt": "2026-09-19T03:39:34.932Z"
+    },
+    {
+      "id": "groq-1789789183533-33zw94",
+      "skill": "GitHub",
+      "topic": "Repository Creation",
+      "difficulty": "EASY",
+      "questionText": "Which of the following steps correctly creates a new public repository on GitHub using the web interface?",
+      "recordedAt": "2026-09-19T03:39:43.537Z"
+    },
+    {
+      "id": "groq-1789789197347-s0xhz9",
+      "skill": "VScode",
+      "topic": "Keyboard Shortcuts",
+      "difficulty": "EASY",
+      "questionText": "Which keyboard shortcut opens the Integrated Terminal in Visual Studio Code?",
+      "recordedAt": "2026-09-19T03:39:57.350Z"
+    },
+    {
+      "id": "groq-1789789212638-141o4d",
+      "skill": "vercel",
+      "topic": "Deployment Commands",
+      "difficulty": "EASY",
+      "questionText": "Which Vercel CLI command is used to immediately deploy the current project to Vercel's cloud hosting?",
+      "recordedAt": "2026-09-19T03:40:12.642Z"
+    },
+    {
+      "id": "groq-1789789222357-1kvkyz",
+      "skill": "Python",
+      "topic": "String Reversal",
+      "difficulty": "EASY",
+      "questionText": "Write a function named solution that receives a single string argument and returns the string with its characters reversed. The input string length will be between 0 and 1000 characters.",
+      "recordedAt": "2026-09-19T03:40:22.361Z"
+    },
+    {
+      "id": "groq-1789789234366-ea0py2",
+      "skill": "HTML",
+      "topic": "Images",
+      "difficulty": "EASY",
+      "questionText": "Which attribute of the <img> tag provides alternative text that is displayed when the image cannot be loaded?",
+      "recordedAt": "2026-09-19T03:40:34.370Z"
+    },
+    {
+      "id": "groq-1789789243322-b7a3ca",
+      "skill": "C++",
+      "topic": "Increment Operators",
+      "difficulty": "EASY",
+      "questionText": "Consider the following C++ program:\\n\\n```cpp\\n#include <iostream>\\nint main(){\\n    int x = 5;\\n    int y = ++x;\\n    std::cout << x << \" \" << y;\\n    return 0;\\n}\\n```\\nWhat is the output when this program is executed?",
+      "recordedAt": "2026-09-19T03:40:43.326Z"
+    },
+    {
+      "id": "groq-1789789251310-l8w23a",
+      "skill": "Firebase",
+      "topic": "Realtime Database vs Firestore",
+      "difficulty": "EASY",
+      "questionText": "Which Firebase product offers a NoSQL cloud database that synchronizes data in real time across connected clients?",
+      "recordedAt": "2026-09-19T03:40:51.313Z"
+    },
+    {
+      "id": "groq-1789789261345-zncllh",
+      "skill": "GitHub",
+      "topic": "Forking",
+      "difficulty": "EASY",
+      "questionText": "Which action on a repository's GitHub page creates a personal copy (fork) of that repository?",
+      "recordedAt": "2026-09-19T03:41:01.349Z"
+    },
+    {
+      "id": "groq-1789789274042-ezb3ji",
+      "skill": "VScode",
+      "topic": "Debugging Configuration",
+      "difficulty": "MEDIUM",
+      "questionText": "Which launch.json configuration will correctly launch and debug the Node.js file app.js located in the root of the current workspace?",
+      "recordedAt": "2026-09-19T03:41:14.045Z"
+    },
+    {
+      "id": "groq-1789789287134-ssuaet",
+      "skill": "vercel",
+      "topic": "Configuration File",
+      "difficulty": "EASY",
+      "questionText": "Which file does Vercel automatically look for in the project root to determine custom deployment configuration?",
+      "recordedAt": "2026-09-19T03:41:27.137Z"
+    },
+    {
+      "id": "groq-1789789296674-r08uth",
+      "skill": "Python",
+      "topic": "Conditional Statements",
+      "difficulty": "EASY",
+      "questionText": "What will be printed when the following Python code is executed?\n\n```python\nscore = 85\nif score >= 90:\n    grade = 'A'\nelif score >= 80:\n    grade = 'B'\nelif score >= 70:\n    grade = 'C'\nelse:\n    grade = 'D'\nprint(grade)\n```",
+      "recordedAt": "2026-09-19T03:41:36.679Z"
+    },
+    {
+      "id": "groq-1789789317055-u0ztx1",
+      "skill": "Python",
+      "topic": "List Slicing",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following code?\nmy_list = [10, 20, 30, 40, 50]\nprint(my_list[1:4])",
+      "recordedAt": "2026-09-19T03:41:57.058Z"
+    },
+    {
+      "id": "groq-1789789561288-ae7dkv",
+      "skill": "Python",
+      "topic": "Membership Operators",
+      "difficulty": "EASY",
+      "questionText": "What will be printed when the following Python code is executed?\n\n```python\nfruits = ['apple', 'banana', 'cherry']\nprint('banana' in fruits)\n```",
+      "recordedAt": "2026-09-19T03:46:01.291Z"
+    },
+    {
+      "id": "groq-1789789624769-akmldn",
+      "skill": "HTML",
+      "topic": "Links and Anchor Tags",
+      "difficulty": "EASY",
+      "questionText": "Which attribute of the <a> tag specifies the destination URL of the hyperlink?",
+      "recordedAt": "2026-09-19T03:47:04.772Z"
+    },
+    {
+      "id": "groq-1789789660306-qa7p1l",
+      "skill": "C++",
+      "topic": "Conditional Statements",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following C++ program?\n\n```cpp\n#include <iostream>\nint main(){\n    int x = 7;\n    if (x > 5)\n        std::cout << \"A\";\n    else\n        std::cout << \"B\";\n    return 0;\n}\n```",
+      "recordedAt": "2026-09-19T03:47:40.310Z"
+    },
+    {
+      "id": "groq-1789789710120-kqyk97",
+      "skill": "Firebase",
+      "topic": "Authentication - Sign-in Methods",
+      "difficulty": "EASY",
+      "questionText": "Which Firebase Authentication method enables users to sign in using their Google account?",
+      "recordedAt": "2026-09-19T03:48:30.124Z"
+    },
+    {
+      "id": "groq-1789789726969-5oak6b",
+      "skill": "GitHub",
+      "topic": "Pull Requests",
+      "difficulty": "EASY",
+      "questionText": "On GitHub, which action best describes a Pull Request?",
+      "recordedAt": "2026-09-19T03:48:46.974Z"
+    },
+    {
+      "id": "groq-1789789762453-3trjf5",
+      "skill": "VScode",
+      "topic": "Extensions",
+      "difficulty": "EASY",
+      "questionText": "Which of the following steps correctly installs an extension from the Visual Studio Code Marketplace?",
+      "recordedAt": "2026-09-19T03:49:22.457Z"
+    },
+    {
+      "id": "groq-1789789790968-60ftae",
+      "skill": "vercel",
+      "topic": "Environment Variables via CLI",
+      "difficulty": "EASY",
+      "questionText": "Which Vercel CLI command is used to create a new environment variable for a specific environment (development, preview, or production)?",
+      "recordedAt": "2026-09-19T03:49:50.973Z"
+    },
+    {
+      "id": "groq-1789789813906-jjkn85",
+      "skill": "Python",
+      "topic": "Summing Even Numbers",
+      "difficulty": "EASY",
+      "questionText": "Given a string containing space‑separated integers, write a function solution(input) that returns the sum of all even numbers. If the string is empty, return 0. The input string may contain leading or trailing spaces.",
+      "recordedAt": "2026-09-19T03:50:13.909Z"
+    },
+    {
+      "id": "groq-1789789827227-7scp48",
+      "skill": "HTML",
+      "topic": "Tables",
+      "difficulty": "MEDIUM",
+      "questionText": "Which of the following <td> elements will correctly span two columns and three rows in an HTML table?",
+      "recordedAt": "2026-09-19T03:50:27.231Z"
+    },
+    {
+      "id": "groq-1789789855689-an8jzj",
+      "skill": "C++",
+      "topic": "Pointer Arithmetic and Post‑Increment",
+      "difficulty": "MEDIUM",
+      "questionText": "What is the output of the following program?\n```cpp\n#include <iostream>\nint main(){\n    int arr[5] = {10,20,30,40,50};\n    int *p = arr + 2;\n    *(p++) += 5;\n    std::cout << arr[2] << \" \" << *p << std::endl;\n    return 0;\n}\n```",
+      "recordedAt": "2026-09-19T03:50:55.697Z"
+    },
+    {
+      "id": "groq-1789789879245-pzrutu",
+      "skill": "Firebase",
+      "topic": "Firestore Security Rules",
+      "difficulty": "MEDIUM",
+      "questionText": "You need to write a Firestore security rule that allows any authenticated user to read documents in the collection \"posts\", but only allows users whose custom claim \"admin\" is true to create or update documents in that collection. Which of the following rule snippets correctly implements this policy?",
+      "recordedAt": "2026-09-19T03:51:19.248Z"
+    },
+    {
+      "id": "groq-1789923069980-3o8i0a",
+      "skill": "Python",
+      "topic": "List Comprehension Basics",
+      "difficulty": "EASY",
+      "questionText": "What is the output of the following Python code?\n```python\nnumbers = [1, 2, 3, 4]\nsquares = [n*n for n in numbers if n%2==0]\nprint(squares)\n```",
+      "recordedAt": "2026-09-20T16:51:09.984Z"
+    },
+    {
+      "id": "groq-1789923078418-lazywn",
+      "skill": "HTML",
+      "topic": "Linking CSS",
+      "difficulty": "EASY",
+      "questionText": "Which tag correctly links an external CSS stylesheet named \"styles.css\" in the head of an HTML document?",
+      "recordedAt": "2026-09-20T16:51:18.421Z"
+    }
+  ],
+  "test_flow_student@placement.edu": [
+    {
+      "id": "groq-1789922903169-734so4",
+      "skill": "JavaScript",
+      "topic": "Variable Scope",
+      "difficulty": "EASY",
+      "questionText": "What will be logged to the console when the following code is executed?\n\nfunction test() {\n  console.log(x);\n  var x = 10;\n}\n\ntest();",
+      "recordedAt": "2026-09-20T16:48:23.175Z"
+    },
+    {
+      "id": "groq-1789922905162-kuvwds",
+      "skill": "React",
+      "topic": "JSX Rendering",
+      "difficulty": "EASY",
+      "questionText": "In a React component, what will be rendered by the following JSX?\n\nfunction Greeting() {\n  const name = 'Alice';\n  return <h1>Hello, {name}!</h1>;\n}",
+      "recordedAt": "2026-09-20T16:48:25.166Z"
+    }
+  ],
+  "iGRUNmk6hdeulK5TJnBJOZeKuZk1": [
+    {
+      "id": "tech-q-1792408394409-ajxmp",
+      "skill": "python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-19T11:13:14.419Z"
+    },
+    {
+      "id": "tech-q-1792408409104-bb6di",
+      "skill": "python",
+      "topic": "Data Types & Mutability",
+      "difficulty": "EASY",
+      "questionText": "Which of the following built-in data types in Python is immutable?",
+      "recordedAt": "2026-10-19T11:13:29.119Z"
+    }
+  ],
+  "Q6KNHVdMnGOUFbcScmxX872rV8c2": [
+    {
+      "id": "tech-q-1792660478141-rj0r5",
+      "skill": "Python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-22T09:14:38.149Z"
+    },
+    {
+      "id": "tech-q-1792660676365-synwd",
+      "skill": "Java",
+      "topic": "Core OOP & Inheritance",
+      "difficulty": "EASY",
+      "questionText": "Which Java keyword prevents a class from being subclassed and a method from being overridden?",
+      "recordedAt": "2026-10-22T09:17:56.370Z"
+    },
+    {
+      "id": "tech-q-1792660690789-ys5kk",
+      "skill": "JavaScript",
+      "topic": "Closures & Scope",
+      "difficulty": "EASY",
+      "questionText": "What is a closure in JavaScript?",
+      "recordedAt": "2026-10-22T09:18:10.796Z"
+    },
+    {
+      "id": "tech-q-1792660701641-u5l7u",
+      "skill": "SQL",
+      "topic": "Joins & Queries",
+      "difficulty": "EASY",
+      "questionText": "Which SQL JOIN returns all rows from the left table, and matched rows from the right table, filling nulls if no match exists?",
+      "recordedAt": "2026-10-22T09:18:21.647Z"
+    },
+    {
+      "id": "tech-q-1792660727539-aetke",
+      "skill": "MySQL",
+      "topic": "Event Loop & Concurrency",
+      "difficulty": "EASY",
+      "questionText": "Which component in the JavaScript/Node.js runtime is responsible for scheduling asynchronous callbacks and microtasks?",
+      "recordedAt": "2026-10-22T09:18:47.545Z"
+    },
+    {
+      "id": "tech-q-1792660780295-0yw18",
+      "skill": "MongoDB",
+      "topic": "Array Methods",
+      "difficulty": "MEDIUM",
+      "questionText": "Write a JavaScript function `findDuplicates(arr)` that returns an array of elements that appear more than once in the input array.",
+      "recordedAt": "2026-10-22T09:19:40.299Z"
+    },
+    {
+      "id": "tech-q-1792660804619-9nmw4",
+      "skill": "Git",
+      "topic": "Promises & Async/Await",
+      "difficulty": "MEDIUM",
+      "questionText": "What will Promise.all() do if one of the passed promises is rejected?",
+      "recordedAt": "2026-10-22T09:20:04.622Z"
+    },
+    {
+      "id": "tech-q-1792660814761-ep1q6",
+      "skill": "GitHub",
+      "topic": "Prototypes & Memory",
+      "difficulty": "HARD",
+      "questionText": "How does property lookup behave on JavaScript prototype chains when a property is not found on the instance?",
+      "recordedAt": "2026-10-22T09:20:14.765Z"
+    },
+    {
+      "id": "tech-q-1792660858432-irzxm",
+      "skill": "Python",
+      "topic": "Generators & Memory",
+      "difficulty": "MEDIUM",
+      "questionText": "What distinguishes a Python generator function using `yield` from a standard function using `return`?",
+      "recordedAt": "2026-10-22T09:20:58.437Z"
+    },
+    {
+      "id": "tech-q-1792660877296-qtv7f",
+      "skill": "Java",
+      "topic": "Memory Management",
+      "difficulty": "MEDIUM",
+      "questionText": "Where are Java object instances allocated during runtime execution?",
+      "recordedAt": "2026-10-22T09:21:17.299Z"
+    },
+    {
+      "id": "tech-q-1792660893218-axihf",
+      "skill": "SQL",
+      "topic": "Aggregation & Filtering",
+      "difficulty": "MEDIUM",
+      "questionText": "What is the key difference between the WHERE and HAVING clauses in SQL?",
+      "recordedAt": "2026-10-22T09:21:33.225Z"
+    },
+    {
+      "id": "tech-q-1792662418214-gqjdo",
+      "skill": "Python",
+      "topic": "Data Types & Mutability",
+      "difficulty": "EASY",
+      "questionText": "Which of the following built-in data types in Python is immutable?",
+      "recordedAt": "2026-10-22T09:46:58.218Z"
+    },
+    {
+      "id": "tech-q-1792662477191-uo21k",
+      "skill": "Java",
+      "topic": "Generics & Type Erasure",
+      "difficulty": "HARD",
+      "questionText": "What is Type Erasure in Java?",
+      "recordedAt": "2026-10-22T09:47:57.196Z"
+    },
+    {
+      "id": "tech-q-1792666357688-6bxgm",
+      "skill": "Python",
+      "topic": "String Manipulation",
+      "difficulty": "MEDIUM",
+      "questionText": "Write a Python function `is_palindrome(s)` that returns True if the alphanumeric characters in string `s` form a palindrome (ignoring casing).",
+      "recordedAt": "2026-10-22T10:52:37.692Z"
+    },
+    {
+      "id": "tech-q-1792667408195-rmk0n",
+      "skill": "Python",
+      "topic": "GIL & Multithreading",
+      "difficulty": "HARD",
+      "questionText": "Why does CPython’s Global Interpreter Lock (GIL) prevent true parallel CPU-bound execution across multiple OS threads?",
+      "recordedAt": "2026-10-22T11:10:08.198Z"
+    },
+    {
+      "id": "tech-q-1792668139615-sbj63",
+      "skill": "SQL",
+      "topic": "Indexing & Transactions",
+      "difficulty": "HARD",
+      "questionText": "What does the \"I\" in ACID database transactions represent, and what does it ensure?",
+      "recordedAt": "2026-10-22T11:22:19.621Z"
+    }
+  ],
+  "test_student": [
+    {
+      "id": "tech-q-1792669143778-kywhq",
+      "skill": "Python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-22T11:39:03.782Z"
+    }
+  ],
+  "test_student_pal": [
+    {
+      "id": "tech-q-1792669164058-teo22",
+      "skill": "Python",
+      "topic": "Data Types & Mutability",
+      "difficulty": "EASY",
+      "questionText": "Which of the following built-in data types in Python is immutable?",
+      "recordedAt": "2026-10-22T11:39:24.061Z"
+    },
+    {
+      "id": "tech-q-1792669165523-kvq4j",
+      "skill": "Python",
+      "topic": "List Comprehensions",
+      "difficulty": "EASY",
+      "questionText": "What is the output of `[x * 2 for x in range(4) if x % 2 == 0]` in Python?",
+      "recordedAt": "2026-10-22T11:39:25.525Z"
+    }
+  ]
+}
