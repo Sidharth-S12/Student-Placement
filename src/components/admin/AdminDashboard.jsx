@@ -15,7 +15,12 @@ import {
   fetchAdminJobs,
   reviewJob
 } from '../../services/adminService';
-import { exportStudentsToCSV } from '../../utils/exportCsv';
+import {
+  exportStudentsToCSV,
+  exportKMeansGroupsToCSV,
+  exportSingleGroupToCSV,
+  exportFilteredStudentsWithGroupsToCSV
+} from '../../utils/exportCsv';
 import { runKMeansClustering, fetchKMeansFromPython } from '../../utils/kmeansClustering';
 import { AdminStudentDetailModal } from './AdminStudentDetailModal';
 import { AdminAddOfficerModal } from './AdminAddOfficerModal';
@@ -44,6 +49,7 @@ import {
   X,
   Loader2,
   Download,
+  FileSpreadsheet,
   UserPlus,
   Plus,
   Briefcase,
@@ -75,8 +81,8 @@ import {
 export const AdminDashboard = () => {
   const { currentUser, logout } = useAuth();
 
-  // Navigation tab state: 8 dedicated sections
-  // 'overview' | 'officers' | 'students' | 'departments' | 'kmeans' | 'drives' | 'applications' | 'settings'
+  // Navigation tab state: 6 dedicated sections
+  // 'overview' | 'officers' | 'students' | 'departments' | 'kmeans' | 'drives'
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -411,14 +417,19 @@ export const AdminDashboard = () => {
   const studentClusterMap = useMemo(() => {
     const map = {};
     if (kmeansResult && kmeansResult.clusters) {
-      kmeansResult.clusters.forEach(c => {
+      kmeansResult.clusters.forEach((c, cIdx) => {
+        const groupNum = c.clusterIndex !== undefined ? c.clusterIndex + 1 : cIdx + 1;
         c.students.forEach(st => {
           map[st.uid] = {
             id: c.id,
             name: c.name,
             color: c.color,
             dotClass: c.dotClass,
-            badgeClass: c.badgeClass
+            badgeClass: c.badgeClass,
+            groupNumber: groupNum,
+            clusterIndex: c.clusterIndex !== undefined ? c.clusterIndex : cIdx,
+            recommendedAction: c.recommendedAction,
+            targetPersona: c.targetPersona
           };
         });
       });
@@ -1068,6 +1079,48 @@ export const AdminDashboard = () => {
     showToast(`Exported ${eligible.length} eligible candidates for ${drive.companyName}.`);
   };
 
+  // Export All K-Means Readiness Groups to Excel (.csv) with Group Numbers
+  const handleExportAllKMeansGroups = () => {
+    if (!kmeansResult?.clusters || kmeansResult.clusters.length === 0) {
+      showToast('No student readiness groups available to export.');
+      return;
+    }
+    const success = exportKMeansGroupsToCSV(
+      kmeansResult.clusters,
+      `Student_Readiness_Groups_Training_Roster_${new Date().toISOString().slice(0, 10)}.csv`,
+      { departmentFilter: kmeansDeptFilter }
+    );
+    if (success) {
+      const deptSuffix = kmeansDeptFilter !== 'all' ? ` for ${kmeansDeptFilter}` : '';
+      showToast(`Training groups Excel exported successfully${deptSuffix}!`);
+    }
+  };
+
+  // Export a Single Cluster Group to Excel (.csv)
+  const handleExportSingleKMeansGroup = (cluster) => {
+    const success = exportSingleGroupToCSV(cluster);
+    if (success) {
+      const groupNum = cluster.clusterIndex !== undefined ? cluster.clusterIndex + 1 : '';
+      showToast(`Group ${groupNum} (${cluster.name}) training roster exported to Excel!`);
+    }
+  };
+
+  // Export current students shown in Readiness Table to Excel (.csv)
+  const handleExportReadinessTable = () => {
+    if (!filteredGroupStudents || filteredGroupStudents.length === 0) {
+      showToast('No students to export in current table view.');
+      return;
+    }
+    const success = exportFilteredStudentsWithGroupsToCSV(
+      filteredGroupStudents,
+      studentClusterMap,
+      `Student_Readiness_Directory_${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    if (success) {
+      showToast(`Exported ${filteredGroupStudents.length} students to Excel.`);
+    }
+  };
+
   const handleOpenStudent = (student) => {
     setSelectedStudent(student);
     setIsStudentModalOpen(true);
@@ -1157,9 +1210,7 @@ export const AdminDashboard = () => {
                 badge: ((companyCounts?.pending || 0) + (jobCounts?.pending || 0)) > 0
                   ? `${(companyCounts?.pending || 0) + (jobCounts?.pending || 0)} pending`
                   : drives.length
-              },
-              { id: 'applications', label: 'Applications Pipeline', icon: FileText, badge: applications.length },
-              { id: 'settings', label: 'System Settings', icon: Settings },
+              }
             ].map((nav) => {
               const isActive = activeTab === nav.id;
               return (
@@ -1320,7 +1371,7 @@ export const AdminDashboard = () => {
                   subtext="Direct & officer nominations"
                   icon={FileText}
                   colorScheme="blue"
-                  onClick={() => setActiveTab('applications')}
+                  onClick={() => setActiveTab('drives')}
                 />
                 <StatCard
                   title="Students Shortlisted"
@@ -2483,6 +2534,17 @@ export const AdminDashboard = () => {
                       ) : null}
                     </div>
                     <Button
+                      variant="secondary"
+                      size="sm"
+                      icon={FileSpreadsheet}
+                      onClick={handleExportAllKMeansGroups}
+                      className="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-bold text-xs shadow-xs"
+                      title="Download Excel spreadsheet containing all student names, group numbers, scores, and training actions"
+                    >
+                      <FileSpreadsheet className="w-4 h-4 mr-1.5 text-emerald-400" />
+                      <span>Download Groups (Excel)</span>
+                    </Button>
+                    <Button
                       variant="primary"
                       size="sm"
                       icon={RefreshCw}
@@ -2681,19 +2743,31 @@ export const AdminDashboard = () => {
                         </div>
                       </div>
 
-                      {/* View Students in this Group Button */}
-                      <div className="pt-3 mt-3 border-t border-slate-800">
+                      {/* View Students in this Group Button & Quick Excel Download */}
+                      <div className="pt-3 mt-3 border-t border-slate-800 flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => handleSelectGroupFilter(cluster.id)}
-                          className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
+                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 ${
                             isSelected
                               ? 'bg-brand-600 text-white shadow-xs'
                               : 'bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700/80'
                           }`}
                         >
-                          <span>{isSelected ? 'Viewing Group Students' : `View Students (${cluster.count})`}</span>
+                          <span>{isSelected ? 'Viewing Group' : `View (${cluster.count})`}</span>
                           <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExportSingleKMeansGroup(cluster);
+                          }}
+                          disabled={!cluster.students || cluster.students.length === 0}
+                          title={`Download Group ${cluster.clusterIndex !== undefined ? cluster.clusterIndex + 1 : ''} (${cluster.name}) Excel Roster`}
+                          className="p-2 rounded-xl bg-slate-800 hover:bg-emerald-600/20 text-slate-300 hover:text-emerald-400 border border-slate-700/80 hover:border-emerald-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                        >
+                          <FileSpreadsheet className="w-4 h-4" />
                         </button>
                       </div>
                     </Card>
@@ -2767,6 +2841,20 @@ export const AdminDashboard = () => {
                         Reset Filters
                       </button>
                     )}
+
+                    {/* Export Table to Excel Button */}
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      icon={FileSpreadsheet}
+                      onClick={handleExportReadinessTable}
+                      disabled={filteredGroupStudents.length === 0}
+                      className="bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold py-1.5"
+                      title="Download students in this table with their group numbers and recommendations to Excel"
+                    >
+                      <FileSpreadsheet className="w-3.5 h-3.5 mr-1 text-emerald-400" />
+                      <span>Export Table (Excel)</span>
+                    </Button>
                   </div>
                 </div>
 
@@ -2830,8 +2918,9 @@ export const AdminDashboard = () => {
                                 </td>
                                 <td className="py-3 px-3">
                                   {clusterInfo ? (
-                                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-block ${clusterInfo.badgeClass}`}>
-                                      {clusterInfo.name}
+                                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-flex items-center space-x-1 ${clusterInfo.badgeClass}`}>
+                                      <span className="font-mono opacity-80 mr-1">#{clusterInfo.groupNumber}</span>
+                                      <span>{clusterInfo.name}</span>
                                     </span>
                                   ) : (
                                     <span className="text-slate-500 text-[10px]">Unassigned</span>
@@ -3446,250 +3535,6 @@ export const AdminDashboard = () => {
                   )}
                 </div>
               )}
-            </div>
-          )}
-
-          {/* =========================================================================
-              TAB 7: APPLICATIONS & RECRUITMENT TRACKING
-             ========================================================================= */}
-          {activeTab === 'applications' && (
-            <div className="space-y-5 animate-fade-in">
-              <PageHeader
-                breadcrumb={['Admin Portal', 'Applications & Tracking']}
-                title="Applications & Selections Pipeline"
-                subtitle="Track candidate recruitment progress across corporate drives, manage interview stages, and record placement outcomes."
-              />
-
-              {/* Status Counters */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 text-center text-xs">
-                {['Applied', 'Under Review', 'Shortlisted', 'Interview Scheduled', 'Selected', 'Rejected', 'Withdrawn'].map((st) => {
-                  const count = applications.filter(a => a.status === st).length;
-                  const isSelected = appStatusFilter === st;
-                  return (
-                    <button
-                      key={st}
-                      type="button"
-                      onClick={() => setAppStatusFilter(isSelected ? 'all' : st)}
-                      className={`p-2.5 rounded-xl border transition-all ${
-                        isSelected
-                          ? 'border-brand-500 bg-brand-500/15 text-white'
-                          : 'border-slate-800 bg-slate-850/80 text-slate-300 hover:border-slate-700'
-                      }`}
-                    >
-                      <div className="font-black text-sm">{count}</div>
-                      <div className="text-[10px] text-slate-400 truncate mt-0.5">{st}</div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Filter Row */}
-              <Card className="p-4 space-y-3">
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                  <div className="relative flex-1">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      value={appSearch}
-                      onChange={(e) => setAppSearch(e.target.value)}
-                      placeholder="Search applications by candidate name, company, or role..."
-                      className="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-700 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 bg-slate-850"
-                    />
-                  </div>
-                  <div className="w-full sm:w-48">
-                    <select
-                      value={appTypeFilter}
-                      onChange={(e) => setAppTypeFilter(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-700 text-xs text-slate-200 bg-slate-850"
-                    >
-                      <option value="all">All Application Sources</option>
-                      <option value="direct">Direct Applications</option>
-                      <option value="nomination">Officer Nominations</option>
-                    </select>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Applications Table */}
-              {loadingApplications ? (
-                <div className="p-12 text-center text-xs text-slate-400 flex items-center justify-center space-x-2 bg-slate-900 rounded-2xl border border-slate-800 shadow-xl">
-                  <Loader2 className="w-4 h-4 animate-spin text-brand-400" />
-                  <span>Loading recruitment applications...</span>
-                </div>
-              ) : filteredApplications.length > 0 ? (
-                <Card className="overflow-hidden">
-                  <div className="divide-y divide-slate-800">
-                    {filteredApplications.map((app) => {
-                      const isUpdating = updatingAppId === app.id;
-                      const isNomination = app.source === 'nomination';
-
-                      return (
-                        <div key={app.id} className="p-4 hover:bg-slate-850/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
-                          <div className="space-y-1">
-                            <div className="flex items-center space-x-2">
-                              <span className="font-extrabold text-white text-xs sm:text-sm">
-                                {app.studentName || 'Student Candidate'}
-                              </span>
-                              <Badge variant="neutral" size="sm">{app.studentDepartment || 'General'}</Badge>
-                              {isNomination ? (
-                                <Badge variant="indigo" size="sm">Officer Nomination</Badge>
-                              ) : (
-                                <Badge variant="dark" size="sm">Direct Application</Badge>
-                              )}
-                            </div>
-                            <div className="text-xs text-slate-300 font-medium">
-                              {app.jobRole} • <span className="font-bold text-white">{app.companyName}</span> ({app.packageCTC || 'Competitive'})
-                            </div>
-                            <div className="text-[11px] text-slate-400">
-                              Applied on {new Date(app.createdAt || Date.now()).toLocaleDateString()} • Candidate CGPA: {app.studentCgpa || '—'}
-                            </div>
-                          </div>
-
-                          {/* Status Management Dropdown */}
-                          <div className="flex items-center space-x-3 self-end md:self-center">
-                            <div className="text-right">
-                              <div className="text-[10px] font-bold text-slate-400 uppercase">Recruitment Stage</div>
-                              <select
-                                value={app.status || 'Applied'}
-                                onChange={(e) => handleUpdateAppStatus(app.id, e.target.value)}
-                                disabled={isUpdating}
-                                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                                  app.status === 'Selected'
-                                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                                    : app.status === 'Shortlisted'
-                                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
-                                    : app.status === 'Interview Scheduled'
-                                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
-                                    : app.status === 'Rejected'
-                                    ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                                    : 'bg-slate-800 text-slate-200 border-slate-700'
-                                }`}
-                              >
-                                <option value="Applied">Applied</option>
-                                <option value="Under Review">Under Review</option>
-                                <option value="Shortlisted">Shortlisted</option>
-                                <option value="Interview Scheduled">Interview Scheduled</option>
-                                <option value="Selected">Selected / Placed</option>
-                                <option value="Rejected">Rejected</option>
-                                <option value="Withdrawn">Withdrawn</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
-              ) : (
-                <div className="p-12 text-center text-xs text-slate-400 bg-slate-900 rounded-2xl border border-dashed border-slate-800">
-                  No applications found for the selected filter.
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* =========================================================================
-              TAB 8: SYSTEM SETTINGS & ACCESS DIAGNOSTICS
-             ========================================================================= */}
-          {activeTab === 'settings' && (
-            <div className="space-y-5 animate-fade-in">
-              <PageHeader
-                breadcrumb={['Admin Portal', 'System Settings']}
-                title="System Settings & Security Diagnostics"
-                subtitle="Review administrative identity, active access boundaries, resilient database storage mode, and role policies."
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                {/* Session Diagnostic */}
-                <Card className="p-5 space-y-3">
-                  <div className="flex items-center space-x-2 text-white">
-                    <ShieldCheck className="w-5 h-5 text-amber-400" />
-                    <h4 className="font-extrabold text-sm">Authenticated Session</h4>
-                  </div>
-                  <div className="space-y-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Officer Name:</span>
-                      <span className="font-bold text-white">{currentOfficerRecord?.displayName || 'Real Administrator'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Email Address:</span>
-                      <span className="font-bold text-white">{currentUser?.email}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Firebase UID:</span>
-                      <span className="font-mono text-[11px] text-slate-300">{currentUser?.uid}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Administrative Role:</span>
-                      <Badge variant="amber" size="sm">Admin / Placement Officer</Badge>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Access Scope Diagnostic */}
-                <Card className="p-5 space-y-3">
-                  <div className="flex items-center space-x-2 text-white">
-                    <Lock className="w-5 h-5 text-brand-400" />
-                    <h4 className="font-extrabold text-sm">Access Scope Configuration</h4>
-                  </div>
-                  <div className="space-y-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Access Scope:</span>
-                      <Badge variant={officerScope === 'college' ? 'amber' : 'indigo'} size="sm">
-                        {officerScope === 'college' ? 'College-Wide Access' : 'Department-Specific'}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Assigned Branch:</span>
-                      <span className="font-bold text-white">
-                        {officerScope === 'college' ? 'All Institutional Departments' : officerAssignedDept}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Security Enforcement:</span>
-                      <span className="text-emerald-400 font-bold">Backend & Firestore Rules</span>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Database & Resilient Storage Diagnostic */}
-                <Card className="p-5 space-y-3">
-                  <div className="flex items-center space-x-2 text-white">
-                    <Database className="w-5 h-5 text-indigo-400" />
-                    <h4 className="font-extrabold text-sm">Database & Persistence Mode</h4>
-                  </div>
-                  <div className="space-y-2 text-xs bg-slate-850/80 p-3 rounded-xl border border-slate-800">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Primary Database:</span>
-                      <span className="font-bold text-white">Google Firebase Firestore</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Dual-Mode Resilient Fallback:</span>
-                      <span className="text-emerald-400 font-bold">Active (server/.data)</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Zero Fabricated Numbers:</span>
-                      <span className="text-emerald-400 font-bold">Verified Dynamic Queries</span>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Security Policy Summary */}
-                <Card className="p-5 space-y-3">
-                  <div className="flex items-center space-x-2 text-white">
-                    <Globe className="w-5 h-5 text-purple-400" />
-                    <h4 className="font-extrabold text-sm">Security & Role Safeguards</h4>
-                  </div>
-                  <div className="text-xs text-slate-300 leading-relaxed space-y-1.5">
-                    <p>• Only verified Admins can create or update officer accounts.</p>
-                    <p>• Placement officer creation uses Firebase Admin SDK without modifying the admin's session.</p>
-                    <p>• Department-restricted officers are strictly prevented from querying unauthorized student branches.</p>
-                    <p>• At least one active admin account is permanently safeguarded against deactivation.</p>
-                  </div>
-                </Card>
-
-              </div>
             </div>
           )}
 
